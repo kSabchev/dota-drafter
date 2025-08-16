@@ -609,6 +609,7 @@ const AdvisorInput = z.object({
       team2: z.array(z.number().nullable()).default([]),
     })
     .default({ team1: [], team2: [] }),
+  perspective: z.enum(["team1", "team2"]).default("team1"),
 });
 
 // function valAt(arr, m) {

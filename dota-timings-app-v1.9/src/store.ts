@@ -364,33 +364,4 @@ export const useStore = create<State & Actions>((set, get) => ({
     }));
     set({ team1: t1, team2: t2 });
   },
-
-  // async buildStory() {
-  //   const base = get().apiBase;
-  //   const body = {
-  //     minute: get().minute,
-  //     teams: {
-  //       team1: get().team1.map((p) => ({
-  //         hero_id: p.hero_id,
-  //         profile: p.profile,
-  //       })),
-  //       team2: get().team2.map((p) => ({
-  //         hero_id: p.hero_id,
-  //         profile: p.profile,
-  //       })),
-  //     },
-  //     roles: {
-  //       team1: get().team1.map((p) => p.role || null),
-  //       team2: get().team2.map((p) => p.role || null),
-  //     },
-  //   };
-  //   const r = await fetch(base + "/storyboard", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(body),
-  //   });
-  //   const j = await r.json();
-  //   if (!r.ok) throw new Error(j.error || "story failed");
-  //   set({ story: j });
-  // },
 }));
