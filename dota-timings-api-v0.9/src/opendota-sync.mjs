@@ -279,31 +279,6 @@ export function buildTopK(heroes, vsMatrix, withMatrix, k = DEFAULT_K) {
   return { topOpponents, topAllies };
 }
 
-/** Main sync: fetch raw, compute matrices, write snapshots, return latest bundle */
-// export async function syncOpenDotaAndBuildMatrices() {
-//   ensureDir(SNAP_DIR);
-//   const date = todayStr();
-//   const heroes = await fetchHeroes();
-//   const allVsRaw = await fetchAllVsMatchups(heroes);
-//   const withMatrix = await buildWithMatrix(heroes, { days: 30 });
-//   const vsMatrix = await buildVsMatrix(heroes, allVsRaw);
-//   const topk = buildTopK(heroes, vsMatrix, withMatrix, DEFAULT_K);
-
-//   const rawSnap = { date, heroes, allVsRaw };
-//   fs.writeFileSync(
-//     path.join(SNAP_DIR, `open_dota_raw_${date}.json`),
-//     JSON.stringify(rawSnap)
-//   );
-
-//   const matrixSnap = { date, vsMatrix, withMatrix, ...topk };
-//   fs.writeFileSync(
-//     path.join(SNAP_DIR, `matrix_${date}.json`),
-//     JSON.stringify(matrixSnap)
-//   );
-
-//   return { heroes, matrix: matrixSnap };
-// }
-
 export async function syncOpenDotaAndBuildMatrices(limit = 0) {
   ensureDir(SNAP_DIR);
   const date = todayStr();

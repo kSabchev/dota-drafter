@@ -4,6 +4,7 @@ import { useStore } from "@/store";
 import { CompositionBars, TimingChart } from "./Charts";
 import ApplyPositionsButton from "../components/ApplyPositionsButton";
 import { exportDraftReportPDF } from "../reports/exportDraftReport";
+import { useMatrixTopK } from "@/lib/api-hooks";
 
 export default function StoryView() {
   // Hooks (always called, in the same order)
@@ -11,6 +12,8 @@ export default function StoryView() {
   const story = useStore((s) => s.story);
   const team1 = useStore((s) => s.team1);
   const team2 = useStore((s) => s.team2);
+
+  const { data: matrix, isLoading, error } = useMatrixTopK(50);
 
   // Build server story once both teams are complete
   useEffect(() => {
@@ -21,7 +24,8 @@ export default function StoryView() {
   }, [team1.length, team2.length, buildStory]);
 
   // Safe accessors so we don't conditionally call hooks later
-  const error = (story as any)?.error ?? null;
+  // doublecheck
+  // const error = (story as any)?.error ?? null;
   const composition = (story as any)?.composition ?? { team1: {}, team2: {} };
   const lanes = (story as any)?.lanes ?? [];
   const windows = (story as any)?.windows ?? [];
@@ -65,88 +69,101 @@ export default function StoryView() {
   const draftComplete = team1.length === 5 && team2.length === 5;
 
   return (
-    <div style={{ display: "grid", gap: 12 }}>
-      {!draftComplete && (
-        <div style={{ opacity: 0.7 }}>
-          Build a complete draft (5 heroes per team) to see the story.
-        </div>
+    <>
+      {isLoading && (
+        <div style={{ fontSize: 12, opacity: 0.7 }}>loading matrix…</div>
       )}
-
       {error && (
-        <div
-          style={{
-            color: "#f88",
-            border: "1px solid #803",
-            padding: 8,
-            borderRadius: 8,
-          }}
-        >
-          Failed to build story: {String(error)}
+        <div style={{ fontSize: 12, color: "#f85149" }}>
+          failed to load matrix
         </div>
       )}
 
-      {draftComplete && !error && (
-        <>
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-            <ApplyPositionsButton />
-            <ExportPDFButton />
+      <div style={{ display: "grid", gap: 12 }}>
+        {!draftComplete && (
+          <div style={{ opacity: 0.7 }}>
+            Build a complete draft (5 heroes per team) to see the story.
           </div>
-          {/* Lanes */}
-          <div style={{ display: "grid", gap: 8 }}>
-            <h3>Lanes</h3>
-            {(lanes as any[]).map((l, i) => (
-              <div
-                key={i}
-                style={{
-                  border: "1px solid #30363d",
-                  borderRadius: 8,
-                  padding: 8,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 12,
-                }}
-              >
-                <div>
-                  <strong>{l.lane}</strong>
-                </div>
-                <div style={{ opacity: 0.85 }}>{l.label}</div>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {(l.reasons || []).map((r: string) => (
-                    <span
-                      key={r}
-                      style={{
-                        padding: "2px 8px",
-                        border: "1px solid #30363d",
-                        borderRadius: 999,
-                      }}
-                    >
-                      {r}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+        )}
 
-          {/* Composition bars */}
-          <div>
-            <h3>Composition</h3>
-            <CompositionBars data={compRows} />
+        {error && (
+          <div
+            style={{
+              color: "#f88",
+              border: "1px solid #803",
+              padding: 8,
+              borderRadius: 8,
+            }}
+          >
+            Failed to build story: {String(error)}
           </div>
+        )}
 
-          {/* Timing graph */}
-          <div>
-            <h3>Objective Windows & Spikes</h3>
-            <TimingChart
-              points={timingPoints}
-              windows={windows}
-              spikes={spikes}
-            />
-          </div>
-        </>
-      )}
-    </div>
+        {draftComplete && !error && (
+          <>
+            <div
+              style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}
+            >
+              <ApplyPositionsButton />
+              <ExportPDFButton />
+            </div>
+            {/* Lanes */}
+            <div style={{ display: "grid", gap: 8 }}>
+              <h3>Lanes</h3>
+              {(lanes as any[]).map((l, i) => (
+                <div
+                  key={i}
+                  style={{
+                    border: "1px solid #30363d",
+                    borderRadius: 8,
+                    padding: 8,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                  }}
+                >
+                  <div>
+                    <strong>{l.lane}</strong>
+                  </div>
+                  <div style={{ opacity: 0.85 }}>{l.label}</div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {(l.reasons || []).map((r: string) => (
+                      <span
+                        key={r}
+                        style={{
+                          padding: "2px 8px",
+                          border: "1px solid #30363d",
+                          borderRadius: 999,
+                        }}
+                      >
+                        {r}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Composition bars */}
+            <div>
+              <h3>Composition</h3>
+              <CompositionBars data={compRows} />
+            </div>
+
+            {/* Timing graph */}
+            <div>
+              <h3>Objective Windows & Spikes</h3>
+              <TimingChart
+                points={timingPoints}
+                windows={windows}
+                spikes={spikes}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 }
 

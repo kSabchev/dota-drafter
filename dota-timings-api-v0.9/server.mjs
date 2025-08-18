@@ -8,8 +8,15 @@ import pino from "pino";
 import { syncOpenDotaAndBuildMatrices } from "./src/opendota-sync.mjs";
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
+import { loadMatrixSnapshot } from "./src/matrix-loader.mjs";
 
 let __MATRIX_BUNDLE = null; // in-memory copy for fast reads
+
+function etagFor(obj) {
+  const json = JSON.stringify(obj);
+  return `"W/${crypto.createHash("sha1").update(json).digest("base64")}"`;
+}
 
 function getMatrixBundle() {
   // If you already set __MATRIX_BUNDLE when syncing/loading snapshots, reuse it
@@ -168,16 +175,25 @@ async function fetchPresets(localBase = "http://localhost:8787") {
 const log = pino({ level: process.env.LOG_LEVEL || "info" });
 const app = express();
 app.use(express.json({ limit: "1mb" }));
+app.use(
+  cors({
+    origin: true, // or ["http://localhost:5173"]
+    credentials: false,
+  })
+);
+const SNAPSHOT_FILE =
+  process.env.MATRIX_SNAPSHOT || "data/snapshots/matrix-topk.json";
+await loadMatrixSnapshot(app);
 
 const ORIGINS = (process.env.CORS_ORIGINS || "")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
-app.use(
-  cors({
-    origin: (o, cb) => cb(null, !ORIGINS.length || ORIGINS.includes(o) || !o),
-  })
-);
+// app.use(
+//   cors({
+//     origin: (o, cb) => cb(null, !ORIGINS.length || ORIGINS.includes(o) || !o),
+//   })
+// );
 
 const PORT = process.env.PORT || 8787;
 const cache = new Map();
@@ -808,359 +824,6 @@ function enemyGainIfTheyPick(heroId, team1Ids, team2Ids, matrix) {
   return pos - neg;
 }
 
-// app.post("/advisor/suggest", async (req, res) => {
-//   try {
-//     const input = AdvisorInput.parse(req.body);
-//     const now = input.minute;
-
-//     const heroes = await fetchHeroesLite();
-//     const presetsByHero = await fetchPresets(); // from /presets if available
-
-//     const your = input.teams.team1 || [];
-//     const enemy = input.teams.team2 || [];
-
-//     const yourTags = new Set(your.flatMap((p) => p.profile?.tags || []));
-//     const enemyTags = new Set(enemy.flatMap((p) => p.profile?.tags || []));
-
-//     const coverage = WANT_TAGS.map((t) => ({ tag: t, ok: yourTags.has(t) }));
-
-//     const taken = new Set([...(input.picked || []), ...(input.banned || [])]);
-//     const pool = heroes.filter((h) => !taken.has(h.id));
-
-//     const matrix = getMatrixBundle() || null;
-//     const team1Ids = your.map((p) => p.hero_id);
-//     const team2Ids = enemy.map((p) => p.hero_id);
-
-//     // Context score from matrix (0 if no matrix loaded)
-//     const ctx = contextScoreFor(h.id, team1Ids, team2Ids, matrix);
-//     const contrib = contextContribFor(h.id, team1Ids, team2Ids, matrix);
-
-//     // Blend context into total score (scale to be comparable with your other terms)
-//     // If your raw score is ~10–40 range, a 0.25 weight on ctx (which is integer-ish)
-//     // works well. Adjust CTX_WEIGHT if needed.
-//     score += CTX_WEIGHT * ctx;
-
-//     // helpers
-//     function reasonsFor(profile) {
-//       const rs = [];
-//       // coverage fills
-//       for (const tag of WANT_TAGS) {
-//         if (!yourTags.has(tag) && (profile.tags || []).includes(tag))
-//           rs.push("+" + tag.replace("_", " "));
-//       }
-//       // synergy
-//       for (const s of SYNERGY_THEMES) {
-//         if (yourTags.has(s.tag) && (profile.tags || []).includes(s.tag))
-//           rs.push(s.label);
-//       }
-//       // counters
-//       for (const c of COUNTER_THEMES) {
-//         if (enemyTags.has(c.enemy) && (profile.tags || []).includes(c.self))
-//           rs.push(c.label);
-//       }
-//       // role fit badge
-//       const pos = (profile.positions || [])[0];
-//       if (pos) rs.push(`Fits Pos ${pos}`);
-
-//       // return rs;
-//       return {
-//         hero_id: h.id,
-//         name: h.name,
-//         icon: h.icon,
-//         profileId: profile.id,
-//         profile,
-//         deltas: axesNow,
-//         deltasByMinute,
-//         itemsLikely,
-//         reasons,
-//         contextScore: ctx,
-//         contextContrib: contrib,
-//         _score: score,
-//       };
-//     }
-
-//     function pickBestProfileFor(h) {
-//       const list = presetsByHero[h.id] || [
-//         {
-//           id: `${h.id}-default`,
-//           hero_id: h.id,
-//           positions: h.roles?.includes("Support")
-//             ? [4, 5]
-//             : h.roles?.includes("Carry")
-//             ? [1]
-//             : [2, 3],
-//           tags: defaultTags(h.roles || []),
-//           curve: defaultCurveByRole(h.roles || []),
-//         },
-//       ];
-//       // simple priority: coverage > synergy > counters > raw @now
-//       function score(p) {
-//         let s = 0;
-//         for (const tag of WANT_TAGS)
-//           if (!yourTags.has(tag) && (p.tags || []).includes(tag)) s += 8;
-//         for (const th of SYNERGY_THEMES)
-//           if (yourTags.has(th.tag) && (p.tags || []).includes(th.tag)) s += 6;
-//         for (const ct of COUNTER_THEMES)
-//           if (enemyTags.has(ct.enemy) && (p.tags || []).includes(ct.self))
-//             s += 5;
-//         const dv = curveValue(p.curve || defaultCurve(), now);
-//         s +=
-//           (dv.fight + dv.pickoff + dv.push + (dv.rosh || 0) + (dv.scale || 0)) /
-//           100;
-//         if ((p.positions || [])[0] === 1) s += 0.5; // tiny carry bias
-//         return s;
-//       }
-//       return list
-//         .map((p) => ({ p, s: score(p) }))
-//         .sort((a, b) =>
-//           b.s === a.s ? (a.p.id < b.p.id ? -1 : 1) : b.s - a.s
-//         )[0].p;
-//     }
-
-//     // team aura count (very rough – if your current picks have those tags)
-//     function teamAuraCountAtNow(team) {
-//       let c = 0;
-//       for (const p of team) {
-//         const tags = p.profile?.tags || [];
-//         if (
-//           tags.includes("aura_carrier") ||
-//           tags.includes("greaves") ||
-//           tags.includes("pipe") ||
-//           tags.includes("assault") ||
-//           tags.includes("vladmir") ||
-//           tags.includes("crimson_guard")
-//         ) {
-//           c++;
-//         }
-//       }
-//       return c;
-//     }
-
-//     // ── Ally suggestions
-//     const ally = pool
-//       .map((h) => {
-//         const profile = pickBestProfileFor(h); // ← ensure profile is defined here
-
-//         const roleHint = (profile.positions || [])[0] || 2;
-
-//         // likely items by tags/role (quick heuristic — swap with presets.item_build later)
-//         const likely = [];
-//         if ((profile.tags || []).includes("initiator")) likely.push("blink");
-//         if ((profile.tags || []).includes("aura_carrier"))
-//           likely.push("greaves");
-//         if ((profile.tags || []).includes("pipe_aura")) likely.push("pipe");
-//         if ((profile.tags || []).includes("armor_aura")) likely.push("assault");
-//         if ((profile.tags || []).includes("anti_heal"))
-//           likely.push("shivas_guard");
-//         if ((profile.tags || []).includes("core_bkb") || roleHint <= 2)
-//           likely.push("bkb");
-
-//         const itemsLikely = likely
-//           .filter((k) => ITEMS[k])
-//           .map((k) => ({
-//             key: k,
-//             label: ITEMS[k].label,
-//             minute: estItemMinute(k, roleHint),
-//             effects: ITEMS[k].effects,
-//             aura: AURA_CLASSES.has(ITEMS[k].class),
-//           }));
-
-//         // deltas at now (with items at/before now, considering aura saturation)
-//         const deltas = curveValue(profile.curve || defaultCurve(), now);
-//         const axesNow = { ...deltas };
-//         let auraCnt = teamAuraCountAtNow(your);
-//         for (const it of itemsLikely) {
-//           if (it.minute <= now) {
-//             const w = it.aura ? auraSaturationPenalty(auraCnt) : 1;
-//             applyItemEffectsToAxes(axesNow, it.effects, w);
-//             if (it.aura) auraCnt++;
-//           }
-//         }
-
-//         // reasons
-//         const reasons = reasonsFor(profile);
-//         for (const it of itemsLikely) {
-//           if (it.minute >= now && it.minute <= now + 10)
-//             reasons.push(`${it.label} @${it.minute}`);
-//         }
-
-//         // per-minute deltas with items
-//         const deltasByMinute = {};
-//         for (const m of [10, 15, 20, 25, now]) {
-//           const base = curveValue(profile.curve || defaultCurve(), m);
-//           let auraCntM = teamAuraCountAtNow(your);
-//           for (const it of itemsLikely) {
-//             if (it.minute <= m) {
-//               const w = it.aura ? auraSaturationPenalty(auraCntM) : 1;
-//               applyItemEffectsToAxes(base, it.effects, w);
-//               if (it.aura) auraCntM++;
-//             }
-//           }
-//           deltasByMinute[m] = base;
-//         }
-
-//         // scoring: coverage(35) role(15) synergy(20) counters(15) raw(15) + item soon bonus
-//         let score = 0;
-//         // coverage
-//         for (const tag of WANT_TAGS)
-//           if (!yourTags.has(tag) && (profile.tags || []).includes(tag))
-//             score += 3.5;
-//         // role
-//         if ((profile.positions || []).includes(1)) score += 1.5;
-//         if ((profile.positions || []).includes(3)) score += 1.0;
-//         // synergy
-//         for (const th of SYNERGY_THEMES)
-//           if (yourTags.has(th.tag) && (profile.tags || []).includes(th.tag))
-//             score += 2.0;
-//         // counters
-//         for (const ct of COUNTER_THEMES)
-//           if (enemyTags.has(ct.enemy) && (profile.tags || []).includes(ct.self))
-//             score += 1.5;
-//         // raw
-//         const raw =
-//           axesNow.fight +
-//           axesNow.pickoff +
-//           axesNow.push +
-//           (axesNow.rosh || 0) +
-//           (axesNow.scale || 0);
-//         score += raw / 100;
-//         // items soon
-//         for (const it of itemsLikely) {
-//           const soon = Math.max(0, 1 - Math.abs(it.minute - now) / 8);
-//           score += soon * 1.5;
-//         }
-
-//         return {
-//           hero_id: h.id,
-//           name: h.name,
-//           icon: h.icon,
-//           profileId: profile.id,
-//           profile,
-//           deltas: axesNow,
-//           deltasByMinute,
-//           itemsLikely,
-//           reasons,
-//           _score: score,
-//         };
-//       })
-//       .sort((a, b) => {
-//         if (b._score !== a._score) return b._score - a._score;
-//         if (b.deltas.push !== a.deltas.push)
-//           return b.deltas.push - a.deltas.push;
-//         return a.hero_id - b.hero_id; // deterministic
-//       })
-//       .slice(0, 6)
-//       .map(({ _score, ...rest }) => rest);
-
-//     // ── Ban (deny) suggestions: enemy gain
-//     const banList = pool
-//       .map((h) => {
-//         // pick enemy's first (or default) profile
-//         const list = presetsByHero[h.id] || [
-//           {
-//             id: `${h.id}-default`,
-//             hero_id: h.id,
-//             tags: defaultTags(h.roles || []),
-//             curve: defaultCurveByRole(h.roles || []),
-//           },
-//         ];
-//         const best = list[0];
-//         const dv = curveValue(best.curve || defaultCurve(), now);
-//         const matrix = getMatrixBundle();
-//         const team1Ids = your.map((p) => p.hero_id);
-//         const team2Ids = enemy.map((p) => p.hero_id);
-//         const enemyCtxGain = enemyGainIfTheyPick(
-//           h.id,
-//           team1Ids,
-//           team2Ids,
-//           matrix
-//         );
-
-//         // coverage they gain if they get this
-//         let coverageGain = 0,
-//           reasons = [];
-//         for (const tag of WANT_TAGS) {
-//           const need = !enemyTags.has(tag) && (best.tags || []).includes(tag);
-//           if (need) {
-//             coverageGain += 8;
-//             reasons.push("Fills enemy: " + tag.replace("_", " "));
-//           }
-//         }
-//         // simple items for enemy (assume similar heuristics)
-//         const roleHint = (best.positions || [])[0] || 2;
-//         const likely = [];
-//         if ((best.tags || []).includes("initiator")) likely.push("blink");
-//         if ((best.tags || []).includes("aura_carrier")) likely.push("greaves");
-//         if ((best.tags || []).includes("pipe_aura")) likely.push("pipe");
-//         if ((best.tags || []).includes("armor_aura")) likely.push("assault");
-//         if ((best.tags || []).includes("core_bkb") || roleHint <= 2)
-//           likely.push("bkb");
-//         const itemsLikely = likely
-//           .filter((k) => ITEMS[k])
-//           .map((k) => ({
-//             key: k,
-//             label: ITEMS[k].label,
-//             minute: estItemMinute(k, roleHint),
-//             effects: ITEMS[k].effects,
-//             aura: AURA_CLASSES.has(ITEMS[k].class),
-//           }));
-
-//         const score = (dv.fight + dv.pickoff + dv.push) / 3 + coverageGain;
-//         score += CTX_WEIGHT * enemyCtxGain;
-
-//         return {
-//           hero_id: h.id,
-//           name: h.name,
-//           icon: h.icon,
-//           deltas: dv,
-//           reasons,
-//           itemsLikely,
-//           enemyContextGain: enemyCtxGain,
-//           _score: score,
-//         };
-//       })
-//       .sort((a, b) => {
-//         if (b._score !== a._score) return b._score - a._score;
-//         if (b.deltas.push !== a.deltas.push)
-//           return b.deltas.push - a.deltas.push;
-//         return a.hero_id - b.hero_id;
-//       })
-//       .slice(0, 6)
-//       .map(({ _score, ...rest }) => rest);
-
-//     // team needs (top 3 missing)
-//     const priority = [
-//       "stun",
-//       "dispel",
-//       "save",
-//       "waveclear",
-//       "vision",
-//       "initiator",
-//       "roshan",
-//       "tower_damage",
-//       "mobility",
-//       "aura_carrier",
-//       "scale",
-//     ];
-//     const missing = coverage
-//       .filter((c) => !c.ok)
-//       .map((c) => c.tag)
-//       .sort((a, b) => priority.indexOf(a) - priority.indexOf(b))
-//       .slice(0, 3);
-
-//     res.json({
-//       minute: now,
-//       coverage,
-//       teamNeeds: missing,
-//       allySuggestions: ally,
-//       banSuggestions: banList,
-//     });
-//   } catch (e) {
-//     console.error("[advisor/suggest] error", e);
-//     res.status(400).json({ error: String(e?.message || e) });
-//   }
-// });
-
 app.post("/advisor/suggest", async (req, res) => {
   try {
     const input = AdvisorInput.parse(req.body);
@@ -1501,53 +1164,69 @@ app.post("/advisor/explain", async (req, res) => {
     res.status(400).json({ error: String(e) });
   }
 });
+
+app.post("/admin/matrix/reload", async (req, res) => {
+  const ok = await loadMatrixSnapshot(app, SNAPSHOT_FILE);
+  if (!ok)
+    return res.status(500).json({ error: "Failed to reload matrix snapshot" });
+  res.json({ ok: true });
+});
+
 // ==== GET /matrix/topk?rank=DivinePlus&patch=7.xx ====
-// Computes top allies/opponents based on tag synergy & axis complement; cached 10 min
+
 app.get("/matrix/topk", async (req, res) => {
   try {
-    const heroes = await fetchHeroesLite();
-    const presets = await fetchPresets(`http://localhost:${PORT || 8787}`);
-    const minute = 15;
-    const key = `matrix:${minute}`;
-    const data = await memo(key, 10 * 60 * 1000, () => {
-      const bestById = new Map();
-      for (const h of heroes) {
-        const p = bestProfileFor(h, presets, new Set(), new Set(), minute);
-        bestById.set(h.id, p);
+    const k = Math.max(1, Math.min(100, Number(req.query.k) || 50));
+    // const full = req.app.locals?.matrixTopK || {
+    //   topAllies: {},
+    //   topOpponents: {},
+    // };
+    let full = req.app.locals?.matrixTopK;
+    // Lazy-load if empty
+    if (
+      !full ||
+      (!Object.keys(full.topAllies || {}).length &&
+        !Object.keys(full.topOpponents || {}).length)
+    ) {
+      const ok = await loadMatrixSnapshot(req.app, SNAPSHOT_FILE);
+      full = req.app.locals.matrixTopK;
+      if (!ok) {
+        return res
+          .status(503)
+          .json({
+            error: "matrix not loaded yet — run sync or check snapshot path",
+          });
       }
-      const topAllies = {},
-        topOpponents = {};
-      for (const hi of heroes) {
-        const pi = bestById.get(hi.id);
-        const allyScores = [];
-        const oppScores = [];
-        for (const hj of heroes) {
-          if (hj.id === hi.id) continue;
-          const pj = bestById.get(hj.id);
-          // ally: tag synergy + axis complement
-          const sTags = tagSynergy(pi.tags, pj.tags);
-          const sAxes =
-            axisMix(pi.curve, minute) * 0.01 + axisMix(pj.curve, minute) * 0.01;
-          allyScores.push({ id: hj.id, score: Math.round(sTags + sAxes) });
-          // opponent: counter mapping
-          const oTags = tagOpposition(pi.tags, pj.tags);
-          // small axis anti‑correlation (optionally)
-          const oAxes =
-            Math.max(
-              0,
-              curveValue(pj.curve, minute).fight -
-                curveValue(pi.curve, minute).defense
-            ) * 0.01;
-          oppScores.push({ id: hj.id, score: Math.round(oTags + oAxes) });
-        }
-        allyScores.sort((a, b) => b.score - a.score);
-        oppScores.sort((a, b) => b.score - a.score);
-        topAllies[hi.id] = allyScores.slice(0, 50);
-        topOpponents[hi.id] = oppScores.slice(0, 50);
-      }
-      return { topAllies, topOpponents };
-    });
-    res.json(data);
+    }
+
+    const clip = (m) => {
+      const out = {};
+      for (const hid in m) out[hid] = (m[hid] || []).slice(0, k);
+      return out;
+    };
+
+    const payload = {
+      topAllies: clip(full.topAllies),
+      topOpponents: clip(full.topOpponents),
+    };
+
+    const empty =
+      Object.keys(payload.topAllies).length === 0 &&
+      Object.keys(payload.topOpponents).length === 0;
+    if (empty)
+      return res
+        .status(503)
+        .json({ error: "matrix not loaded yet — run build script" });
+
+    const etag = etagFor(payload);
+    if (req.headers["if-none-match"] === etag) return res.status(304).end();
+
+    res.setHeader(
+      "Cache-Control",
+      "public, max-age=3600, stale-while-revalidate=300"
+    );
+    res.setHeader("ETag", etag);
+    res.json(payload);
   } catch (e) {
     res.status(500).json({ error: String(e?.message || e) });
   }
@@ -1555,6 +1234,7 @@ app.get("/matrix/topk", async (req, res) => {
 
 // ==== GET /meta?rank=DivinePlus&patch=7.xx ====
 // Role‑aware META list using curve power at mid/late minutes; cached 30 min
+
 app.get("/meta", async (req, res) => {
   try {
     const heroes = await fetchHeroesLite();
