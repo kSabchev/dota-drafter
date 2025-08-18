@@ -5,6 +5,7 @@ import ImportDraft from "./ImportDraft";
 import Heroes from "./Heroes";
 import Profiles from "./Profiles";
 import ErrorBoundary from "./ErrorBoundary";
+import StatusStrip from "./parts/StatusStrip";
 
 type Page = "create" | "import" | "heroes" | "profiles";
 
@@ -29,6 +30,7 @@ export default function App() {
             background: "#0d1117",
           }}
         >
+          <StatusStrip />
           <nav style={{ display: "flex", gap: 8 }}>
             {(["create", "import", "heroes", "profiles"] as Page[]).map((p) => (
               <button

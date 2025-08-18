@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node server.mjs",
     "sync:opendota": "node scripts/build-matrix.mjs",
-    "matrix:reload": "curl -X POST http://localhost:8787/admin/matrix/reload"
+    "matrix:reload": "curl -X POST http://localhost:8787/admin/matrix/reload",
+    "sync:hot": "curl -X POST http://localhost:8787/admin/opendota/sync-and-reload"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.85.3",

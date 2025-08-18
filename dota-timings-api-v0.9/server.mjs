@@ -1191,11 +1191,9 @@ app.get("/matrix/topk", async (req, res) => {
       const ok = await loadMatrixSnapshot(req.app, SNAPSHOT_FILE);
       full = req.app.locals.matrixTopK;
       if (!ok) {
-        return res
-          .status(503)
-          .json({
-            error: "matrix not loaded yet — run sync or check snapshot path",
-          });
+        return res.status(503).json({
+          error: "matrix not loaded yet — run sync or check snapshot path",
+        });
       }
     }
 
@@ -1282,6 +1280,42 @@ app.get("/meta", async (req, res) => {
       return byRole;
     });
     res.json({ meta });
+  } catch (e) {
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+app.get("/meta/status", (req, res) => {
+  try {
+    const m = req.app.locals?.matrixTopK || {
+      topAllies: {},
+      topOpponents: {},
+      _meta: null,
+    };
+    const heroes = m.topAllies ? Object.keys(m.topAllies).length : 0;
+
+    const status = {
+      ok: true,
+      server: {
+        time: new Date().toISOString(),
+      },
+      matrix: {
+        loaded: heroes > 0,
+        heroes,
+        generatedAt: m._meta?.generatedAt || null,
+        source: m._meta?.source || null,
+        schema: m._meta?.schema || "matrix-topk/v1",
+      },
+      // placeholders for future expansions
+      profiles: {
+        available: false,
+        patch: null,
+        count: 0,
+      },
+      version: "v0.9",
+    };
+    res.setHeader("Cache-Control", "no-cache");
+    res.json(status);
   } catch (e) {
     res.status(500).json({ error: String(e?.message || e) });
   }
@@ -1440,6 +1474,27 @@ app.post("/admin/opendota/sync", async (req, res) => {
     res.json({ ok: true, date: matrix.date, heroes: heroes.length });
   } catch (e) {
     console.error(e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+app.post("/admin/opendota/sync-and-reload", async (req, res) => {
+  try {
+    const { topAllies, topOpponents } = await syncOpenDotaAndBuildMatrices();
+    // write to disk too if you want identical snapshot-on-disk:
+    // (optional) fs.writeFile("data/snapshots/matrix-topk.json", JSON.stringify({ schema:"matrix-topk/v1", generatedAt:new Date().toISOString(), source:"OpenDota", topAllies, topOpponents }));
+    // but for dev, loading directly into memory is fine:
+    req.app.locals.matrixTopK = {
+      topAllies,
+      topOpponents,
+      _meta: {
+        schema: "matrix-topk/v1",
+        generatedAt: new Date().toISOString(),
+        source: "OpenDota",
+      },
+    };
+    res.json({ ok: true, heroes: Object.keys(topAllies || {}).length });
+  } catch (e) {
     res.status(500).json({ error: String(e?.message || e) });
   }
 });

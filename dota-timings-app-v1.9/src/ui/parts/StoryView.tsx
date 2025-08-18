@@ -13,7 +13,7 @@ export default function StoryView() {
   const team1 = useStore((s) => s.team1);
   const team2 = useStore((s) => s.team2);
 
-  const { data: matrix, isLoading, error } = useMatrixTopK(50);
+  const { data: matrix, isLoading, error, refetch } = useMatrixTopK(50);
 
   // Build server story once both teams are complete
   useEffect(() => {
@@ -67,6 +67,26 @@ export default function StoryView() {
 
   // Render
   const draftComplete = team1.length === 5 && team2.length === 5;
+
+  if (error) {
+    return (
+      <div style={{ fontSize: 12 }}>
+        <div style={{ color: "#f85149", marginBottom: 6 }}>
+          Matrix unavailable. Have you run the OpenDota sync?
+        </div>
+        <button
+          onClick={() => refetch()}
+          style={{
+            padding: "6px 10px",
+            border: "1px solid #30363d",
+            borderRadius: 6,
+          }}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>

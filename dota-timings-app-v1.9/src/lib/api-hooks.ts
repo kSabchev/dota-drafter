@@ -34,6 +34,39 @@ export function useAdvisorSuggest() {
   });
 }
 
+export function useMetaStatus() {
+  return useQuery({
+    queryKey: ["meta", "status"],
+    queryFn: () =>
+      fetchJSON<{
+        ok: boolean;
+        server: { time: string };
+        matrix: {
+          loaded: boolean;
+          heroes: number;
+          generatedAt: string | null;
+          source: string | null;
+          schema: string;
+        };
+        profiles: { available: boolean; patch: string | null; count: number };
+        version: string;
+      }>("/meta/status"),
+    staleTime: 30_000,
+    refetchInterval: 60_000, // refresh every minute
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useSyncHot() {
+  return useMutation({
+    mutationFn: () =>
+      fetchJSON<{ ok: boolean; heroes?: number }>(
+        "/admin/opendota/sync-and-reload",
+        { method: "POST" }
+      ),
+  });
+}
+
 // Stub for future use
 export function useProfilesForHero(heroId: number, patch = "latest") {
   return useQuery({

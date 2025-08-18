@@ -241,11 +241,6 @@ export default function CreateDraft() {
               </PillButton>
             }
           >
-            {advisorExpanded && (
-              <div style={{ fontSize: 12, color: "#9aa4b2", marginBottom: 8 }}>
-                Wider panel: more reasons visible, less wrapping.
-              </div>
-            )}
             <DraftAdvisor />
           </Card>
         </aside>

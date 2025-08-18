@@ -53,3 +53,5 @@ coverage/
 # Misc
 *.tgz
 *.zip
+
+/dota-timings-api-v0.9/data/snapshots
