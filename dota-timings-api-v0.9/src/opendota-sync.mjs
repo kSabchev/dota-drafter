@@ -22,7 +22,7 @@ export const FORMULA = {
     // score = wLift * lift + wVol * log10(games+1)
     wLift_vs: 100,
     wVol_vs: 8,
-    wLift_with: 100
+    wLift_with: 100,
     wVol_with: 8,
   },
 };

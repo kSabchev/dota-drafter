@@ -19,12 +19,7 @@ function etagFor(obj) {
 }
 
 function getMatrixBundle() {
-  // If you already set __MATRIX_BUNDLE when syncing/loading snapshots, reuse it
-  try {
-    return __MATRIX_BUNDLE || null;
-  } catch {
-    return null;
-  }
+  return __MATRIX_BUNDLE || app.locals?.matrixTopK || null;
 }
 
 // ---------- Minimal in‑memory cache helper ----------
@@ -261,37 +256,33 @@ app.get("/constants/items", async (req, res) => {
   }
 });
 
-// 7.34+ CM SEQUENCE (default). Returns a normalized array of steps.
+// Standard Dota 2 CM sequence (12 bans, 10 picks, 5 per team).
+// Phase 1: 6 bans (3+3), 4 picks (2+2)
+// Phase 2: 4 bans (2+2), 4 picks (2+2)
+// Phase 3: 2 bans (1+1), 2 picks (1+1)
 app.get("/cm/sequence", (req, res) => {
   const firstPick = req.query.firstPick === "team2" ? "team2" : "team1";
   const fp = firstPick,
     sp = firstPick === "team1" ? "team2" : "team1";
   const steps = [];
 
-  // Ban Phase 1: per 7.34 change: 7 bans before any pick.
-  // Order used here: sp, fp, sp, fp, sp, sp, fp (4 bans for sp, 3 for fp).
-  const ban1 = [sp, fp, sp, fp, sp, sp, fp];
-  for (const t of ban1) steps.push({ type: "ban", team: t });
+  // Ban Phase 1: 6 bans, 3 per team (sp gets first ban)
+  for (const t of [sp, fp, sp, fp, sp, fp]) steps.push({ type: "ban", team: t });
 
-  // Pick Phase 1: 1-3-1 (fp first)
-  const pick1 = [fp, sp, sp, sp, fp];
-  for (const t of pick1) steps.push({ type: "pick", team: t });
+  // Pick Phase 1: fp-sp-sp-fp (2 each)
+  for (const t of [fp, sp, sp, fp]) steps.push({ type: "pick", team: t });
 
-  // Ban Phase 2: fp, sp, fp
-  const ban2 = [fp, sp, fp];
-  for (const t of ban2) steps.push({ type: "ban", team: t });
+  // Ban Phase 2: fp-sp-fp-sp (2 each)
+  for (const t of [fp, sp, fp, sp]) steps.push({ type: "ban", team: t });
 
-  // Pick Phase 2: 1-3-1 mirror so totals add up
-  const pick2 = [sp, fp, fp, fp, sp];
-  for (const t of pick2) steps.push({ type: "pick", team: t });
+  // Pick Phase 2: sp-fp-fp-sp (2 each)
+  for (const t of [sp, fp, fp, sp]) steps.push({ type: "pick", team: t });
 
-  // Ban Phase 3: fp, sp, fp, sp
-  const ban3 = [fp, sp, fp, sp];
-  for (const t of ban3) steps.push({ type: "ban", team: t });
+  // Ban Phase 3: fp-sp (1 each)
+  for (const t of [fp, sp]) steps.push({ type: "ban", team: t });
 
-  // Pick Phase 3: fp, sp
-  const pick3 = [fp, sp];
-  for (const t of pick3) steps.push({ type: "pick", team: t });
+  // Pick Phase 3: fp-sp (1 each)
+  for (const t of [fp, sp]) steps.push({ type: "pick", team: t });
 
   res.json({ firstPick, steps });
 });
@@ -1476,6 +1467,15 @@ app.post("/admin/opendota/sync", async (req, res) => {
     const limit = Number(req.query.limit || 0);
     let { heroes, matrix } = await syncOpenDotaAndBuildMatrices(limit);
     __MATRIX_BUNDLE = matrix;
+    req.app.locals.matrixTopK = {
+      topAllies: matrix.topAllies,
+      topOpponents: matrix.topOpponents,
+      _meta: {
+        schema: "matrix-topk/v1",
+        generatedAt: matrix.date,
+        source: "OpenDota",
+      },
+    };
     res.json({ ok: true, date: matrix.date, heroes: heroes.length });
   } catch (e) {
     console.error(e);
@@ -1523,23 +1523,6 @@ function loadLatestMatrixSnapshot() {
   }
 }
 loadLatestMatrixSnapshot();
-
-app.get("/matrix/topk", (req, res) => {
-  if (!__MATRIX_BUNDLE)
-    return res
-      .status(503)
-      .json({ error: "matrix not ready; run /admin/opendota/sync" });
-  const k = Math.max(1, Math.min(100, Number(req.query.k) || 50));
-  // trim to K on the fly
-  const trim = (m) =>
-    Object.fromEntries(
-      Object.entries(m).map(([hid, arr]) => [hid, arr.slice(0, k)])
-    );
-  res.json({
-    topAllies: trim(__MATRIX_BUNDLE.topAllies),
-    topOpponents: trim(__MATRIX_BUNDLE.topOpponents),
-  });
-});
 
 app.get("/matrix/raw", (req, res) => {
   if (!__MATRIX_BUNDLE)

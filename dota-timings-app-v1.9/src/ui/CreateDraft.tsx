@@ -45,6 +45,7 @@ export default function CreateDraft() {
   });
 
   const draftMode = useStore((s: any) => s.draftMode ?? "manual");
+  const setDraftMode = useStore((s: any) => s.setDraftMode ?? null);
 
   // Draft completion: fall back to counts if you don't have a flag
   const t1Len = useStore((s: any) => s.team1?.length ?? 0);
@@ -170,6 +171,25 @@ export default function CreateDraft() {
           >
             Clear Board
           </PillButton>
+          {setDraftMode && (
+            <PillButton
+              type="button"
+              onClick={() =>
+                setDraftMode(draftMode === "cm" ? "manual" : "cm")
+              }
+              style={{
+                borderColor: draftMode === "cm" ? "#58a6ff" : "#30363d",
+                color: draftMode === "cm" ? "#58a6ff" : "#e6edf3",
+              }}
+              title={
+                draftMode === "cm"
+                  ? "Switch to manual draft mode"
+                  : "Switch to Captain's Mode (CM sequence)"
+              }
+            >
+              {draftMode === "cm" ? "CM Mode" : "Manual"}
+            </PillButton>
+          )}
         </div>
         <Card>
           <TeamPanel />

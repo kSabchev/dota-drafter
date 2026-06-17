@@ -57,6 +57,8 @@ type AdvisorSuggestion = {
 };
 type Coverage = { tag: string; ok: boolean };
 
+type DraftSnapshot = { team1: Pick[]; team2: Pick[]; bans: number[] };
+
 type State = {
   apiBase: string;
   heroes: Hero[];
@@ -73,12 +75,22 @@ type State = {
   story: any | null;
   matrix?: { topAllies: TopK; topOpponents: TopK };
   metaByRole?: MetaByRole;
+  // undo history
+  _history: DraftSnapshot[];
+  canUndo: boolean;
+  // draft mode / active team
+  draftMode: "manual" | "cm";
+  activeTeam: "team1" | "team2";
+  cmSequence: { type: "pick" | "ban"; team: "team1" | "team2" }[] | null;
+  cmStep: number;
 };
 type Actions = {
   init: () => Promise<void>;
   clearBoard: () => void;
   pickHero: (id: number, forceTeam?: 1 | 2) => void;
   banHero: (id: number) => void;
+  undo: () => void;
+  setDraftMode: (mode: "manual" | "cm", firstPick?: "team1" | "team2") => Promise<void>;
   setRoleForPick: (team: 1 | 2, idx: number, pos: number) => void;
   runAdvisor: () => Promise<void>;
   explain: (heroId: number) => Promise<void>;
@@ -112,6 +124,12 @@ export const useStore = create<State & Actions>((set, get) => ({
   story: null,
   matrix: undefined,
   metaByRole: undefined,
+  _history: [],
+  canUndo: false,
+  draftMode: "manual",
+  activeTeam: "team1",
+  cmSequence: null,
+  cmStep: 0,
 
   async init() {
     const base = get().apiBase;
@@ -196,6 +214,7 @@ export const useStore = create<State & Actions>((set, get) => ({
   // },
 
   clearBoard() {
+    const s = get();
     set({
       team1: [],
       team2: [],
@@ -205,6 +224,10 @@ export const useStore = create<State & Actions>((set, get) => ({
       allySuggestions: [],
       banSuggestions: [],
       explainRows: null,
+      _history: [],
+      canUndo: false,
+      cmStep: 0,
+      activeTeam: s.cmSequence?.[0]?.team ?? "team1",
     });
   },
 
@@ -215,17 +238,28 @@ export const useStore = create<State & Actions>((set, get) => ({
       s.bans.includes(id)
     )
       return;
-    const t1 = s.team1.length,
-      t2 = s.team2.length;
-    const team: 1 | 2 = forceTeam ?? (t1 <= t2 ? 1 : 2);
+    let team: 1 | 2;
+    if (s.draftMode === "cm" && s.cmSequence) {
+      const step = s.cmSequence[s.cmStep];
+      if (!step || step.type !== "pick") return;
+      team = step.team === "team1" ? 1 : 2;
+    } else {
+      const t1 = s.team1.length, t2 = s.team2.length;
+      team = forceTeam ?? (t1 <= t2 ? 1 : 2);
+    }
     const best = (s.profilesByHero[id] || [])[0] || null;
-    const slot = {
-      hero_id: id,
-      profile: best,
-      role: best?.positions?.[0] ?? null,
-    };
-    if (team === 1 && s.team1.length < 5) set({ team1: [...s.team1, slot] });
-    if (team === 2 && s.team2.length < 5) set({ team2: [...s.team2, slot] });
+    const slot = { hero_id: id, profile: best, role: best?.positions?.[0] ?? null };
+    const newTeam1 = team === 1 && s.team1.length < 5 ? [...s.team1, slot] : s.team1;
+    const newTeam2 = team === 2 && s.team2.length < 5 ? [...s.team2, slot] : s.team2;
+    if (newTeam1 === s.team1 && newTeam2 === s.team2) return;
+    const newCmStep = s.draftMode === "cm" ? s.cmStep + 1 : s.cmStep;
+    const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
+    const total = newTeam1.length + newTeam2.length;
+    const nextActive: "team1" | "team2" =
+      s.draftMode === "cm" && s.cmSequence
+        ? (s.cmSequence[newCmStep]?.team ?? (total % 2 === 0 ? "team1" : "team2"))
+        : total % 2 === 0 ? "team1" : "team2";
+    set({ team1: newTeam1, team2: newTeam2, _history: history, canUndo: true, activeTeam: nextActive, cmStep: newCmStep });
   },
 
   banHero(id) {
@@ -235,7 +269,60 @@ export const useStore = create<State & Actions>((set, get) => ({
       s.team1.concat(s.team2).some((p) => p.hero_id === id)
     )
       return;
-    set({ bans: [...s.bans, id] });
+    if (s.draftMode === "cm" && s.cmSequence) {
+      const step = s.cmSequence[s.cmStep];
+      if (!step || step.type !== "ban") return;
+    }
+    const newCmStep = s.draftMode === "cm" ? s.cmStep + 1 : s.cmStep;
+    const nextActive: "team1" | "team2" =
+      s.draftMode === "cm" && s.cmSequence
+        ? (s.cmSequence[newCmStep]?.team ?? s.activeTeam)
+        : s.activeTeam;
+    const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
+    set({ bans: [...s.bans, id], _history: history, canUndo: true, cmStep: newCmStep, activeTeam: nextActive });
+  },
+
+  undo() {
+    const s = get();
+    if (!s._history.length) return;
+    const prev = s._history[s._history.length - 1];
+    const history = s._history.slice(0, -1);
+    const newCmStep = s.draftMode === "cm" && s.cmStep > 0 ? s.cmStep - 1 : s.cmStep;
+    const total = prev.team1.length + prev.team2.length;
+    const nextActive: "team1" | "team2" =
+      s.draftMode === "cm" && s.cmSequence
+        ? (s.cmSequence[newCmStep]?.team ?? (total % 2 === 0 ? "team1" : "team2"))
+        : total % 2 === 0 ? "team1" : "team2";
+    set({
+      team1: prev.team1,
+      team2: prev.team2,
+      bans: prev.bans,
+      _history: history,
+      canUndo: history.length > 0,
+      activeTeam: nextActive,
+      cmStep: newCmStep,
+    });
+  },
+
+  async setDraftMode(mode, firstPick = "team1") {
+    const base = get().apiBase;
+    if (mode === "cm") {
+      const r = await fetch(`${base}/cm/sequence?firstPick=${firstPick}`);
+      const j = await r.json();
+      set({
+        draftMode: "cm",
+        cmSequence: j.steps,
+        cmStep: 0,
+        activeTeam: j.steps?.[0]?.team ?? "team1",
+        team1: [],
+        team2: [],
+        bans: [],
+        _history: [],
+        canUndo: false,
+      });
+    } else {
+      set({ draftMode: "manual", cmSequence: null, cmStep: 0, activeTeam: "team1" });
+    }
   },
 
   setRoleForPick(team, idx, pos) {

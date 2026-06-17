@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useStore } from "@/store";
 import LocalHeroImg from "@/ui/components/LocalHeroImg";
 
-type DraftMode = "manual" | "captains";
+type DraftMode = "manual" | "cm";
 
 export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
   const heroes = useStore((s) => s.heroes);
@@ -13,6 +13,8 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
   const banHero = useStore((s) => s.banHero);
   const loadMeta = useStore((s) => s.loadMeta);
   const meta = useStore((s) => s.metaByRole);
+  const cmSequence = useStore((s: any) => s.cmSequence ?? null);
+  const cmStep = useStore((s: any) => s.cmStep ?? 0);
   useEffect(() => {
     if (!meta) loadMeta().catch(() => {});
   }, [meta, loadMeta]);
@@ -22,8 +24,8 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
   const ctxScore = useStore((s) => s.contextScoreFor);
 
   const [q, setQ] = useState("");
-  // in "captains" mode, let the user choose whether clicks do Pick or Ban (since real CM sequencing is skipped)
-  const [capAction, setCapAction] = useState<"pick" | "ban">("pick");
+
+  const currentStep = mode === "cm" ? cmSequence?.[cmStep] : null;
 
   const taken = useMemo(
     () => new Set(team1.concat(team2).map((p) => p.hero_id)),
@@ -54,11 +56,10 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
 
   const onHeroClick = (id: number) => {
     if (taken.has(id) || banned.has(id)) return;
-    if (mode === "captains") {
-      if (capAction === "ban") return banHero(id);
+    if (mode === "cm") {
+      if (currentStep?.type === "ban") return banHero(id);
       return pickHero(id);
     }
-    // manual mode
     pickHero(id);
   };
 
@@ -124,43 +125,27 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
           }}
         />
 
-        {mode === "captains" && (
+        {mode === "cm" && currentStep && (
           <div
             style={{
               display: "flex",
               gap: 6,
+              alignItems: "center",
+              padding: "3px 10px",
               border: "1px solid #30363d",
               borderRadius: 999,
-              padding: 2,
               background: "#0d1117",
+              fontSize: 12,
             }}
           >
-            <button
-              onClick={() => setCapAction("pick")}
-              style={{
-                padding: "4px 10px",
-                borderRadius: 999,
-                border: "none",
-                background: capAction === "pick" ? "#161b22" : "transparent",
-                color: "#e6edf3",
-                cursor: "pointer",
-              }}
-            >
-              Pick
-            </button>
-            <button
-              onClick={() => setCapAction("ban")}
-              style={{
-                padding: "4px 10px",
-                borderRadius: 999,
-                border: "none",
-                background: capAction === "ban" ? "#161b22" : "transparent",
-                color: "#e6edf3",
-                cursor: "pointer",
-              }}
-            >
-              Ban
-            </button>
+            <span style={{ color: currentStep.team === "team1" ? "#3fb950" : "#f85149" }}>
+              {currentStep.team === "team1" ? "Team 1" : "Team 2"}
+            </span>
+            <span style={{ opacity: 0.5 }}>·</span>
+            <span style={{ color: currentStep.type === "ban" ? "#d29922" : "#58a6ff" }}>
+              {currentStep.type === "ban" ? "BAN" : "PICK"}
+            </span>
+            <span style={{ opacity: 0.4, marginLeft: 2 }}>#{cmStep + 1}</span>
           </div>
         )}
       </div>
