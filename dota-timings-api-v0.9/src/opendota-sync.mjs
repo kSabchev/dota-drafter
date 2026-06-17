@@ -6,8 +6,14 @@ import fetch from "node-fetch";
 /** ============== CONFIG ============== */
 const USE_EXPLORER = process.env.OD_EXPLORER === "1"; // set to '1' to use SQL explorer
 const SNAP_DIR = path.resolve(process.cwd(), "data", "snapshots");
+const HERO_CACHE_DIR = path.resolve(SNAP_DIR, "hero-cache");
 const DEFAULT_K = 50;
 const OD_API_KEY = process.env.OD_API_KEY || null;
+// Concurrent workers for matchup fetch. 3 is safe without an API key.
+const FETCH_CONCURRENCY = Number(process.env.OD_CONCURRENCY ?? "3");
+// Minimum ms between requests across all workers (global token bucket).
+// 1000ms = ~60 req/min — safe for unauthenticated. With API key try 300.
+const REQ_INTERVAL_MS = Number(process.env.OD_INTERVAL_MS ?? (OD_API_KEY ? "300" : "1100"));
 
 // smoothing & scoring config (edit anytime; no code changes needed)
 export const FORMULA = {
@@ -53,6 +59,32 @@ function scoreWith(lift, games) {
   );
 }
 
+/** ============== RATE LIMITER ============== */
+// Global token bucket: all concurrent workers share this so we never exceed REQ_INTERVAL_MS per request.
+let _lastReqAt = 0;
+async function acquireToken() {
+  const now = Date.now();
+  const wait = REQ_INTERVAL_MS - (now - _lastReqAt);
+  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+  _lastReqAt = Date.now();
+}
+
+/** ============== HERO CACHE ============== */
+function heroCachePath(heroId) {
+  return path.join(HERO_CACHE_DIR, `${todayStr()}_vs_${heroId}.json`);
+}
+function readHeroCache(heroId) {
+  const p = heroCachePath(heroId);
+  if (fs.existsSync(p)) {
+    try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch {}
+  }
+  return null;
+}
+function writeHeroCache(heroId, data) {
+  ensureDir(HERO_CACHE_DIR);
+  fs.writeFileSync(heroCachePath(heroId), JSON.stringify(data));
+}
+
 /** ============== FETCHERS ============== */
 export async function fetchHeroes() {
   //   const r = await fetch("https://api.opendota.com/api/constants/heroes");
@@ -91,17 +123,42 @@ export async function fetchVsMatchupsFor(heroId) {
 
 export async function fetchAllVsMatchups(heroes) {
   const out = {};
-  for (const h of heroes) {
-    try {
-      // polite delay to avoid 429; tune as needed
-      await new Promise((res) => setTimeout(res, 300));
-      const arr = await fetchVsMatchupsFor(h.id);
-      out[h.id] = arr;
-    } catch (e) {
-      console.warn(`[matchups] skip hero ${h.id}: ${e?.message || e}`);
-      out[h.id] = []; // keep empty so downstream doesn’t blow up
+  const queue = [...heroes];
+  let done = 0;
+  let cached = 0;
+
+  async function worker() {
+    while (true) {
+      const h = queue.shift();
+      if (!h) break;
+      // Check disk cache first — no network call needed
+      const hit = readHeroCache(h.id);
+      if (hit) {
+        out[h.id] = hit;
+        cached++;
+        done++;
+      } else {
+        await acquireToken(); // global rate limit across all workers
+        try {
+          const arr = await fetchVsMatchupsFor(h.id);
+          out[h.id] = arr;
+          writeHeroCache(h.id, arr);
+        } catch (e) {
+          console.warn(`\n[matchups] skip hero ${h.id}: ${e?.message || e}`);
+          out[h.id] = [];
+        }
+        done++;
+      }
+      // progress line
+      process.stdout.write(
+        `\r[matchups] ${done}/${heroes.length} (${cached} cached)     `
+      );
     }
   }
+
+  await Promise.all(Array.from({ length: FETCH_CONCURRENCY }, worker));
+  process.stdout.write("\n");
+  console.log(`[matchups] done. ${cached} from cache, ${done - cached} fetched.`);
   return out;
 }
 
@@ -132,14 +189,20 @@ async function explorerAlliesPairs(days = 30) {
 }
 
 // ---- Allies via proMatches fallback ----
-async function proMatchesFallback(pages = 20) {
-  // returns array of pro matches with 10 heroes each; we aggregate pair stats
+async function proMatchesFallback(pages = 10) {
   const all = [];
+  let lessThan = null;
   for (let i = 0; i < pages; i++) {
-    const r = await fetch("https://api.opendota.com/api/proMatches");
+    const url = lessThan
+      ? `https://api.opendota.com/api/proMatches?less_than_match_id=${lessThan}`
+      : "https://api.opendota.com/api/proMatches";
+    await acquireToken();
+    const r = await fetch(url);
     if (!r.ok) break;
     const j = await r.json();
+    if (!j.length) break;
     all.push(...j);
+    lessThan = j[j.length - 1].match_id; // paginate backwards
   }
   return all;
 }
@@ -282,19 +345,29 @@ export function buildTopK(heroes, vsMatrix, withMatrix, k = DEFAULT_K) {
 export async function syncOpenDotaAndBuildMatrices(limit = 0) {
   ensureDir(SNAP_DIR);
   const date = todayStr();
-  let heroes = await fetchHeroes();
-  if (limit > 0) heroes = heroes.slice(0, limit); // for quick test
 
-  const allVsRaw = await fetchAllVsMatchups(heroes);
-  const withMatrix = await buildWithMatrix(heroes, { days: 30 });
+  // If today's raw snapshot already exists, skip all network fetches
+  const rawSnapFile = path.join(SNAP_DIR, `open_dota_raw_${date}.json`);
+  let heroes, allVsRaw, withMatrix;
+
+  if (fs.existsSync(rawSnapFile) && limit === 0) {
+    console.log(`[sync] Today's raw snapshot found — skipping fetch, rebuilding matrices.`);
+    const snap = JSON.parse(fs.readFileSync(rawSnapFile, "utf8"));
+    heroes = snap.heroes;
+    allVsRaw = snap.allVsRaw;
+    withMatrix = snap.withMatrix ?? await buildWithMatrix(heroes, { days: 30 });
+  } else {
+    heroes = await fetchHeroes();
+    if (limit > 0) heroes = heroes.slice(0, limit);
+    console.log(`[sync] Fetching matchups for ${heroes.length} heroes (${FETCH_CONCURRENCY} workers, ${REQ_INTERVAL_MS}ms/req)…`);
+    allVsRaw = await fetchAllVsMatchups(heroes);
+    withMatrix = await buildWithMatrix(heroes, { days: 30 });
+    const rawSnap = { date, heroes, allVsRaw, withMatrix };
+    fs.writeFileSync(rawSnapFile, JSON.stringify(rawSnap));
+  }
+
   const vsMatrix = await buildVsMatrix(heroes, allVsRaw);
   const topk = buildTopK(heroes, vsMatrix, withMatrix, DEFAULT_K);
-
-  const rawSnap = { date, heroes, allVsRaw };
-  fs.writeFileSync(
-    path.join(SNAP_DIR, `open_dota_raw_${date}.json`),
-    JSON.stringify(rawSnap)
-  );
 
   const matrixSnap = { date, vsMatrix, withMatrix, ...topk };
   fs.writeFileSync(
@@ -302,7 +375,7 @@ export async function syncOpenDotaAndBuildMatrices(limit = 0) {
     JSON.stringify(matrixSnap)
   );
 
-  return { heroes, matrix: matrixSnap };
+  return { heroes, matrix: matrixSnap, allVsRaw, withMatrix };
 }
 async function odFetch(url, { tries = 5, backoffMs = 600 } = {}) {
   // add api_key if provided

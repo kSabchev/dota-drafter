@@ -10,6 +10,19 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { loadMatrixSnapshot } from "./src/matrix-loader.mjs";
+import {
+  seedMatchups,
+  seedSynergies,
+  getMatchups,
+  getCounteredBy,
+  getSynergies,
+  getPositions,
+  setPositions,
+  getGuides,
+  addGuide,
+  deleteGuide,
+  dbStats,
+} from "./src/db.mjs";
 
 let __MATRIX_BUNDLE = null; // in-memory copy for fast reads
 
@@ -1174,6 +1187,89 @@ app.post("/advisor/explain", async (req, res) => {
   }
 });
 
+// ─── Hero DB endpoints ────────────────────────────────────────────────────────
+
+app.get("/heroes/:id/matchups", (req, res) => {
+  try {
+    const heroId = Number(req.params.id);
+    const limit = Math.min(Number(req.query.limit ?? 20), 100);
+    const minGames = Number(req.query.minGames ?? 100);
+    const counters = getMatchups(heroId, { limit, minGames });
+    const counteredBy = getCounteredBy(heroId, { limit, minGames });
+    res.json({ hero_id: heroId, counters, counteredBy });
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
+app.get("/heroes/:id/synergies", (req, res) => {
+  try {
+    const heroId = Number(req.params.id);
+    const limit = Math.min(Number(req.query.limit ?? 20), 100);
+    const minGames = Number(req.query.minGames ?? 50);
+    res.json({ hero_id: heroId, allies: getSynergies(heroId, { limit, minGames }) });
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
+app.get("/heroes/:id/positions", (req, res) => {
+  try {
+    res.json({ hero_id: Number(req.params.id), positions: getPositions(Number(req.params.id)) });
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
+app.put("/heroes/:id/positions", (req, res) => {
+  try {
+    const heroId = Number(req.params.id);
+    const positions = z.array(z.object({
+      position: z.number().int().min(1).max(5),
+      is_primary: z.number().int().min(0).max(1).optional(),
+      is_flex: z.number().int().min(0).max(1).optional(),
+    })).parse(req.body);
+    setPositions(heroId, positions);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ error: String(e.message) });
+  }
+});
+
+app.get("/heroes/:id/guides", (req, res) => {
+  try {
+    res.json({ hero_id: Number(req.params.id), guides: getGuides(Number(req.params.id)) });
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
+app.post("/heroes/:id/guides", (req, res) => {
+  try {
+    const heroId = Number(req.params.id);
+    const body = z.object({
+      title: z.string().min(1).max(200),
+      body: z.string().min(1),
+      author: z.string().optional(),
+    }).parse(req.body);
+    const id = addGuide(heroId, body);
+    res.status(201).json({ ok: true, id });
+  } catch (e) {
+    res.status(400).json({ error: String(e.message) });
+  }
+});
+
+app.delete("/heroes/:id/guides/:guideId", (req, res) => {
+  try {
+    deleteGuide(Number(req.params.guideId));
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 app.post("/admin/matrix/reload", async (req, res) => {
   const ok = await loadMatrixSnapshot(app, SNAPSHOT_FILE);
   if (!ok)
@@ -1315,12 +1411,12 @@ app.get("/meta/status", (req, res) => {
         source: m._meta?.source || null,
         schema: m._meta?.schema || "matrix-topk/v1",
       },
-      // placeholders for future expansions
       profiles: {
         available: false,
         patch: null,
         count: 0,
       },
+      db: (() => { try { return dbStats(); } catch { return null; } })(),
       version: "v0.9",
     };
     res.setHeader("Cache-Control", "no-cache");
@@ -1498,10 +1594,8 @@ app.post("/admin/opendota/sync", async (req, res) => {
 
 app.post("/admin/opendota/sync-and-reload", async (req, res) => {
   try {
-    const { topAllies, topOpponents } = await syncOpenDotaAndBuildMatrices();
-    // write to disk too if you want identical snapshot-on-disk:
-    // (optional) fs.writeFile("data/snapshots/matrix-topk.json", JSON.stringify({ schema:"matrix-topk/v1", generatedAt:new Date().toISOString(), source:"OpenDota", topAllies, topOpponents }));
-    // but for dev, loading directly into memory is fine:
+    const { matrix, allVsRaw, withMatrix } = await syncOpenDotaAndBuildMatrices();
+    const { topAllies, topOpponents } = matrix;
     req.app.locals.matrixTopK = {
       topAllies,
       topOpponents,
@@ -1511,6 +1605,13 @@ app.post("/admin/opendota/sync-and-reload", async (req, res) => {
         source: "OpenDota",
       },
     };
+    // Seed SQLite (non-fatal)
+    try {
+      seedMatchups(allVsRaw, matrix.vsMatrix);
+      seedSynergies(withMatrix);
+    } catch (dbErr) {
+      console.warn("[db] seed failed (non-fatal):", dbErr.message);
+    }
     res.json({ ok: true, heroes: Object.keys(topAllies || {}).length });
   } catch (e) {
     res.status(500).json({ error: String(e?.message || e) });

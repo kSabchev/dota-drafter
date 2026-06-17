@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "@/store";
 import LocalHeroImg from "@/ui/components/LocalHeroImg";
+import { cmPhaseName } from "@/ui/draftUtils";
 
 type DraftMode = "manual" | "cm";
 
@@ -254,11 +255,3 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
   );
 }
 
-function cmPhaseName(step: number): string {
-  if (step < 6) return "Ban Phase 1";
-  if (step < 10) return "Pick Phase 1";
-  if (step < 14) return "Ban Phase 2";
-  if (step < 18) return "Pick Phase 2";
-  if (step < 20) return "Ban Phase 3";
-  return "Pick Phase 3";
-}

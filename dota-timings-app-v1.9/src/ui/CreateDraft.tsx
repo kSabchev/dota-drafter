@@ -7,6 +7,7 @@ import StoryView from "@/ui/parts/StoryView";
 import { colors, space } from "@/ui/theme";
 import { Card, TurnBadge, PillButton } from "@/ui/primitives";
 import LocalHeroImg from "@/ui/components/LocalHeroImg";
+import { cmPhaseName } from "@/ui/draftUtils";
 
 export default function CreateDraft() {
   // const activeTeam = useStore((s: any) => s.activeTeam ?? null);
@@ -240,6 +241,8 @@ export default function CreateDraft() {
           <TeamPanel />
         </Card>
 
+        <DraftStateBanner />
+
         <Card>
           <div
             style={{
@@ -311,6 +314,119 @@ export default function CreateDraft() {
         </aside>
       )}
     </main>
+  );
+}
+
+function DraftStateBanner() {
+  const draftMode = useStore((s: any) => s.draftMode ?? "manual");
+  const activeTeam = useStore((s: any) => s.activeTeam ?? "team1");
+  const cmSequence = useStore((s: any) => s.cmSequence ?? null);
+  const cmStep = useStore((s: any) => s.cmStep ?? 0);
+  const t1Len = useStore((s: any) => s.team1?.length ?? 0);
+  const t2Len = useStore((s: any) => s.team2?.length ?? 0);
+  const bansLen = useStore((s: any) => s.bans?.length ?? 0);
+
+  const isDone = t1Len === 5 && t2Len === 5;
+  if (isDone) {
+    return (
+      <div style={{
+        margin: "8px 0",
+        padding: "10px 16px",
+        border: "1px solid #30363d",
+        borderRadius: 8,
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        background: "#161b22",
+      }}>
+        <span style={{ fontSize: 18 }}>✓</span>
+        <span style={{ fontWeight: 600, fontSize: 14 }}>Draft Complete</span>
+        <span style={{ fontSize: 12, opacity: 0.5, marginLeft: 4 }}>
+          {bansLen} ban{bansLen !== 1 ? "s" : ""} · 10 picks
+        </span>
+      </div>
+    );
+  }
+
+  let actionType: "BAN" | "PICK" = "PICK";
+  let phase = "";
+  let stepLabel = "";
+
+  if (draftMode === "cm" && cmSequence) {
+    const step = cmSequence[cmStep];
+    if (step) {
+      actionType = step.type === "ban" ? "BAN" : "PICK";
+      phase = cmPhaseName(cmStep);
+      stepLabel = `Step ${cmStep + 1} / ${cmSequence.length}`;
+    }
+  } else {
+    actionType = "PICK";
+  }
+
+  const isTeam1 = activeTeam === "team1";
+  const teamColor = isTeam1 ? "#3fb950" : "#f85149";
+  const teamLabel = isTeam1 ? "Team 1" : "Team 2";
+  const actionColor = actionType === "BAN" ? "#d29922" : "#58a6ff";
+
+  return (
+    <div style={{
+      margin: "8px 0",
+      padding: "10px 16px",
+      borderRadius: 8,
+      border: `1px solid ${teamColor}44`,
+      borderLeft: `4px solid ${teamColor}`,
+      background: `${teamColor}0d`,
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+    }}>
+      {/* Pulsing dot */}
+      <span style={{
+        width: 10,
+        height: 10,
+        borderRadius: "50%",
+        background: teamColor,
+        flexShrink: 0,
+        animation: "pulse 1.6s ease-in-out infinite",
+      }} />
+
+      {/* Team */}
+      <span style={{ fontWeight: 700, fontSize: 15, color: teamColor }}>
+        {teamLabel}
+      </span>
+
+      <span style={{ opacity: 0.35, fontSize: 14 }}>·</span>
+
+      {/* Action badge */}
+      <span style={{
+        fontWeight: 700,
+        fontSize: 13,
+        color: actionColor,
+        padding: "2px 9px",
+        border: `1px solid ${actionColor}55`,
+        borderRadius: 999,
+        background: `${actionColor}11`,
+        letterSpacing: "0.06em",
+      }}>
+        {actionType}
+      </span>
+
+      {/* Phase + step (CM only) */}
+      {phase && (
+        <>
+          <span style={{ opacity: 0.35, fontSize: 14 }}>·</span>
+          <span style={{ fontSize: 13, opacity: 0.8 }}>{phase}</span>
+          <span style={{ fontSize: 12, opacity: 0.4, marginLeft: 2 }}>{stepLabel}</span>
+        </>
+      )}
+
+      <div style={{ flex: 1 }} />
+
+      {/* Pick counts */}
+      <span style={{ fontSize: 12, opacity: 0.45 }}>
+        {t1Len + t2Len}/10 picks · {bansLen} ban{bansLen !== 1 ? "s" : ""}
+      </span>
+    </div>
   );
 }
 

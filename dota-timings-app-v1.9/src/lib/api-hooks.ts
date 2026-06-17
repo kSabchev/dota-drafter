@@ -67,6 +67,48 @@ export function useSyncHot() {
   });
 }
 
+export type HeroMatchup = {
+  opponent_id: number;
+  wins: number;
+  games: number;
+  winrate: number;
+  score: number;
+};
+export type HeroSynergy = {
+  ally_id: number;
+  games: number;
+  wr: number;
+  score: number;
+};
+
+export function useHeroMatchups(heroId: number | null, opts?: { limit?: number; minGames?: number }) {
+  const params = new URLSearchParams();
+  if (opts?.limit) params.set("limit", String(opts.limit));
+  if (opts?.minGames) params.set("minGames", String(opts.minGames));
+  return useQuery({
+    queryKey: ["hero", heroId, "matchups", opts?.limit, opts?.minGames],
+    queryFn: () => fetchJSON<{ hero_id: number; counters: HeroMatchup[]; counteredBy: HeroMatchup[] }>(
+      `/heroes/${heroId}/matchups?${params}`
+    ),
+    enabled: heroId != null,
+    staleTime: 30 * 60 * 1000,
+  });
+}
+
+export function useHeroSynergies(heroId: number | null, opts?: { limit?: number; minGames?: number }) {
+  const params = new URLSearchParams();
+  if (opts?.limit) params.set("limit", String(opts.limit));
+  if (opts?.minGames) params.set("minGames", String(opts.minGames));
+  return useQuery({
+    queryKey: ["hero", heroId, "synergies", opts?.limit, opts?.minGames],
+    queryFn: () => fetchJSON<{ hero_id: number; allies: HeroSynergy[] }>(
+      `/heroes/${heroId}/synergies?${params}`
+    ),
+    enabled: heroId != null,
+    staleTime: 30 * 60 * 1000,
+  });
+}
+
 // Stub for future use
 export function useProfilesForHero(heroId: number, patch = "latest") {
   return useQuery({
