@@ -14,7 +14,42 @@ export default function App() {
   const [page, setPage] = useState<Page>("create");
 
   useEffect(() => {
+    // Restore saved draft before fetching heroes so picks re-populate correctly
+    try {
+      const saved = localStorage.getItem("dota.draft");
+      if (saved) {
+        const s = JSON.parse(saved);
+        useStore.setState({
+          team1: s.team1 ?? [],
+          team2: s.team2 ?? [],
+          bans: s.bans ?? [],
+          draftMode: s.draftMode ?? "manual",
+          cmSequence: s.cmSequence ?? null,
+          cmStep: s.cmStep ?? 0,
+          activeTeam: s.activeTeam ?? "team1",
+          canUndo: false,
+          _history: [],
+        });
+      }
+    } catch {}
     init().catch(console.error);
+  }, []);
+
+  // Persist draft state to localStorage on every relevant change
+  useEffect(() => {
+    return useStore.subscribe((state) => {
+      try {
+        localStorage.setItem("dota.draft", JSON.stringify({
+          team1: state.team1,
+          team2: state.team2,
+          bans: state.bans,
+          draftMode: state.draftMode,
+          cmSequence: state.cmSequence,
+          cmStep: state.cmStep,
+          activeTeam: state.activeTeam,
+        }));
+      } catch {}
+    });
   }, []);
 
   return (

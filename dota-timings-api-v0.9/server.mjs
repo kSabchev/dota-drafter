@@ -828,8 +828,13 @@ app.post("/advisor/suggest", async (req, res) => {
     const heroes = await fetchHeroesLite();
     const presetsByHero = await fetchPresets();
 
-    const your = input.teams.team1 || [];
-    const enemy = input.teams.team2 || [];
+    // Respect perspective: swap teams when viewing from team2's side
+    const your = input.perspective === "team2"
+      ? (input.teams.team2 || [])
+      : (input.teams.team1 || []);
+    const enemy = input.perspective === "team2"
+      ? (input.teams.team1 || [])
+      : (input.teams.team2 || []);
 
     const yourTags = new Set(your.flatMap((p) => p.profile?.tags || []));
     const enemyTags = new Set(enemy.flatMap((p) => p.profile?.tags || []));
@@ -841,8 +846,15 @@ app.post("/advisor/suggest", async (req, res) => {
 
     // matrix + ids for context
     const matrix = getMatrixBundle() || null;
-    const team1Ids = your.map((p) => p.hero_id);
-    const team2Ids = enemy.map((p) => p.hero_id);
+    const yourIds = your.map((p) => p.hero_id);
+    const enemyIds = enemy.map((p) => p.hero_id);
+    // team1Ids / team2Ids kept for backward-compat with helpers below
+    const team1Ids = yourIds;
+    const team2Ids = enemyIds;
+
+    // Dynamic matrix weight: scales with draft depth so matrix dominates over tags as picks accumulate
+    const pickCount = yourIds.length + enemyIds.length;
+    const matrixWeight = 0.3 + pickCount * 0.4;
 
     // --- helpers (local) ---
     function reasonsFor(profile) {
@@ -1001,9 +1013,9 @@ app.post("/advisor/suggest", async (req, res) => {
           score += soon * 1.5;
         }
 
-        // context (matrix)
+        // context (matrix) — weight scales with draft depth so matrix dominates late
         const ctx = contextScoreFor(h.id, team1Ids, team2Ids, matrix);
-        score += CTX_WEIGHT * ctx;
+        score += matrixWeight * ctx;
 
         return {
           hero_id: h.id,
@@ -1074,14 +1086,14 @@ app.post("/advisor/suggest", async (req, res) => {
 
         let score = (dv.fight + dv.pickoff + dv.push) / 3 + coverageGain;
 
-        // how much THEY gain in our context
+        // how much THEY gain in our context — same dynamic weight
         const enemyCtxGain = enemyGainIfTheyPick(
           h.id,
           team1Ids,
           team2Ids,
           matrix
         );
-        score += CTX_WEIGHT * enemyCtxGain;
+        score += matrixWeight * enemyCtxGain;
 
         return {
           hero_id: h.id,
@@ -1129,6 +1141,7 @@ app.post("/advisor/suggest", async (req, res) => {
       teamNeeds,
       allySuggestions: ally,
       banSuggestions: banList,
+      matrixAvailable: !!matrix,
     });
   } catch (e) {
     console.error("[advisor/suggest] error", e);

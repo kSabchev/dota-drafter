@@ -6,6 +6,7 @@ import DraftAdvisor from "@/ui/parts/DraftAdvisor";
 import StoryView from "@/ui/parts/StoryView";
 import { colors, space } from "@/ui/theme";
 import { Card, TurnBadge, PillButton } from "@/ui/primitives";
+import LocalHeroImg from "@/ui/components/LocalHeroImg";
 
 export default function CreateDraft() {
   // const activeTeam = useStore((s: any) => s.activeTeam ?? null);
@@ -46,6 +47,9 @@ export default function CreateDraft() {
 
   const draftMode = useStore((s: any) => s.draftMode ?? "manual");
   const setDraftMode = useStore((s: any) => s.setDraftMode ?? null);
+  const minute = useStore((s: any) => s.minute ?? 15);
+  const setMinute = useStore((s: any) => s.setMinute ?? null);
+  const [cmFirstPick, setCmFirstPick] = useState<"team1" | "team2">("team1");
 
   // Draft completion: fall back to counts if you don't have a flag
   const t1Len = useStore((s: any) => s.team1?.length ?? 0);
@@ -139,11 +143,24 @@ export default function CreateDraft() {
             variant="radiant"
           />
           <TurnBadge
-            on={activeTeam === "team2"}
+            on={activeTeam === "team2" && !isDraftDone}
             label="Team 2 Turn"
             variant="dire"
           />
           <div style={{ flex: 1 }} />
+          <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, opacity: 0.75 }}>
+            <span>Min</span>
+            <input
+              type="range"
+              min={5}
+              max={40}
+              step={5}
+              value={minute}
+              onChange={(e) => setMinute?.(Number(e.target.value))}
+              style={{ width: 70 }}
+            />
+            <span style={{ minWidth: 18 }}>{minute}</span>
+          </label>
           <PillButton
             type="button"
             onClick={() => undo?.()}
@@ -172,25 +189,53 @@ export default function CreateDraft() {
             Clear Board
           </PillButton>
           {setDraftMode && (
-            <PillButton
-              type="button"
-              onClick={() =>
-                setDraftMode(draftMode === "cm" ? "manual" : "cm")
-              }
-              style={{
-                borderColor: draftMode === "cm" ? "#58a6ff" : "#30363d",
-                color: draftMode === "cm" ? "#58a6ff" : "#e6edf3",
-              }}
-              title={
-                draftMode === "cm"
-                  ? "Switch to manual draft mode"
-                  : "Switch to Captain's Mode (CM sequence)"
-              }
-            >
-              {draftMode === "cm" ? "CM Mode" : "Manual"}
-            </PillButton>
+            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+              <span style={{ fontSize: 11, opacity: 0.5 }}>1st:</span>
+              {(["team1", "team2"] as const).map((t) => (
+                <PillButton
+                  key={t}
+                  type="button"
+                  onClick={() => {
+                    setCmFirstPick(t);
+                    if (draftMode === "cm") setDraftMode("cm", t);
+                  }}
+                  style={{
+                    padding: "2px 7px",
+                    fontSize: 11,
+                    borderColor:
+                      cmFirstPick === t
+                        ? t === "team1" ? "#3fb950" : "#f85149"
+                        : "#30363d",
+                    color:
+                      cmFirstPick === t
+                        ? t === "team1" ? "#3fb950" : "#f85149"
+                        : "#8b949e",
+                  }}
+                >
+                  {t === "team1" ? "T1" : "T2"}
+                </PillButton>
+              ))}
+              <PillButton
+                type="button"
+                onClick={() =>
+                  setDraftMode(draftMode === "cm" ? "manual" : "cm", cmFirstPick)
+                }
+                style={{
+                  borderColor: draftMode === "cm" ? "#58a6ff" : "#30363d",
+                  color: draftMode === "cm" ? "#58a6ff" : "#e6edf3",
+                }}
+                title={
+                  draftMode === "cm"
+                    ? "Switch to manual draft mode"
+                    : `Activate Captain's Mode (${cmFirstPick === "team1" ? "Team 1" : "Team 2"} picks first)`
+                }
+              >
+                {draftMode === "cm" ? "CM Mode" : "Manual"}
+              </PillButton>
+            </div>
           )}
         </div>
+        <BanStrip />
         <Card>
           <TeamPanel />
         </Card>
@@ -266,6 +311,51 @@ export default function CreateDraft() {
         </aside>
       )}
     </main>
+  );
+}
+
+function BanStrip() {
+  const bans = useStore((s) => s.bans);
+  const heroes = useStore((s) => s.heroes);
+  if (bans.length === 0) return null;
+  return (
+    <div style={{ display: "flex", gap: 4, flexWrap: "wrap", padding: "4px 0 8px" }}>
+      {bans.map(({ hero_id, team }) => {
+        const hero = heroes.find((h) => h.id === hero_id);
+        if (!hero) return null;
+        const teamColor = team === 1 ? "#3fb950" : "#f85149";
+        return (
+          <div
+            key={hero_id}
+            title={`Banned by Team ${team}: ${hero.localized_name}`}
+            style={{
+              width: 36,
+              height: 36,
+              border: `1px solid ${teamColor}`,
+              borderRadius: 6,
+              overflow: "hidden",
+              flexShrink: 0,
+              position: "relative",
+            }}
+          >
+            <LocalHeroImg
+              hero={hero}
+              kind="icon"
+              style={{ width: "100%", height: "100%", filter: "grayscale(80%) brightness(0.65)" }}
+            />
+            <div style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 3,
+              background: teamColor,
+              opacity: 0.7,
+            }} />
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

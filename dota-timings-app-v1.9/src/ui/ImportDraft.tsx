@@ -5,6 +5,7 @@ import { useStore } from '@/store'
 export default function ImportDraft({ onImported }:{ onImported: ()=>void }){
   const apiBase = useStore(s=> s.apiBase)
   const clearBoard = useStore(s=> s.clearBoard)
+  const setDraftMode = useStore((s: any) => s.setDraftMode ?? null)
   const pickHero = useStore(s=> s.pickHero)
   const banHero = useStore(s=> s.banHero)
   const buildStory = useStore(s=> s.buildStory)
@@ -15,13 +16,14 @@ export default function ImportDraft({ onImported }:{ onImported: ()=>void }){
   const run = async()=>{
     try{
       setLoading(true)
+      setDraftMode?.("manual")
       clearBoard()
       const r = await fetch(apiBase+'/importMatch?q='+encodeURIComponent(q))
       const j = await r.json()
       if (!r.ok) throw new Error(j.error||'import failed')
       setRes(j)
       for (const p of j.picks) pickHero(p.hero_id, p.team)
-      for (const b of (j.bans || [])) banHero(b.hero_id)
+      for (const b of (j.bans || [])) banHero(b.hero_id, b.team)
       await buildStory()
       onImported()
     }catch(e:any){

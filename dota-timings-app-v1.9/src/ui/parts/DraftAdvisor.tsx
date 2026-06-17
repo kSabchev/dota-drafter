@@ -11,7 +11,7 @@ export default function DraftAdvisor() {
   const minute = useStore((s: any) => s.minute ?? 15);
   const team1 = useStore((s: any) => s.team1 ?? []);
   const team2 = useStore((s: any) => s.team2 ?? []);
-  const banned = useStore((s: any) => s.bans ?? []);
+  const banned = useStore((s: any) => (s.bans ?? []).map((b: any) => b.hero_id ?? b));
 
   // Roles live inline on each pick (p.role), not as a separate store field.
   // Derive the { team1: number[], team2: number[] } shape the API expects.
@@ -30,6 +30,11 @@ export default function DraftAdvisor() {
   });
   const activeTeam = useStore((s: any) => s.activeTeam ?? manualActive);
   const perspective = activeTeam === "team2" ? "team2" : "team1";
+
+  const draftMode = useStore((s: any) => s.draftMode ?? "manual");
+  const cmSequence = useStore((s: any) => s.cmSequence ?? null);
+  const cmStep = useStore((s: any) => s.cmStep ?? 0);
+  const currentCmStep = draftMode === "cm" ? (cmSequence?.[cmStep] ?? null) : null;
 
   // picked list (both teams)
   const picked = useMemo(
@@ -78,6 +83,7 @@ export default function DraftAdvisor() {
   const ally = data?.allySuggestions ?? [];
   const deny = data?.banSuggestions ?? [];
   const coverage = data?.coverage ?? [];
+  const matrixAvailable = data?.matrixAvailable !== false;
 
   return (
     <div style={{ border: "1px solid #30363d", borderRadius: 8, padding: 8 }}>
@@ -107,6 +113,11 @@ export default function DraftAdvisor() {
       {error && (
         <div style={{ fontSize: 12, color: "#f85149", marginBottom: 8 }}>
           Failed to fetch suggestions.
+        </div>
+      )}
+      {!error && data && !matrixAvailable && (
+        <div style={{ fontSize: 11, color: "#d29922", marginBottom: 8, opacity: 0.85 }}>
+          Matrix not loaded — run Sync & Reload for data-driven suggestions.
         </div>
       )}
 
@@ -191,17 +202,23 @@ export default function DraftAdvisor() {
                   <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
                     <button
                       onClick={() => pickHero(s.hero_id)}
+                      disabled={draftMode === "cm" && currentCmStep?.type !== "pick"}
+                      title={
+                        draftMode === "cm" && currentCmStep?.type !== "pick"
+                          ? "Current CM step is a ban — wait for pick phase"
+                          : "Queue this pick"
+                      }
                       style={{
                         padding: "4px 8px",
                         border: "1px solid #30363d",
                         borderRadius: 6,
                         background: "#0d1117",
-                        color: "#e6edf3",
+                        color: draftMode === "cm" && currentCmStep?.type !== "pick" ? "#8b949e" : "#e6edf3",
+                        cursor: draftMode === "cm" && currentCmStep?.type !== "pick" ? "not-allowed" : "pointer",
                       }}
                     >
                       Queue Pick
                     </button>
-                    {/* Future: Why? modal from /advisor/explain */}
                   </div>
                 </div>
               </div>
@@ -280,12 +297,19 @@ export default function DraftAdvisor() {
                 </div>
                 <button
                   onClick={() => banHero(s.hero_id)}
+                  disabled={draftMode === "cm" && currentCmStep?.type !== "ban"}
+                  title={
+                    draftMode === "cm" && currentCmStep?.type !== "ban"
+                      ? "Current CM step is a pick — wait for ban phase"
+                      : "Queue this ban"
+                  }
                   style={{
                     padding: "4px 8px",
                     border: "1px solid #30363d",
                     borderRadius: 6,
                     background: "#0d1117",
-                    color: "#e6edf3",
+                    color: draftMode === "cm" && currentCmStep?.type !== "ban" ? "#8b949e" : "#e6edf3",
+                    cursor: draftMode === "cm" && currentCmStep?.type !== "ban" ? "not-allowed" : "pointer",
                   }}
                 >
                   Queue Ban

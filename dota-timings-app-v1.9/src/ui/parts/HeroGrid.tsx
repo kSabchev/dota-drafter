@@ -31,7 +31,7 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
     () => new Set(team1.concat(team2).map((p) => p.hero_id)),
     [team1, team2]
   );
-  const banned = useMemo(() => new Set(bans), [bans]);
+  const banned = useMemo(() => new Set(bans.map((b) => b.hero_id)), [bans]);
 
   // const filtered = useMemo(
   //   () =>
@@ -126,26 +126,31 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
         />
 
         {mode === "cm" && currentStep && (
-          <div
-            style={{
-              display: "flex",
-              gap: 6,
-              alignItems: "center",
-              padding: "3px 10px",
-              border: "1px solid #30363d",
-              borderRadius: 999,
-              background: "#0d1117",
-              fontSize: 12,
-            }}
-          >
-            <span style={{ color: currentStep.team === "team1" ? "#3fb950" : "#f85149" }}>
-              {currentStep.team === "team1" ? "Team 1" : "Team 2"}
+          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+            <span style={{ fontSize: 11, opacity: 0.45, fontStyle: "italic" }}>
+              {cmPhaseName(cmStep)}
             </span>
-            <span style={{ opacity: 0.5 }}>·</span>
-            <span style={{ color: currentStep.type === "ban" ? "#d29922" : "#58a6ff" }}>
-              {currentStep.type === "ban" ? "BAN" : "PICK"}
-            </span>
-            <span style={{ opacity: 0.4, marginLeft: 2 }}>#{cmStep + 1}</span>
+            <div
+              style={{
+                display: "flex",
+                gap: 6,
+                alignItems: "center",
+                padding: "3px 10px",
+                border: "1px solid #30363d",
+                borderRadius: 999,
+                background: "#0d1117",
+                fontSize: 12,
+              }}
+            >
+              <span style={{ color: currentStep.team === "team1" ? "#3fb950" : "#f85149" }}>
+                {currentStep.team === "team1" ? "Team 1" : "Team 2"}
+              </span>
+              <span style={{ opacity: 0.5 }}>·</span>
+              <span style={{ color: currentStep.type === "ban" ? "#d29922" : "#58a6ff" }}>
+                {currentStep.type === "ban" ? "BAN" : "PICK"}
+              </span>
+              <span style={{ opacity: 0.4, marginLeft: 2 }}>#{cmStep + 1}</span>
+            </div>
           </div>
         )}
       </div>
@@ -164,12 +169,18 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
           return (
             <div
               key={h.id}
+              draggable={!disabled}
+              onDragStart={(e) => {
+                if (disabled) { e.preventDefault(); return; }
+                e.dataTransfer.setData("hero_id", String(h.id));
+                e.dataTransfer.effectAllowed = "copy";
+              }}
               onClick={() => onHeroClick(h.id)}
               style={{
                 border: "1px solid #30363d",
                 borderRadius: 8,
                 overflow: "hidden",
-                cursor: disabled ? "not-allowed" : "pointer",
+                cursor: disabled ? "not-allowed" : "grab",
                 position: "relative",
               }}
               title={
@@ -241,4 +252,13 @@ export default function HeroGrid({ mode = "manual" }: { mode: DraftMode }) {
       </div>
     </div>
   );
+}
+
+function cmPhaseName(step: number): string {
+  if (step < 6) return "Ban Phase 1";
+  if (step < 10) return "Pick Phase 1";
+  if (step < 14) return "Ban Phase 2";
+  if (step < 18) return "Pick Phase 2";
+  if (step < 20) return "Ban Phase 3";
+  return "Pick Phase 3";
 }

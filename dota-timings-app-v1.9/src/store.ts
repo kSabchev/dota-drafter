@@ -57,7 +57,8 @@ type AdvisorSuggestion = {
 };
 type Coverage = { tag: string; ok: boolean };
 
-type DraftSnapshot = { team1: Pick[]; team2: Pick[]; bans: number[] };
+export type Ban = { hero_id: number; team: 1 | 2 };
+type DraftSnapshot = { team1: Pick[]; team2: Pick[]; bans: Ban[] };
 
 type State = {
   apiBase: string;
@@ -65,7 +66,7 @@ type State = {
   profilesByHero: Record<number, Profile[]>;
   team1: Pick[];
   team2: Pick[];
-  bans: number[];
+  bans: Ban[];
   minute: number;
   // advisor & story
   coverage: Coverage[];
@@ -88,9 +89,11 @@ type Actions = {
   init: () => Promise<void>;
   clearBoard: () => void;
   pickHero: (id: number, forceTeam?: 1 | 2) => void;
-  banHero: (id: number) => void;
+  banHero: (id: number, forceTeam?: 1 | 2) => void;
+  replacePickAt: (team: 1 | 2, idx: number, heroId: number) => void;
   undo: () => void;
   setDraftMode: (mode: "manual" | "cm", firstPick?: "team1" | "team2") => Promise<void>;
+  setMinute: (minute: number) => void;
   setRoleForPick: (team: 1 | 2, idx: number, pos: number) => void;
   runAdvisor: () => Promise<void>;
   explain: (heroId: number) => Promise<void>;
@@ -235,7 +238,7 @@ export const useStore = create<State & Actions>((set, get) => ({
     const s = get();
     if (
       s.team1.concat(s.team2).some((p) => p.hero_id === id) ||
-      s.bans.includes(id)
+      s.bans.some((b) => b.hero_id === id)
     )
       return;
     let team: 1 | 2;
@@ -262,16 +265,20 @@ export const useStore = create<State & Actions>((set, get) => ({
     set({ team1: newTeam1, team2: newTeam2, _history: history, canUndo: true, activeTeam: nextActive, cmStep: newCmStep });
   },
 
-  banHero(id) {
+  banHero(id, forceTeam?: 1 | 2) {
     const s = get();
     if (
-      s.bans.includes(id) ||
+      s.bans.some((b) => b.hero_id === id) ||
       s.team1.concat(s.team2).some((p) => p.hero_id === id)
     )
       return;
+    let team: 1 | 2;
     if (s.draftMode === "cm" && s.cmSequence) {
       const step = s.cmSequence[s.cmStep];
       if (!step || step.type !== "ban") return;
+      team = step.team === "team1" ? 1 : 2;
+    } else {
+      team = forceTeam ?? (s.activeTeam === "team2" ? 2 : 1);
     }
     const newCmStep = s.draftMode === "cm" ? s.cmStep + 1 : s.cmStep;
     const nextActive: "team1" | "team2" =
@@ -279,7 +286,24 @@ export const useStore = create<State & Actions>((set, get) => ({
         ? (s.cmSequence[newCmStep]?.team ?? s.activeTeam)
         : s.activeTeam;
     const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
-    set({ bans: [...s.bans, id], _history: history, canUndo: true, cmStep: newCmStep, activeTeam: nextActive });
+    set({ bans: [...s.bans, { hero_id: id, team }], _history: history, canUndo: true, cmStep: newCmStep, activeTeam: nextActive });
+  },
+
+  replacePickAt(team: 1 | 2, idx: number, heroId: number) {
+    const s = get();
+    const teamArr = team === 1 ? s.team1 : s.team2;
+    const otherArr = team === 1 ? s.team2 : s.team1;
+    if (!teamArr[idx]) return;
+    if (otherArr.some((p) => p.hero_id === heroId)) return;
+    if (s.bans.some((b) => b.hero_id === heroId)) return;
+    if (teamArr.some((p, i) => p.hero_id === heroId && i !== idx)) return;
+    const best = (s.profilesByHero[heroId] || [])[0] || null;
+    const slot = { hero_id: heroId, profile: best, role: best?.positions?.[0] ?? null };
+    const newArr = teamArr.map((p, i) => (i === idx ? slot : p));
+    const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
+    set(team === 1
+      ? { team1: newArr, _history: history, canUndo: true }
+      : { team2: newArr, _history: history, canUndo: true });
   },
 
   undo() {
@@ -325,6 +349,10 @@ export const useStore = create<State & Actions>((set, get) => ({
     }
   },
 
+  setMinute(m: number) {
+    set({ minute: Math.max(0, Math.min(60, m)) });
+  },
+
   setRoleForPick(team, idx, pos) {
     const key = team === 1 ? "team1" : "team2";
     const arr = [...(get() as any)[key]];
@@ -350,7 +378,7 @@ export const useStore = create<State & Actions>((set, get) => ({
       picked: get()
         .team1.concat(get().team2)
         .map((p) => p.hero_id),
-      banned: get().bans,
+      banned: get().bans.map((b) => b.hero_id),
       roles: {
         team1: get().team1.map((p) => p.role || null),
         team2: get().team2.map((p) => p.role || null),
