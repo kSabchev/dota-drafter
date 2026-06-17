@@ -11,8 +11,17 @@ export default function DraftAdvisor() {
   const minute = useStore((s: any) => s.minute ?? 15);
   const team1 = useStore((s: any) => s.team1 ?? []);
   const team2 = useStore((s: any) => s.team2 ?? []);
-  const roles = useStore((s: any) => s.roles ?? { team1: [], team2: [] });
-  const banned = useStore((s: any) => s.banned ?? []);
+  const banned = useStore((s: any) => s.bans ?? []);
+
+  // Roles live inline on each pick (p.role), not as a separate store field.
+  // Derive the { team1: number[], team2: number[] } shape the API expects.
+  const roles = useMemo(
+    () => ({
+      team1: team1.map((p: any) => p.role ?? null),
+      team2: team2.map((p: any) => p.role ?? null),
+    }),
+    [team1, team2]
+  );
 
   // Perspective: whose turn is it?
   const manualActive = useStore((s: any) => {
@@ -55,7 +64,15 @@ export default function DraftAdvisor() {
       run().catch(() => {});
     }, 200);
     return () => clearTimeout(t);
-  }, [minute, team1.length, team2.length, perspective]); // include perspective
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    minute,
+    team1.length,
+    team2.length,
+    banned.length,
+    perspective,
+    JSON.stringify(roles),
+  ]);
 
   // Render lists from API data (fallback to empty arrays)
   const ally = data?.allySuggestions ?? [];

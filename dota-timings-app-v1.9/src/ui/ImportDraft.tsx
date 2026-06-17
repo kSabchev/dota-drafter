@@ -6,6 +6,7 @@ export default function ImportDraft({ onImported }:{ onImported: ()=>void }){
   const apiBase = useStore(s=> s.apiBase)
   const clearBoard = useStore(s=> s.clearBoard)
   const pickHero = useStore(s=> s.pickHero)
+  const banHero = useStore(s=> s.banHero)
   const buildStory = useStore(s=> s.buildStory)
   const [q,setQ] = useState('')
   const [loading,setLoading] = useState(false)
@@ -19,7 +20,8 @@ export default function ImportDraft({ onImported }:{ onImported: ()=>void }){
       const j = await r.json()
       if (!r.ok) throw new Error(j.error||'import failed')
       setRes(j)
-      for (const p of j.picks) pickHero(p.hero_id)
+      for (const p of j.picks) pickHero(p.hero_id, p.team)
+      for (const b of (j.bans || [])) banHero(b.hero_id)
       await buildStory()
       onImported()
     }catch(e:any){

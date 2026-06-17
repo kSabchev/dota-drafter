@@ -507,10 +507,14 @@ app.get("/importMatch", async (req, res) => {
       return res.status(502).json({ error: "OpenDota fail " + r.status });
     const data = await r.json();
     const picks = [];
+    const bans = [];
     if (Array.isArray(data.picks_bans) && data.picks_bans.length) {
       for (const pb of data.picks_bans) {
-        if (pb.is_pick)
+        if (pb.is_pick) {
           picks.push({ hero_id: pb.hero_id, team: pb.team === 0 ? 1 : 2 });
+        } else {
+          bans.push({ hero_id: pb.hero_id, team: pb.team === 0 ? 1 : 2 });
+        }
       }
     } else if (Array.isArray(data.players)) {
       for (const p of data.players) {
@@ -524,6 +528,7 @@ app.get("/importMatch", async (req, res) => {
       duration: data.duration,
       start_time: data.start_time,
       picks,
+      bans,
     });
   } catch (e) {
     log.error(e);

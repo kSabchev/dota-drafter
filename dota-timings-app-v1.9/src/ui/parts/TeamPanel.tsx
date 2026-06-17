@@ -92,26 +92,9 @@ function TeamCol({ team }: { team: 1 | 2 }) {
   );
 }
 
-// export default function TeamPanel() {
-//   return (
-//     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-
-export default function TeamPanel(props: any) {
-  const { team, heroes, title, active = false, teamId } = props;
-  // container style:
+export default function TeamPanel() {
   return (
-    <div
-      style={{
-        padding: "8px",
-        background: active ? "#0f1a12" : "#111",
-        borderRadius: "6px",
-        border: active ? "1px solid #1f6f3e" : "1px solid #30363d",
-        boxShadow: active ? "0 0 0 2px rgba(46,160,67,.15) inset" : "none",
-      }}
-    >
-      <h3 style={{ marginBottom: "8px", color: "#fff", fontSize: "1.1em" }}>
-        {title || (teamId ? `Team ${teamId}` : "Team")}
-      </h3>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
       <TeamCol team={1} />
       <TeamCol team={2} />
     </div>

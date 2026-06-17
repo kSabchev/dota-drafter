@@ -77,7 +77,7 @@ type State = {
 type Actions = {
   init: () => Promise<void>;
   clearBoard: () => void;
-  pickHero: (id: number) => void;
+  pickHero: (id: number, forceTeam?: 1 | 2) => void;
   banHero: (id: number) => void;
   setRoleForPick: (team: 1 | 2, idx: number, pos: number) => void;
   runAdvisor: () => Promise<void>;
@@ -208,7 +208,7 @@ export const useStore = create<State & Actions>((set, get) => ({
     });
   },
 
-  pickHero(id) {
+  pickHero(id, forceTeam?: 1 | 2) {
     const s = get();
     if (
       s.team1.concat(s.team2).some((p) => p.hero_id === id) ||
@@ -217,7 +217,7 @@ export const useStore = create<State & Actions>((set, get) => ({
       return;
     const t1 = s.team1.length,
       t2 = s.team2.length;
-    const team: 1 | 2 = t1 <= t2 ? 1 : 2;
+    const team: 1 | 2 = forceTeam ?? (t1 <= t2 ? 1 : 2);
     const best = (s.profilesByHero[id] || [])[0] || null;
     const slot = {
       hero_id: id,
