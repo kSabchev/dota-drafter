@@ -245,37 +245,32 @@ export default function CreateDraft() {
         </Card>
 
         <DraftStateBanner />
-        <LaneMatchupPanel />
         <UniqueItemsTracker />
-        <TeamTimingPanel />
 
         <Card>
-          <div
-            style={{
-              display: "flex",
-              gap: 6,
-              marginBottom: 10,
-              flexWrap: "wrap",
-            }}
-          >
-            {(["composition", "timings", "lanes"] as const).map((k) => (
+          <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }}>
+            {(["composition", "lanes", "timings"] as const).map((k) => (
               <PillButton
                 key={k}
                 onClick={() => setStoryTab(k)}
                 style={{
                   background: storyTab === k ? "#161b22" : "transparent",
-                  borderColor: storyTab === k ? "#30363d" : undefined,
+                  borderColor: storyTab === k ? "#58a6ff" : "#30363d",
+                  color: storyTab === k ? "#58a6ff" : undefined,
                 }}
               >
-                {k === "composition"
-                  ? "Composition"
-                  : k === "timings"
-                  ? "Timings"
-                  : "Lanes"}
+                {k === "composition" ? "Composition" : k === "timings" ? "Timings" : "Lanes"}
               </PillButton>
             ))}
           </div>
-          <StoryView />
+
+          {/* Pre-panel: rendered above StoryView when its tab is active */}
+          {storyTab === "timings" && <TeamTimingPanel />}
+          {storyTab === "lanes"   && <LaneMatchupPanel />}
+
+          {/* StoryView stays mounted across tab switches — buildStory only
+              re-fires on pick/minute changes, not on tab navigation */}
+          <StoryView tab={storyTab} />
         </Card>
       </section>
 
@@ -869,6 +864,9 @@ function TeamTimingPanel() {
 function BanStrip() {
   const bans = useStore((s) => s.bans);
   const heroes = useStore((s) => s.heroes);
+  const removeBan = useStore((s: any) => s.removeBan as (id: number) => void);
+  const [hovered, setHovered] = useState<number | null>(null);
+
   if (bans.length === 0) return null;
   return (
     <div style={{ display: "flex", gap: 4, flexWrap: "wrap", padding: "4px 0 8px" }}>
@@ -906,18 +904,22 @@ function BanStrip() {
         }
         const hero = heroes.find((h) => h.id === ban.hero_id);
         if (!hero) return null;
+        const isHovered = hovered === ban.hero_id;
         return (
           <div
             key={ban.hero_id}
-            title={`Banned by Team ${ban.team}: ${hero.localized_name}`}
+            title={`Banned by Team ${ban.team}: ${hero.localized_name} — click × to remove`}
+            onMouseEnter={() => setHovered(ban.hero_id)}
+            onMouseLeave={() => setHovered(null)}
             style={{
               width: 36,
               height: 36,
-              border: `1px solid ${teamColor}`,
+              border: `1px solid ${isHovered ? teamColor : teamColor + "99"}`,
               borderRadius: 6,
               overflow: "hidden",
               flexShrink: 0,
               position: "relative",
+              transition: "border-color .12s",
             }}
           >
             <LocalHeroImg
@@ -934,6 +936,29 @@ function BanStrip() {
               background: teamColor,
               opacity: 0.7,
             }} />
+            {isHovered && (
+              <button
+                onClick={() => removeBan(ban.hero_id)}
+                title="Remove ban"
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#0d111799",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: 14,
+                  color: "#e6edf3",
+                  lineHeight: 1,
+                }}
+              >
+                ×
+              </button>
+            )}
           </div>
         );
       })}

@@ -380,16 +380,15 @@ function BulkPositionEditor() {
     let next: PosEntry[];
 
     if (idx === -1) {
-      // New position — always start at Main (tier 0)
+      // Not yet assigned — add as Main (tier 0)
       next = [...current, { position: pos, tier: 0 }].sort((a, b) => a.position - b.position);
-    } else if (shiftKey) {
+    } else if (shiftKey || current[idx].tier >= 3) {
+      // Shift+click, or reached end of cycle (Undesirable) → remove so next click re-adds as Main
       next = current.filter((_, i) => i !== idx);
     } else {
-      // Cycle: 0 → 1 → 2 → 3 → 0 (wrap back to Main, never auto-remove)
-      // Guard against NaN/null/undefined from stale data
+      // Cycle forward: Main(0) → Secondary(1) → Suboptimal(2) → Undesirable(3)
       const curTier = Number.isFinite(current[idx].tier) ? current[idx].tier : 0;
-      const nextTier = curTier >= 3 ? 0 : curTier + 1;
-      next = current.map((e, i) => i === idx ? { ...e, tier: nextTier } : e);
+      next = current.map((e, i) => i === idx ? { ...e, tier: curTier + 1 } : e);
     }
 
     setLocal((prev) => ({ ...prev, [heroId]: next }));
@@ -477,7 +476,7 @@ function BulkPositionEditor() {
           </div>
         ))}
         <div style={{ fontSize: 11, opacity: 0.35, alignSelf: "center" }}>
-          · click empty to add · click assigned to cycle tier (wraps back to ★) · shift+click to remove
+          · click empty → ★ Main · click to cycle down · past ✕ Undesirable or shift+click → removes · click again → ★ Main
         </div>
       </div>
 
@@ -560,9 +559,9 @@ function TierButton({
 
   const safeTier = assigned && Number.isFinite(tier) ? tier! : 0;
   const nextTierLabel = !assigned
-    ? `Add pos ${pos} as Main`
+    ? `Click to add as ★ Main`
     : safeTier >= 3
-    ? `Undesirable → wrap back to Main`
+    ? `Click to remove  (then click again to re-add as Main)`
     : `${TIER_LABEL[safeTier]} → ${TIER_LABEL[safeTier + 1]}`;
 
   return (

@@ -56,75 +56,152 @@ async function cached(key, fn, ttlMs = 60_000) {
 
 // ----- Items Library (effects -> axes) & Aura classes -----
 const ITEMS = {
-  blink: {
-    label: "Blink",
-    effects: { pickoff: +18, fight: +10 },
-    class: "mobility",
-  },
-  bkb: { label: "BKB", effects: { fight: +15, push: +6 }, class: "core" },
-  arcane_boots: {
-    label: "Arcanes",
-    effects: { sustain: +6 },
-    class: "economy",
-  },
-  mekansm: {
-    label: "Mek",
-    effects: { sustain: +10, defense: +8 },
-    class: "aura",
-  },
-  greaves: {
-    label: "Greaves",
-    effects: { sustain: +20, defense: +15, push: +6 },
-    class: "aura",
-  },
-  pipe: { label: "Pipe", effects: { defense: +18 }, class: "aura_magic" },
-  crimson_guard: {
-    label: "Crimson",
-    effects: { defense: +14 },
-    class: "aura_physical",
-  },
-  vladmir: { label: "Vlad", effects: { push: +10, rosh: +6 }, class: "aura" },
-  assault: {
-    label: "AC",
-    effects: { tower_damage: +18, push: +10, rosh: +8, defense: +6 },
-    class: "aura",
-  },
-  shivas_guard: {
-    label: "Shiva",
-    effects: { defense: +12, fight: +8, anti_heal: +1 },
-    class: "core",
-  },
-  radiance: { label: "Radiance", effects: { scale: +8 }, class: "core" },
-  aghanim_scepter: {
-    label: "Aghs",
-    effects: { fight: +8, pickoff: +8 },
-    class: "hero_specific",
-  },
-  aghanim_shard: {
-    label: "Shard",
-    effects: { pickoff: +6, fight: +4 },
-    class: "hero_specific",
-  },
+  // ── Mobility / initiation
+  blink:          { label: "Blink",     effects: { pickoff: +18, fight: +10 },              class: "mobility" },
+  force_staff:    { label: "Force",     effects: { pickoff: +8,  defense: +6 },              class: "utility" },
+  shadow_blade:   { label: "S-Blade",   effects: { pickoff: +12, fight: +8 },                class: "mobility" },
+  silver_edge:    { label: "S-Edge",    effects: { pickoff: +14, fight: +10 },               class: "mobility" },
+  // ── Core BKB / resistance
+  bkb:            { label: "BKB",       effects: { fight: +15, push: +6 },                  class: "core" },
+  blade_mail:     { label: "BladeMail", effects: { fight: +12, defense: +8 },               class: "core" },
+  lotus_orb:      { label: "Lotus",     effects: { defense: +15, fight: +8 },               class: "utility" },
+  // ── Economy / boots
+  arcane_boots:   { label: "Arcanes",   effects: { sustain: +6 },                           class: "economy" },
+  phase_boots:    { label: "Phase",     effects: { fight: +8 },                             class: "economy" },
+  power_treads:   { label: "Treads",    effects: { fight: +6, scale: +4 },                  class: "economy" },
+  // ── Auras (diminishing returns stacked)
+  mekansm:        { label: "Mek",       effects: { sustain: +10, defense: +8 },             class: "aura" },
+  greaves:        { label: "Greaves",   effects: { sustain: +20, defense: +15, push: +6 }, class: "aura" },
+  pipe:           { label: "Pipe",      effects: { defense: +18 },                         class: "aura_magic" },
+  crimson_guard:  { label: "Crimson",   effects: { defense: +14 },                         class: "aura_physical" },
+  vladmir:        { label: "Vlad",      effects: { push: +10, rosh: +6 },                  class: "aura" },
+  assault:        { label: "AC",        effects: { tower_damage: +18, push: +10, rosh: +8, defense: +6 }, class: "aura" },
+  solar_crest:    { label: "Solar",     effects: { rosh: +8, fight: +6 },                  class: "aura" },
+  ancient_janggo: { label: "Drum",      effects: { fight: +6, push: +6 },                  class: "utility" },
+  // ── Anti-heal / burst
+  shivas_guard:   { label: "Shiva",     effects: { defense: +12, fight: +8, anti_heal: +1 }, class: "core" },
+  // ── Farming / push
+  radiance:       { label: "Radiance",  effects: { scale: +8 },                            class: "core" },
+  battle_fury:    { label: "BFury",     effects: { push: +12, scale: +6 },                 class: "core" },
+  // ── Carry scaling
+  manta_style:    { label: "Manta",     effects: { fight: +12, scale: +8 },                class: "core" },
+  butterfly:      { label: "Butterfly", effects: { fight: +15, scale: +10 },               class: "core" },
+  skull_basher:   { label: "Basher",    effects: { fight: +10, pickoff: +6 },              class: "core" },
+  abyssal_blade:  { label: "Abyssal",   effects: { fight: +12, pickoff: +10 },             class: "core" },
+  diffusal_blade: { label: "Diffusal",  effects: { fight: +10, pickoff: +8 },              class: "core" },
+  // ── Caster / utility
+  aether_lens:    { label: "A-Lens",    effects: { pickoff: +8, fight: +6 },               class: "utility" },
+  cyclone:        { label: "Eul's",     effects: { pickoff: +10, fight: +6 },              class: "utility" },
+  glimmer_cape:   { label: "Glimmer",   effects: { defense: +12, pickoff: +5 },            class: "utility" },
+  rod_of_atos:    { label: "Atos",      effects: { pickoff: +12, fight: +6 },              class: "utility" },
+  orchid_malevolence: { label: "Orchid", effects: { pickoff: +10, fight: +6 },             class: "core" },
+  bloodthorn:     { label: "Bloodthorn",effects: { pickoff: +12, fight: +8 },              class: "core" },
+  dragon_lance:   { label: "D-Lance",   effects: { fight: +8, scale: +5 },                 class: "utility" },
+  mask_of_madness:{ label: "MoM",       effects: { fight: +10, scale: +6 },                class: "core" },
+  // ── Late game / durability
+  heart_of_tarrasque: { label: "Heart", effects: { scale: +12, defense: +8 },             class: "late" },
+  eye_of_skadi:   { label: "Skadi",     effects: { fight: +10, scale: +8 },                class: "late" },
+  satanic:        { label: "Satanic",   effects: { scale: +10, fight: +8 },                class: "late" },
+  // ── Hero-specific upgrades
+  aghanim_scepter:{ label: "Aghs",      effects: { fight: +8, pickoff: +8 },               class: "hero_specific" },
+  aghanim_shard:  { label: "Shard",     effects: { pickoff: +6, fight: +4 },               class: "hero_specific" },
 };
 // auras count once per team for most value (diminishing after first)
 const AURA_CLASSES = new Set(["aura", "aura_magic", "aura_physical"]);
 
-function estItemMinute(itemKey, roleHint) {
-  // conservative defaults; you can swap to STRATZ/OpenDota later
+// Maps OpenDota item names → our ITEMS catalog keys
+const ITEM_KEY_MAP = {
+  // ── Boots / economy
+  arcane_boots:            "arcane_boots",
+  phase_boots:             "phase_boots",
+  power_treads:            "power_treads",
+  // ── Mobility / pickoff
+  blink:                   "blink",
+  force_staff:             "force_staff",
+  shadow_blade:            "shadow_blade",
+  silver_edge:             "silver_edge",
+  // ── Core resistance
+  black_king_bar:          "bkb",
+  blade_mail:              "blade_mail",
+  lotus_orb:               "lotus_orb",
+  // ── Aura / support
+  mekansm:                 "mekansm",
+  guardian_greaves:        "greaves",
+  pipe:                    "pipe",
+  crimson_guard:           "crimson_guard",
+  vladmir:                 "vladmir",
+  assault:                 "assault",
+  shivas_guard:            "shivas_guard",
+  solar_crest:             "solar_crest",
+  ancient_janggo:          "ancient_janggo",
+  // ── Core damage / carry
+  radiance:                "radiance",
+  bfury:                   "battle_fury",
+  manta:                   "manta_style",
+  butterfly:               "butterfly",
+  skull_basher:            "skull_basher",
+  abyssal_blade:           "abyssal_blade",
+  diffusal_blade:          "diffusal_blade",
+  mask_of_madness:         "mask_of_madness",
+  dragon_lance:            "dragon_lance",
+  orchid_malevolence:      "orchid_malevolence",
+  bloodthorn:              "bloodthorn",
+  // ── Caster / support utility
+  aether_lens:             "aether_lens",
+  cyclone:                 "cyclone",
+  euls_scepter_of_divinity:"cyclone",
+  glimmer_cape:            "glimmer_cape",
+  rod_of_atos:             "rod_of_atos",
+  // ── Late game
+  heart_of_tarrasque:      "heart_of_tarrasque",
+  eye_of_skadi:            "eye_of_skadi",
+  satanic:                 "satanic",
+  // ── Hero-specific
+  ultimate_scepter:        "aghanim_scepter",
+  aghanims_shard:          "aghanim_shard",
+};
+// Reverse: catalog key → first matching OD name (for phase lookup)
+const CATALOG_TO_OD = Object.fromEntries(
+  Object.entries(ITEM_KEY_MAP).map(([od, cat]) => [cat, od])
+);
+
+// Per-team tag conflict rules: applying penalty when count ≥ max
+const TAG_CONFLICTS = {
+  radiance:     { max: 1, penalty: 3.0, label: "Radiance overload" },
+  global:       { max: 2, penalty: 2.0, label: "Global overload" },
+  flash_farmer: { max: 2, penalty: 1.5, label: "Farm conflict" },
+  refresher:    { max: 1, penalty: 2.5, label: "Refresher overload" },
+};
+
+function estItemMinute(itemKey, roleHint, heroId) {
+  // Phase-based estimate from stored build data (most accurate)
+  if (heroId != null) {
+    const phases = getHeroItems()[String(heroId)]?.phases;
+    if (phases) {
+      const odName = CATALOG_TO_OD[itemKey] || itemKey;
+      if ((phases.early || []).includes(odName)) return roleHint <= 2 ? 10 : 12;
+      if ((phases.mid   || []).includes(odName)) return 22;
+      if ((phases.late  || []).includes(odName)) return 32;
+    }
+  }
+  // Hardcoded fallback table
   const base = {
+    arcane_boots: 8,  phase_boots: 9,  power_treads: 10,
+    vladmir: 12,      mekansm: 14,     aether_lens: 14,
     blink: roleHint === 3 || roleHint === 2 ? 12 : 14,
-    bkb: roleHint === 1 || roleHint === 2 ? 18 : 20,
+    glimmer_cape: 15, force_staff: 16, ancient_janggo: 12,
+    solar_crest: 16,  rod_of_atos: 16, lotus_orb: 18,
+    pipe: 17,         crimson_guard: 18,
     greaves: roleHint >= 4 ? 17 : 19,
-    pipe: 17,
-    crimson_guard: 18,
-    vladmir: 12,
-    assault: 20,
-    shivas_guard: 22,
-    radiance: 20,
-    aghanim_scepter: 20,
-    aghanim_shard: 15,
-    mekansm: 14,
-    arcane_boots: 8,
+    bkb: roleHint <= 2 ? 18 : 20,
+    blade_mail: 18,   mask_of_madness: 16, dragon_lance: 14,
+    battle_fury: 18,  diffusal_blade: 18,  skull_basher: 20,
+    radiance: 20,     shadow_blade: 20,    cyclone: 18,
+    assault: 20,      shivas_guard: 22,    orchid_malevolence: 20,
+    bloodthorn: 26,   silver_edge: 26,     abyssal_blade: 28,
+    manta_style: 22,  butterfly: 28,       heart_of_tarrasque: 32,
+    eye_of_skadi: 30, satanic: 30,
+    aghanim_scepter: 20, aghanim_shard: 15,
   };
   return base[itemKey] ?? 18;
 }
@@ -392,13 +469,14 @@ function defaultCurve() {
 }
 
 function series(team) {
-  // compute axis values every 5 minutes up to 40
-  const out = { push: {}, pickoff: {}, fight: {} };
+  const out = { push: {}, pickoff: {}, fight: {}, scale: {}, sustain: {} };
   for (let m = 5; m <= 40; m += 5) {
     const t = teamAxesAt(team, m);
-    out.push[m] = t.push;
+    out.push[m]    = t.push;
     out.pickoff[m] = t.pickoff;
-    out.fight[m] = t.fight;
+    out.fight[m]   = t.fight;
+    out.scale[m]   = t.scale;
+    out.sustain[m] = t.sustain;
   }
   return out;
 }
@@ -414,20 +492,20 @@ function series(team) {
 // }
 
 function teamAxesAt(team, minute) {
-  const axes = [
-    "fight",
-    "pickoff",
-    "push",
-    "sustain",
-    "defense",
-    "rosh",
-    "scale",
-  ];
+  const axes = ["fight", "pickoff", "push", "sustain", "defense", "rosh", "scale"];
+  const heroTimings = getHeroTimings();
   const sums = {};
   for (const a of axes) {
     let s = 0;
     for (const p of team || []) {
-      const curve = (p && p.profile && p.profile.curve) || defaultCurve();
+      let curve;
+      if (p?.profile?.curve) {
+        curve = p.profile.curve;
+      } else if (p?.hero_id && heroTimings[String(p.hero_id)]) {
+        curve = heroTimingsToCurve(heroTimings[String(p.hero_id)], p.roles ?? []);
+      } else {
+        curve = defaultCurve();
+      }
       s += valAt(curve[a], minute);
     }
     sums[a] = Math.round(s);
@@ -472,58 +550,153 @@ function defaultTags(roles = []) {
 function blend(a, b, w) {
   return a.map((v, i) => Math.round(v * (1 - w) + b[i] * w));
 }
-// function defaultCurveByRole(roles = []) {
-//   const base = {
-//     fight: [10, 25, 45, 60, 70, 75],
-//     pickoff: [10, 25, 45, 60, 70, 75],
-//     push: [10, 20, 40, 55, 65, 75],
-//     farm: [10, 25, 45, 60, 75, 85],
-//     sustain: [5, 15, 30, 45, 60, 70],
-//     defense: [10, 25, 40, 55, 70, 80],
-//     rosh: [5, 10, 20, 35, 50, 60],
-//     scale: [10, 20, 35, 55, 75, 90],
-//   };
-//   const isCarry = roles.includes("Carry"),
-//     isMid = roles.includes("Nuker") || roles.includes("Escape"),
-//     isOff = roles.includes("Initiator") || roles.includes("Durable"),
-//     isSupp = roles.includes("Support") || roles.includes("Disabler");
-//   if (isCarry) {
-//     base.farm = blend(base.farm, [10, 30, 60, 85, 95, 100], 0.8);
-//     base.fight = blend(base.fight, [5, 15, 35, 65, 80, 90], 0.6);
-//     base.push = blend(base.push, [5, 15, 30, 50, 70, 85], 0.5);
-//     base.scale = blend(base.scale, [10, 20, 45, 75, 95, 100], 0.7);
-//   }
-//   if (isMid) {
-//     base.fight = blend(base.fight, [15, 45, 70, 75, 80, 85], 0.7);
-//     base.pickoff = blend(base.pickoff, [20, 50, 75, 80, 85, 90], 0.7);
-//   }
-//   if (isOff) {
-//     base.fight = blend(base.fight, [20, 45, 65, 75, 80, 85], 0.6);
-//     base.defense = blend(base.defense, [20, 40, 60, 75, 85, 90], 0.6);
-//     base.push = blend(base.push, [10, 25, 45, 60, 75, 85], 0.5);
-//     base.rosh = blend(base.rosh, [5, 10, 25, 45, 55, 65], 0.4);
-//   }
-//   if (isSupp) {
-//     base.fight = blend(base.fight, [25, 55, 65, 60, 55, 50], 0.7);
-//     base.sustain = blend(base.sustain, [20, 40, 60, 70, 75, 80], 0.7);
-//     base.defense = blend(base.defense, [20, 40, 60, 70, 75, 80], 0.6);
-//   }
-//   return base;
-// }
+
+// Role-aware fallback curves. Used when hero-timings.json has no entry for this hero.
 function defaultCurveByRole(roles = []) {
-  const c = defaultCurve();
-  // small role biases
-  if (roles.includes("Carry")) {
-    c.scale = c.scale.map((v) => v + 8);
+  const base = {
+    fight:   [10, 25, 45, 60, 70, 75],
+    pickoff: [10, 25, 45, 60, 70, 75],
+    push:    [10, 20, 40, 55, 65, 75],
+    sustain: [5,  15, 30, 45, 60, 70],
+    defense: [10, 25, 40, 55, 70, 80],
+    rosh:    [5,  10, 20, 35, 50, 60],
+    scale:   [10, 20, 35, 55, 75, 90],
+  };
+  const isCarry = roles.includes("Carry");
+  const isMid   = roles.includes("Nuker") || roles.includes("Escape");
+  const isOff   = roles.includes("Initiator") || roles.includes("Durable");
+  const isSupp  = roles.includes("Support") || roles.includes("Disabler");
+  if (isCarry) {
+    base.fight = blend(base.fight, [5,  15, 35, 65, 80, 90], 0.6);
+    base.push  = blend(base.push,  [5,  15, 30, 50, 70, 85], 0.5);
+    base.scale = blend(base.scale, [10, 20, 45, 75, 95, 100], 0.7);
   }
-  if (roles.includes("Support")) {
-    c.sustain = c.sustain.map((v) => v + 6);
+  if (isMid) {
+    base.fight   = blend(base.fight,   [15, 45, 70, 75, 80, 85], 0.7);
+    base.pickoff = blend(base.pickoff, [20, 50, 75, 80, 85, 90], 0.7);
   }
-  if (roles.includes("Initiator")) {
-    c.pickoff = c.pickoff.map((v) => v + 10);
-    c.fight = c.fight.map((v) => v + 6);
+  if (isOff) {
+    base.fight   = blend(base.fight,   [20, 45, 65, 75, 80, 85], 0.6);
+    base.defense = blend(base.defense, [20, 40, 60, 75, 85, 90], 0.6);
+    base.push    = blend(base.push,    [10, 25, 45, 60, 75, 85], 0.5);
+    base.rosh    = blend(base.rosh,    [5,  10, 25, 45, 55, 65], 0.4);
   }
-  return c;
+  if (isSupp) {
+    base.fight   = blend(base.fight,   [25, 55, 65, 60, 55, 50], 0.7);
+    base.sustain = blend(base.sustain, [20, 40, 60, 70, 75, 80], 0.7);
+    base.defense = blend(base.defense, [20, 40, 60, 70, 75, 80], 0.6);
+  }
+  return base;
+}
+
+// ── Hero timings ────────────────────────────────────────────────────────────
+// hero-timings.json stores 8 axes at 5 timepoints [10,15,20,25,30] minutes.
+// Axes: teamfight, pickoff, push, split, objective, farm, early_end, late_scale
+// The advisor uses 6-element arrays at [0,10,20,30,40,50] minutes.
+
+const HERO_TIMINGS_PATH = path.resolve(
+  path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1")),
+  "data/hero-timings.json"
+);
+
+let __heroTimings = null;
+function getHeroTimings() {
+  if (!__heroTimings) {
+    try { __heroTimings = JSON.parse(fs.readFileSync(HERO_TIMINGS_PATH, "utf8")); }
+    catch { __heroTimings = {}; }
+  }
+  return __heroTimings;
+}
+
+// ─── Hero items & gameplay tags (lazy-loaded, cached) ────────────────────────
+const _DATA_ROOT = path.dirname(HERO_TIMINGS_PATH);
+const HERO_TAGS_PATH = path.join(_DATA_ROOT, "hero-tags.json");
+
+let __heroItems = null;
+function bustHeroItemsCache() { __heroItems = null; } // eslint-disable-line no-unused-vars
+function getHeroItems() {
+  if (!__heroItems) {
+    try { __heroItems = JSON.parse(fs.readFileSync(path.join(_DATA_ROOT, "hero-items.json"), "utf8")); }
+    catch { __heroItems = {}; }
+  }
+  return __heroItems;
+}
+
+let __heroTagsCurated = null;
+function getHeroTagsCurated() {
+  if (!__heroTagsCurated) {
+    try { __heroTagsCurated = JSON.parse(fs.readFileSync(HERO_TAGS_PATH, "utf8")); }
+    catch { __heroTagsCurated = {}; }
+  }
+  return __heroTagsCurated;
+}
+
+/**
+ * Compute all gameplay tags for a hero: curated special tags + auto-derived
+ * from build data (radiance/refresher) and OpenDota roles (physical/magical).
+ */
+function computeHeroTags(heroId, heroRoles = [], heroItemsBuild = []) {
+  const curated = getHeroTagsCurated()[String(heroId)] ?? [];
+  const auto = [];
+  // Approximate damage type from roles
+  const isCarry = heroRoles.includes("Carry");
+  const isNuker  = heroRoles.includes("Nuker");
+  if (isCarry && !isNuker) auto.push("physical");
+  else if (isNuker && !isCarry) auto.push("magical");
+  // Derive item tags from actual OpenDota build data
+  const top10 = heroItemsBuild.slice(0, 10);
+  if (top10.includes("radiance")  && !curated.includes("radiance"))  auto.push("radiance");
+  if (top10.includes("refresher") && !curated.includes("refresher")) auto.push("refresher");
+  return [...new Set([...curated, ...auto])];
+}
+
+// Convert a 5-point [t10,t15,t20,t25,t30] array → 6-point [t0,t10,t20,t30,t40,t50]
+function _expandTimingArr(src) {
+  if (!Array.isArray(src) || src.length < 5) return null;
+  const earlySlope = src[1] - src[0];               // t10→t15 slope
+  const t0  = Math.max(0, Math.round(src[0] - earlySlope * 2));
+  const lateSlope = src[4] - src[3];                // t25→t30 slope
+  const t40 = Math.max(0, Math.min(100, Math.round(src[4] + lateSlope * 2)));
+  const t50 = Math.max(0, Math.min(100, Math.round(src[4] + lateSlope * 4)));
+  // [t0, t10, t20, t30, t40, t50]  (t15/t25 are interpolated by valAt)
+  return [t0, src[0], src[2], src[4], t40, t50];
+}
+
+// Map hero-timings axes to advisor curve format, falling back to role defaults.
+function heroTimingsToCurve(timings, roles = []) {
+  const fb = defaultCurveByRole(roles);
+  return {
+    fight:   _expandTimingArr(timings.teamfight)  ?? fb.fight,
+    pickoff: _expandTimingArr(timings.pickoff)    ?? fb.pickoff,
+    push:    _expandTimingArr(timings.push)        ?? fb.push,
+    scale:   _expandTimingArr(timings.late_scale) ?? fb.scale,
+    rosh:    _expandTimingArr(timings.objective)  ?? fb.rosh,
+    sustain: fb.sustain,  // no direct hero-timings analog
+    defense: fb.defense,
+  };
+}
+
+// Derive power-spike annotations from timing data.
+function deriveSpikes(timings) {
+  const MINS = [10, 15, 20, 25, 30];
+  const combat = MINS.map((_, i) =>
+    (timings.teamfight?.[i] ?? 0) + (timings.pickoff?.[i] ?? 0)
+  );
+  const peakIdx = combat.indexOf(Math.max(...combat));
+  const peakMin = MINS[peakIdx];
+
+  const label =
+    peakMin <= 15 ? "Early power spike" :
+    peakMin <= 22 ? "Mid-game power spike" :
+                    "Late game power spike";
+  const spikes = [{ minute: peakMin, description: label }];
+
+  if ((timings.late_scale?.[4] ?? 0) >= 70)
+    spikes.push({ minute: 35, description: "Scales hard into late game" });
+  else if ((timings.early_end?.[1] ?? 0) >= 65)
+    spikes.push({ minute: 8, description: "Strong early game pressure" });
+
+  return spikes;
 }
 
 app.get("/presets", async (req, res) => {
@@ -537,8 +710,15 @@ app.get("/presets", async (req, res) => {
         roles: h.roles,
       }));
     });
+    const allHeroTimings = getHeroTimings();
     const profilesByHero = {};
     for (const h of heroes) {
+      const ht = allHeroTimings[String(h.id)];
+      const curve  = ht ? heroTimingsToCurve(ht, h.roles || []) : defaultCurveByRole(h.roles || []);
+      const spikes = ht ? deriveSpikes(ht) : [
+        { minute: 10, description: "Level 10" },
+        { minute: 20, description: "Level 20" },
+      ];
       profilesByHero[h.id] = [
         {
           id: `${h.id}-default`,
@@ -553,11 +733,9 @@ app.get("/presets", async (req, res) => {
           play_style: "Adaptive",
           tags: defaultTags(h.roles || []),
           item_build: [],
-          spikes: [
-            { minute: 10, description: "Level 10" },
-            { minute: 20, description: "Level 20" },
-          ],
-          curve: defaultCurveByRole(h.roles || []),
+          spikes,
+          curve,
+          hasRealTimings: !!ht,
         },
       ];
     }
@@ -901,6 +1079,33 @@ function enemyGainIfTheyPick(heroId, team1Ids, team2Ids, matrix) {
   return pos - neg;
 }
 
+/**
+ * How much heroId counters the given enemy picks.
+ * Returns total score + per-enemy breakdown (top 3).
+ * topOpponents[heroId] = enemies heroId beats with the highest lift above baseline.
+ */
+function counterPickScoreFor(heroId, enemyIds, heroesById, matrix) {
+  if (!matrix || !enemyIds.length) return { score: 0, vs: [] };
+  const opps = matrix.topOpponents?.[heroId] || [];
+  const enemySet = new Set(enemyIds);
+  const matched = opps
+    .filter((e) => enemySet.has(e.id))
+    .sort((a, b) => b.score - a.score);
+  const total = matched.reduce((s, e) => s + (e.score || 0), 0);
+  return {
+    score: total,
+    vs: matched.slice(0, 3).map((e) => {
+      const eh = heroesById[e.id];
+      return {
+        hero_id: e.id,
+        name: eh?.name ?? `#${e.id}`,
+        wr: Math.round((e.wr ?? 0.5) * 1000) / 10,   // e.g. 56.2
+        score: Math.round((e.score || 0) * 10) / 10,
+      };
+    }),
+  };
+}
+
 app.post("/advisor/suggest", async (req, res) => {
   try {
     const input = AdvisorInput.parse(req.body);
@@ -945,13 +1150,31 @@ app.post("/advisor/suggest", async (req, res) => {
     let dbHeroPositions = {};
     try {
       const rows = getDb()
-        .prepare(`SELECT hero_id, position, is_primary, is_flex FROM hero_positions`)
+        .prepare(`SELECT hero_id, position, tier FROM hero_positions`)
         .all();
       for (const r of rows) {
         if (!dbHeroPositions[r.hero_id]) dbHeroPositions[r.hero_id] = [];
         dbHeroPositions[r.hero_id].push(r);
       }
     } catch {}
+
+    // Hero item builds + tag infrastructure
+    const heroItemsData = getHeroItems();
+    const heroesById = Object.fromEntries(heroes.map((h) => [h.id, h]));
+
+    function teamTagCounts(team) {
+      const counts = {};
+      for (const pick of team) {
+        const h2 = heroesById[pick.hero_id];
+        const build = heroItemsData[String(pick.hero_id)]?.generic ?? [];
+        for (const tag of computeHeroTags(pick.hero_id, h2?.roles ?? [], build)) {
+          counts[tag] = (counts[tag] || 0) + 1;
+        }
+      }
+      return counts;
+    }
+    const yourTagCounts  = teamTagCounts(your);
+    const enemyTagCounts = teamTagCounts(enemy);
 
     function roleFillBonus(heroId) {
       const positions = dbHeroPositions[heroId] ?? [];
@@ -1046,24 +1269,27 @@ app.post("/advisor/suggest", async (req, res) => {
         const profile = pickBestProfileFor(h);
         const roleHint = (profile.positions || [])[0] || 2;
 
-        // likely items
-        const likely = [];
-        if ((profile.tags || []).includes("initiator")) likely.push("blink");
-        if ((profile.tags || []).includes("aura_carrier"))
-          likely.push("greaves");
-        if ((profile.tags || []).includes("pipe_aura")) likely.push("pipe");
-        if ((profile.tags || []).includes("armor_aura")) likely.push("assault");
-        if ((profile.tags || []).includes("anti_heal"))
-          likely.push("shivas_guard");
-        if ((profile.tags || []).includes("core_bkb") || roleHint <= 2)
-          likely.push("bkb");
+        // likely items — prefer real build data, fall back to profile tag inference
+        const heroBuild = heroItemsData[String(h.id)]?.generic ?? [];
+        const likelyFromBuild = heroBuild.slice(0, 10)
+          .map((name) => ITEM_KEY_MAP[name])
+          .filter(Boolean);
+        const likelyFromTags = [];
+        const ptags = profile.tags || [];
+        if (ptags.includes("initiator")  && !likelyFromBuild.includes("blink"))       likelyFromTags.push("blink");
+        if (ptags.includes("aura_carrier")&& !likelyFromBuild.includes("greaves"))    likelyFromTags.push("greaves");
+        if (ptags.includes("pipe_aura")   && !likelyFromBuild.includes("pipe"))       likelyFromTags.push("pipe");
+        if (ptags.includes("armor_aura")  && !likelyFromBuild.includes("assault"))    likelyFromTags.push("assault");
+        if (ptags.includes("anti_heal")   && !likelyFromBuild.includes("shivas_guard"))likelyFromTags.push("shivas_guard");
+        if ((ptags.includes("core_bkb") || roleHint <= 2) && !likelyFromBuild.includes("bkb")) likelyFromTags.push("bkb");
 
-        const itemsLikely = likely
+        const itemsLikely = [...new Set([...likelyFromBuild, ...likelyFromTags])]
           .filter((k) => ITEMS[k])
+          .slice(0, 8)
           .map((k) => ({
             key: k,
             label: ITEMS[k].label,
-            minute: estItemMinute(k, roleHint),
+            minute: estItemMinute(k, roleHint, h.id),
             effects: ITEMS[k].effects,
             aura: AURA_CLASSES.has(ITEMS[k].class),
           }));
@@ -1126,16 +1352,32 @@ app.post("/advisor/suggest", async (req, res) => {
           score += soon * 1.5;
         }
 
-        // context (matrix) — weight scales with draft depth so matrix dominates late
-        const ctx = contextScoreFor(h.id, team1Ids, team2Ids, matrix);
-        score += matrixWeight * ctx;
+        // synergy with our picks (matrix)
+        const synergy = sumTopK(matrix?.topAllies?.[h.id] || [], yourIds);
+        score += matrixWeight * synergy;
+
+        // counter advantage vs enemy picks — explicitly added (not subtracted)
+        const cpk = counterPickScoreFor(h.id, enemyIds, heroesById, matrix);
+        score += matrixWeight * cpk.score;
+        if (cpk.score > 0 && cpk.vs.length) {
+          reasons.push(`Counters: ${cpk.vs.slice(0, 2).map((v) => v.name).join(", ")}`);
+        }
 
         // role-fill bonus: prefer heroes that fill open positions
         const rfb = roleFillBonus(h.id);
         score += rfb;
         if (rfb > 0) {
-          const pos = (dbHeroPositions[h.id] ?? []).find((p) => p.is_primary);
+          const pos = (dbHeroPositions[h.id] ?? []).find((p) => (p.tier ?? 0) === 0);
           if (pos && neededPositions.includes(pos.position)) reasons.push(`Fills Pos ${pos.position}`);
+        }
+
+        // tag conflict penalty: penalise picks that oversaturate the team
+        const heroTags = computeHeroTags(h.id, h.roles ?? [], heroBuild);
+        for (const [tag, rule] of Object.entries(TAG_CONFLICTS)) {
+          if (heroTags.includes(tag) && (yourTagCounts[tag] || 0) >= rule.max) {
+            score -= rule.penalty;
+            reasons.push(`⚠ ${rule.label}`);
+          }
         }
 
         return {
@@ -1148,7 +1390,8 @@ app.post("/advisor/suggest", async (req, res) => {
           deltasByMinute,
           itemsLikely,
           reasons,
-          contextScore: ctx,
+          counterScore: Math.round(cpk.score * 10) / 10,
+          counterVs: cpk.vs,
           _score: score,
         };
       })
@@ -1186,21 +1429,24 @@ app.post("/advisor/suggest", async (req, res) => {
           }
         }
 
-        // their likely items
+        // their likely items — from real build data, falling back to tags
         const roleHint = (best.positions || [])[0] || 2;
-        const likely = [];
-        if ((best.tags || []).includes("initiator")) likely.push("blink");
-        if ((best.tags || []).includes("aura_carrier")) likely.push("greaves");
-        if ((best.tags || []).includes("pipe_aura")) likely.push("pipe");
-        if ((best.tags || []).includes("armor_aura")) likely.push("assault");
-        if ((best.tags || []).includes("core_bkb") || roleHint <= 2)
-          likely.push("bkb");
-        const itemsLikely = likely
+        const enemyBuild = heroItemsData[String(h.id)]?.generic ?? [];
+        const likelyFromBuild = enemyBuild.slice(0, 10).map((n) => ITEM_KEY_MAP[n]).filter(Boolean);
+        const likelyFromTags = [];
+        const btags = best.tags || [];
+        if (btags.includes("initiator")  && !likelyFromBuild.includes("blink"))       likelyFromTags.push("blink");
+        if (btags.includes("aura_carrier")&& !likelyFromBuild.includes("greaves"))    likelyFromTags.push("greaves");
+        if (btags.includes("pipe_aura")   && !likelyFromBuild.includes("pipe"))       likelyFromTags.push("pipe");
+        if (btags.includes("armor_aura")  && !likelyFromBuild.includes("assault"))    likelyFromTags.push("assault");
+        if ((btags.includes("core_bkb") || roleHint <= 2) && !likelyFromBuild.includes("bkb")) likelyFromTags.push("bkb");
+        const itemsLikely = [...new Set([...likelyFromBuild, ...likelyFromTags])]
           .filter((k) => ITEMS[k])
+          .slice(0, 8)
           .map((k) => ({
             key: k,
             label: ITEMS[k].label,
-            minute: estItemMinute(k, roleHint),
+            minute: estItemMinute(k, roleHint, h.id),
             effects: ITEMS[k].effects,
             aura: AURA_CLASSES.has(ITEMS[k].class),
           }));
@@ -1256,13 +1502,41 @@ app.post("/advisor/suggest", async (req, res) => {
       .sort((a, b) => priority.indexOf(a) - priority.indexOf(b))
       .slice(0, 3);
 
+    // Pure counter-pick ranking: scored solely by matchup advantage vs enemy picks.
+    // Only meaningful when enemy has picks and matrix is available.
+    const counterSuggestions = enemyIds.length > 0 && matrix
+      ? pool
+          .map((h) => {
+            const cpk = counterPickScoreFor(h.id, enemyIds, heroesById, matrix);
+            if (cpk.score <= 0) return null;
+            const rfb = roleFillBonus(h.id);
+            // Tiebreak: add a small role-fill bonus so two heroes with equal counter scores
+            // prefer the one that fills an open position.
+            return {
+              hero_id: h.id,
+              name: h.name,
+              icon: h.icon,
+              counterScore: Math.round(cpk.score * 10) / 10,
+              counterVs: cpk.vs,
+              roleFit: rfb > 0,
+              _sort: cpk.score + rfb * 0.1,
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => b._sort - a._sort)
+          .slice(0, 10)
+          .map(({ _sort, ...rest }) => rest)
+      : [];
+
     res.json({
       minute: now,
       coverage,
       teamNeeds,
       allySuggestions: ally,
       banSuggestions: banList,
+      counterSuggestions,
       matrixAvailable: !!matrix,
+      teamTags: { your: yourTagCounts, enemy: enemyTagCounts },
     });
   } catch (e) {
     console.error("[advisor/suggest] error", e);
@@ -1280,7 +1554,9 @@ app.post("/advisor/explain", async (req, res) => {
       return Object.values(j).map((h) => ({ id: h.id, roles: h.roles }));
     });
     const h = heroes.find((x) => x.id == hero_id);
-    const curve = defaultCurveByRole(h?.roles || []);
+    const ht = getHeroTimings()[String(hero_id)];
+    const curve = ht ? heroTimingsToCurve(ht, h?.roles || []) : defaultCurveByRole(h?.roles || []);
+    const spikes = ht ? deriveSpikes(ht) : [];
     const mins = [10, 15, 20, 25, minute || 20];
     const axes = ["fight", "pickoff", "push", "rosh", "scale"];
     const rows = mins.map((m) => {
@@ -1288,7 +1564,7 @@ app.post("/advisor/explain", async (req, res) => {
       axes.forEach((a) => (o[a] = Math.round(valAt(curve[a], m))));
       return o;
     });
-    res.json({ rows });
+    res.json({ rows, spikes, hasRealTimings: !!ht });
   } catch (e) {
     log.error(e);
     res.status(400).json({ error: String(e) });
@@ -1450,6 +1726,7 @@ app.put("/heroes/:id/items", (req, res) => {
     if (!all[heroId]) all[heroId] = {};
     all[heroId][String(body.position)] = body.items;
     writeJson(HERO_ITEMS_PATH, all);
+    __heroItems = null; // bust cache
     res.json({ ok: true });
   } catch (e) {
     res.status(400).json({ error: String(e.message) });
@@ -1483,14 +1760,21 @@ app.post("/admin/heroes/:id/fetch-items", async (req, res) => {
     const SKIP = new Set(["tango", "clarity", "faerie_fire", "enchanted_mango",
       "observer_ward", "sentry_ward", "smoke_of_deceit", "tome_of_knowledge"]);
 
-    // Aggregate mid + late game items by count
+    const phaseItems = (bucket, limit = 8) =>
+      Object.entries(bucket ?? {})
+        .map(([id, cnt]) => ({ name: idToName[id], cnt }))
+        .filter(({ name }) => name && !SKIP.has(name) && !name.startsWith("recipe"))
+        .sort((a, b) => b.cnt - a.cnt)
+        .slice(0, limit)
+        .map(({ name }) => name);
+
+    // Combined generic top-10 across phases
     const counts = {};
     for (const phase of ["early_game_items", "mid_game_items", "late_game_items"]) {
       for (const [itemId, count] of Object.entries(pop[phase] ?? {})) {
         counts[itemId] = (counts[itemId] ?? 0) + count;
       }
     }
-
     const top = Object.entries(counts)
       .map(([id, count]) => ({ name: idToName[id], count }))
       .filter(({ name }) => name && !SKIP.has(name) && !name.startsWith("recipe"))
@@ -1502,7 +1786,13 @@ app.post("/admin/heroes/:id/fetch-items", async (req, res) => {
     const key = String(heroId);
     if (!all[key]) all[key] = {};
     all[key].generic = top;
+    all[key].phases = {
+      early: phaseItems(pop.early_game_items),
+      mid:   phaseItems(pop.mid_game_items),
+      late:  phaseItems(pop.late_game_items),
+    };
     writeJson(HERO_ITEMS_PATH, all);
+    __heroItems = null;
     res.json({ ok: true, fetched: top });
   } catch (e) {
     res.status(500).json({ error: String(e.message) });
@@ -1593,6 +1883,14 @@ app.get("/admin/heroes/fetch-all-items", async (req, res) => {
           }
         }
 
+        const phaseItems = (bucket, limit = 8) =>
+          Object.entries(bucket ?? {})
+            .map(([id, cnt]) => ({ name: idToName[id], cnt }))
+            .filter(({ name }) => name && !SKIP.has(name) && !name.startsWith("recipe"))
+            .sort((a, b) => b.cnt - a.cnt)
+            .slice(0, limit)
+            .map(({ name }) => name);
+
         const top = Object.entries(counts)
           .map(([id, count]) => ({ name: idToName[id], count }))
           .filter(({ name }) => name && !SKIP.has(name) && !name.startsWith("recipe"))
@@ -1602,6 +1900,11 @@ app.get("/admin/heroes/fetch-all-items", async (req, res) => {
 
         if (!allBuilds[String(hero.id)]) allBuilds[String(hero.id)] = {};
         allBuilds[String(hero.id)].generic = top;
+        allBuilds[String(hero.id)].phases = {
+          early: phaseItems(pop.early_game_items),
+          mid:   phaseItems(pop.mid_game_items),
+          late:  phaseItems(pop.late_game_items),
+        };
         writeJson(HERO_ITEMS_PATH, allBuilds);
 
         done++; fetched++;
@@ -1624,11 +1927,7 @@ app.get("/admin/heroes/fetch-all-items", async (req, res) => {
 
 // ─── Hero desire timings ──────────────────────────────────────────────────────
 // Schema: { [heroId]: { [desireKey]: [val10, val15, val20, val25, val30] } }
-
-const HERO_TIMINGS_PATH = path.resolve(
-  path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1")),
-  "data/hero-timings.json"
-);
+// HERO_TIMINGS_PATH is defined earlier (near getHeroTimings)
 
 const DESIRE_KEYS = ["teamfight","pickoff","push","split","objective","farm","early_end","late_scale"];
 const TIMING_SCHEMA = z.record(
@@ -1655,6 +1954,7 @@ app.put("/heroes/:id/timings", (req, res) => {
     const all = readJson(HERO_TIMINGS_PATH, {});
     all[heroId] = body;
     writeJson(HERO_TIMINGS_PATH, all);
+    __heroTimings = null; // bust in-memory cache so next advisor request picks up new data
     res.json({ ok: true });
   } catch (e) {
     res.status(400).json({ error: String(e.message) });
@@ -1664,6 +1964,23 @@ app.put("/heroes/:id/timings", (req, res) => {
 // Bulk read for the draft team panel
 app.get("/heroes/timings/all", (req, res) => {
   res.json(readJson(HERO_TIMINGS_PATH, {}));
+});
+
+// Gameplay tags per hero — curated + auto-derived from build data + roles
+app.get("/heroes/tags", async (req, res) => {
+  try {
+    const heroes = await fetchHeroesLite();
+    const itemsData = getHeroItems();
+    const tags = {};
+    for (const h of heroes) {
+      const build = itemsData[String(h.id)]?.generic ?? [];
+      const heroTags = computeHeroTags(h.id, h.roles ?? [], build);
+      if (heroTags.length) tags[h.id] = heroTags;
+    }
+    res.json({ tags });
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1893,6 +2210,132 @@ function solvePositions(team) {
   return assigned;
 }
 
+// ─── Storyboard helpers ───────────────────────────────────────────────────────
+
+function heroAxesAt(pick, minute) {
+  if (!pick) return null;
+  const a = teamAxesAt([pick], minute);
+  return { fight: a.fight || 0, pickoff: a.pickoff || 0, push: a.push || 0, scale: a.scale || 0 };
+}
+
+function computeLanes(t1, pos1, t2, pos2) {
+  const heroAt = (team, positions, pos) => {
+    const i = positions.indexOf(pos);
+    return i >= 0 && i < team.length ? team[i] : null;
+  };
+
+  const result = [];
+
+  // Safe lane: T1 carry (pos 1) vs T2 offlaner (pos 3)
+  {
+    const h1 = heroAt(t1, pos1, 1);
+    const h2 = heroAt(t2, pos2, 3);
+    const incomplete = !h1 || !h2;
+    const a1 = heroAxesAt(h1, 10) ?? { fight: 25, scale: 20, push: 15 };
+    const a2 = heroAxesAt(h2, 10) ?? { fight: 25, push: 20, scale: 15 };
+    const p1 = a1.fight + a1.scale;
+    const p2 = a2.fight + a2.push;
+    const d = p1 - p2;
+    result.push({
+      lane: "Safe",
+      incomplete,
+      label: incomplete ? "TBD" : d > 12 ? "T1 favored" : d < -12 ? "T2 pressure" : "Even",
+      reasons: incomplete
+        ? [!h1 ? "T1 carry not yet picked" : "", !h2 ? "T2 offlaner not yet picked" : ""].filter(Boolean)
+        : [
+            d > 12  ? "T1 carry has early scale edge" :
+            d < -12 ? "T2 offlaner creates lane pressure" :
+                      "Safe lane is close — support play decides",
+          ],
+    });
+  }
+
+  // Mid lane: T1 pos 2 vs T2 pos 2
+  {
+    const h1 = heroAt(t1, pos1, 2);
+    const h2 = heroAt(t2, pos2, 2);
+    const incomplete = !h1 || !h2;
+    const a1 = heroAxesAt(h1, 10) ?? { fight: 25, pickoff: 25 };
+    const a2 = heroAxesAt(h2, 10) ?? { fight: 25, pickoff: 25 };
+    const p1 = a1.fight + a1.pickoff;
+    const p2 = a2.fight + a2.pickoff;
+    const d = p1 - p2;
+    result.push({
+      lane: "Mid",
+      incomplete,
+      label: incomplete ? "TBD" : d > 12 ? "T1 mid" : d < -12 ? "T2 mid" : "Contested",
+      reasons: incomplete
+        ? [!h1 ? "T1 mid not yet picked" : "", !h2 ? "T2 mid not yet picked" : ""].filter(Boolean)
+        : [
+            d > 12  ? "T1 mid hero has higher early threat" :
+            d < -12 ? "T2 mid hero wins the early lane" :
+                      "Rune control and bottle timing are key",
+          ],
+    });
+  }
+
+  // Off lane: T1 offlaner (pos 3) vs T2 carry (pos 1)
+  {
+    const h1 = heroAt(t1, pos1, 3);
+    const h2 = heroAt(t2, pos2, 1);
+    const incomplete = !h1 || !h2;
+    const a1 = heroAxesAt(h1, 10) ?? { fight: 25, push: 20 };
+    const a2 = heroAxesAt(h2, 10) ?? { fight: 25, scale: 20 };
+    const p1 = a1.fight + a1.push;
+    const p2 = a2.fight + a2.scale;
+    const d = p1 - p2;
+    result.push({
+      lane: "Off",
+      incomplete,
+      label: incomplete ? "TBD" : d > 12 ? "T1 off threat" : d < -12 ? "T2 scales free" : "Risk/Reward",
+      reasons: incomplete
+        ? [!h1 ? "T1 offlaner not yet picked" : "", !h2 ? "T2 carry not yet picked" : ""].filter(Boolean)
+        : [
+            d > 12  ? "T1 offlaner can contest T2 carry" :
+            d < -12 ? "T2 carry can farm safely and scale" :
+                      "Aggressive supports could flip this lane",
+          ],
+    });
+  }
+
+  return result;
+}
+
+function computeSpikes(t1, t2) {
+  const MINS = [10, 15, 20, 25, 30, 35];
+  const peakMinute = (team) => {
+    if (!team.length) return null;
+    let maxVal = -1, maxMin = 20;
+    for (const m of MINS) {
+      const a = teamAxesAt(team, m);
+      const v = (a.fight || 0) + (a.pickoff || 0);
+      if (v > maxVal) { maxVal = v; maxMin = m; }
+    }
+    return maxMin;
+  };
+
+  const spikes = [];
+  const t1Peak = peakMinute(t1);
+  const t2Peak = peakMinute(t2);
+
+  if (t1Peak != null) {
+    spikes.push({
+      minute: t1Peak,
+      label: t1Peak <= 15 ? "T1 early surge" : t1Peak <= 22 ? "T1 mid peak" : "T1 late peak",
+    });
+  }
+  if (t2Peak != null) {
+    spikes.push({
+      minute: t2Peak,
+      label: t2Peak <= 15 ? "T2 early surge" : t2Peak <= 22 ? "T2 mid peak" : "T2 late peak",
+    });
+  }
+
+  return spikes.sort((a, b) => a.minute - b.minute);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 app.post("/storyboard", async (req, res) => {
   try {
     const input = StoryInput.parse(req.body || {});
@@ -1930,29 +2373,15 @@ app.post("/storyboard", async (req, res) => {
       }
     }
 
-    const lanes = [
-      {
-        lane: "Safe",
-        label: "Even",
-        reasons: ["Farm secured vs mild pressure"],
-      },
-      { lane: "Mid", label: "Skill/Runes", reasons: ["Rune control matters"] },
-      {
-        lane: "Off",
-        label: "Risk",
-        reasons: ["Higher enemy kill threat early"],
-      },
-    ];
+    const lanes = computeLanes(t1, positions.team1, t2, positions.team2);
+    const spikes = computeSpikes(t1, t2);
 
     res.json({
       positions,
       composition: { team1: compTeam1, team2: compTeam2 },
       windows,
       lanes,
-      spikes: [
-        { minute: 8, label: "Roshan earliest" },
-        { minute: 20, label: "Tormentor" },
-      ],
+      spikes,
       __series: { team1: series1, team2: series2 }, // used by client TimingChart
     });
   } catch (e) {

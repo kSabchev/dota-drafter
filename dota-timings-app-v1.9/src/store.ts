@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 // types
 export type Hero = {
@@ -97,6 +98,8 @@ type State = {
   metaByRole?: MetaByRole;
   // hero positions (loaded from DB on init)
   heroPositions: Record<number, PosEntry[]>;
+  // gameplay tags per hero (curated + auto-derived, loaded from server on init)
+  heroTags: Record<number, string[]>;
   // undo history
   _history: DraftSnapshot[];
   canUndo: boolean;
@@ -113,6 +116,7 @@ type Actions = {
   clearBoard: () => void;
   pickHero: (id: number, forceTeam?: 1 | 2) => void;
   banHero: (id: number, forceTeam?: 1 | 2) => void;
+  removeBan: (heroId: number) => void;
   skipBan: () => void;
   replacePickAt: (team: 1 | 2, idx: number, heroId: number) => void;
   undo: () => void;
@@ -144,35 +148,77 @@ function _bestRole(
   const positions = heroPositions[heroId] ?? [];
   if (!positions.length) return null;
   const taken = new Set(takenRoles.filter(Boolean) as number[]);
-  // Only auto-assign main (0) or secondary (1); suboptimal/undesirable need explicit override
+  // Prefer main (tier 0), then secondary (tier 1) — only if the slot is free
   for (const tier of [0, 1]) {
     const p = positions.find((e) => e.tier === tier && !taken.has(e.position));
     if (p) return p.position;
   }
-  // Fall back to main even if already taken
-  return positions.find((e) => e.tier === 0)?.position ?? positions[0].position;
+  // All preferred roles are taken — leave unassigned rather than creating a duplicate
+  return null;
 }
 
-// Re-resolve auto-assigned roles for a team after a manual role change.
-// Manual picks are treated as reserved slots; auto picks are re-assigned greedily.
+// How well a hero fits a given position — lower score is better.
+function _roleScore(heroId: number, role: number, heroPositions: Record<number, PosEntry[]>): number {
+  const entry = (heroPositions[heroId] ?? []).find((e) => e.position === role);
+  if (!entry) return 10; // no DB data — last resort but still assignable
+  return entry.tier;     // 0=main, 1=secondary, 2=suboptimal, 3=undesirable
+}
+
+// Re-resolve auto-assigned roles for a team.
+// Step 1: manual picks are locked in as reserved.
+// Step 2: auto picks are greedily filled (tier 0/1 preferred, skip taken slots).
+// Step 3: on a full 5-hero team, any hero still null is assigned an uncovered role
+//         using an exhaustive best-fit search (min total tier score across all permutations).
 function _resolveTeamRoles(picks: Pick[], heroPositions: Record<number, PosEntry[]>): Pick[] {
-  // All manually-set roles are pre-reserved
-  const manualRoles = picks.filter((p) => p.roleManual).map((p) => p.role ?? null);
-  const taken = [...manualRoles];
-  const result: Pick[] = [];
-  for (const p of picks) {
-    if (p.roleManual) {
-      result.push(p);
-    } else {
-      const newRole = _bestRole(p.hero_id, heroPositions, taken);
-      result.push({ ...p, role: newRole });
-      if (newRole != null) taken.push(newRole);
+  const result: Pick[] = [...picks];
+
+  // Step 1 + 2: greedy pass — manual locks first, then auto-assign in order
+  const taken: (number | null)[] = result.filter((p) => p.roleManual).map((p) => p.role ?? null);
+  for (let i = 0; i < result.length; i++) {
+    if (result[i].roleManual) continue;
+    const best = _bestRole(result[i].hero_id, heroPositions, taken);
+    result[i] = { ...result[i], role: best };
+    if (best != null) taken.push(best);
+  }
+
+  // Step 3: fill remaining null roles on a complete team
+  if (result.length === 5) {
+    const covered = new Set(result.map((p) => p.role).filter((r): r is number => r != null));
+    const uncovered = [1, 2, 3, 4, 5].filter((r) => !covered.has(r));
+    const unassigned = result.map((p, i) => (p.role == null ? i : -1)).filter((i) => i >= 0);
+
+    if (uncovered.length > 0 && unassigned.length > 0) {
+      const n = Math.min(unassigned.length, uncovered.length);
+      const roles = uncovered.slice(0, n);
+
+      // Exhaustive search over all role permutations (max 5! = 120)
+      let bestTotal = Infinity;
+      let bestPerm  = roles.slice();
+
+      const permute = (rem: number[], chosen: number[]) => {
+        if (chosen.length === n) {
+          let total = 0;
+          for (let i = 0; i < n; i++)
+            total += _roleScore(result[unassigned[i]].hero_id, chosen[i], heroPositions);
+          if (total < bestTotal) { bestTotal = total; bestPerm = chosen.slice(); }
+          return;
+        }
+        for (let i = 0; i < rem.length; i++)
+          permute([...rem.slice(0, i), ...rem.slice(i + 1)], [...chosen, rem[i]]);
+      };
+      permute(roles, []);
+
+      for (let i = 0; i < n; i++)
+        result[unassigned[i]] = { ...result[unassigned[i]], role: bestPerm[i] };
     }
   }
+
   return result;
 }
 
-export const useStore = create<State & Actions>((set, get) => ({
+export const useStore = create<State & Actions>()(
+  persist(
+    (set, get) => ({
   apiBase: import.meta.env.VITE_API_BASE || "http://localhost:8787",
   heroes: [],
   profilesByHero: {},
@@ -194,15 +240,17 @@ export const useStore = create<State & Actions>((set, get) => ({
   cmSequence: null,
   cmStep: 0,
   heroPositions: {},
+  heroTags: {},
 
   async init() {
     const base = get().apiBase;
-    const [h, p, pos] = await Promise.all([
+    const [h, p, pos, tags] = await Promise.all([
       fetch(base + "/constants/heroes").then((r) => r.json()),
       fetch(base + "/presets").then((r) => r.json()),
       fetch(base + "/heroes/positions").then((r) => r.json()).catch(() => ({ positions: {} })),
+      fetch(base + "/heroes/tags").then((r) => r.json()).catch(() => ({ tags: {} })),
     ]);
-    set({ heroes: h.heroes, profilesByHero: p.profilesByHero, heroPositions: pos.positions ?? {} });
+    set({ heroes: h.heroes, profilesByHero: p.profilesByHero, heroPositions: pos.positions ?? {}, heroTags: tags.tags ?? {} });
   },
 
   async loadPositions() {
@@ -324,10 +372,12 @@ export const useStore = create<State & Actions>((set, get) => ({
     }
     const best = (s.profilesByHero[id] || [])[0] || null;
     const teamArr = team === 1 ? s.team1 : s.team2;
-    const takenRoles = teamArr.map((p) => p.role ?? null);
-    const slot = { hero_id: id, profile: best, role: _bestRole(id, s.heroPositions, takenRoles) };
-    const newTeam1 = team === 1 && s.team1.length < 5 ? [...s.team1, slot] : s.team1;
-    const newTeam2 = team === 2 && s.team2.length < 5 ? [...s.team2, slot] : s.team2;
+    if (teamArr.length >= 5) return;
+    const rawSlot = { hero_id: id, profile: best, role: null as number | null, roleManual: false };
+    const rawTeam1 = team === 1 ? [...s.team1, rawSlot] : s.team1;
+    const rawTeam2 = team === 2 ? [...s.team2, rawSlot] : s.team2;
+    const newTeam1 = team === 1 ? _resolveTeamRoles(rawTeam1, s.heroPositions) : rawTeam1;
+    const newTeam2 = team === 2 ? _resolveTeamRoles(rawTeam2, s.heroPositions) : rawTeam2;
     if (newTeam1 === s.team1 && newTeam2 === s.team2) return;
     const newCmStep = s.draftMode === "cm" ? s.cmStep + 1 : s.cmStep;
     const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
@@ -363,6 +413,12 @@ export const useStore = create<State & Actions>((set, get) => ({
     set({ bans: [...s.bans, { hero_id: id, team }], _history: history, canUndo: true, cmStep: newCmStep, activeTeam: nextActive });
   },
 
+  removeBan(heroId: number) {
+    const s = get();
+    const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
+    set({ bans: s.bans.filter((b) => b.hero_id !== heroId), _history: history, canUndo: true });
+  },
+
   skipBan() {
     const s = get();
     if (s.draftMode !== "cm" || !s.cmSequence) return;
@@ -384,9 +440,12 @@ export const useStore = create<State & Actions>((set, get) => ({
     if (s.bans.some((b) => b.hero_id === heroId)) return;
     if (teamArr.some((p, i) => p.hero_id === heroId && i !== idx)) return;
     const best = (s.profilesByHero[heroId] || [])[0] || null;
-    const takenRoles = teamArr.filter((_, i) => i !== idx).map((p) => p.role ?? null);
-    const slot = { hero_id: heroId, profile: best, role: _bestRole(heroId, s.heroPositions, takenRoles) };
-    const newArr = teamArr.map((p, i) => (i === idx ? slot : p));
+    const rawArr = teamArr.map((p, i) =>
+      i === idx
+        ? { hero_id: heroId, profile: best, role: null as number | null, roleManual: false }
+        : p
+    );
+    const newArr = _resolveTeamRoles(rawArr, s.heroPositions);
     const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
     set(team === 1
       ? { team1: newArr, _history: history, canUndo: true }
@@ -444,11 +503,19 @@ export const useStore = create<State & Actions>((set, get) => ({
     const key = team === 1 ? "team1" : "team2";
     const arr = [...(get() as any)[key]] as Pick[];
     if (!arr[idx]) return;
-    // pos=0 means clear: becomes auto-assigned again
-    arr[idx] = pos > 0
-      ? { ...arr[idx], role: pos, roleManual: true }
-      : { ...arr[idx], role: null, roleManual: false };
-    // Re-resolve all auto picks so they adapt to the new constraint
+    if (pos > 0) {
+      // Clear this position from any other hero on the team so there's always max 1 per role
+      for (let i = 0; i < arr.length; i++) {
+        if (i !== idx && arr[i].role === pos) {
+          arr[i] = { ...arr[i], role: null, roleManual: false };
+        }
+      }
+      arr[idx] = { ...arr[idx], role: pos, roleManual: true };
+    } else {
+      // pos=0 → return to auto-assignment
+      arr[idx] = { ...arr[idx], role: null, roleManual: false };
+    }
+    // Re-resolve all auto picks so they fill remaining free slots
     const resolved = _resolveTeamRoles(arr, get().heroPositions);
     set({ [key]: resolved } as any);
   },
@@ -571,4 +638,21 @@ export const useStore = create<State & Actions>((set, get) => ({
     }));
     set({ team1: t1, team2: t2 });
   },
-}));
+    }),
+    {
+      name: "dota-draft",
+      storage: createJSONStorage(() => localStorage),
+      // Only persist the live draft state — everything else is fetched from the server on init
+      partialize: (s) => ({
+        team1: s.team1,
+        team2: s.team2,
+        bans: s.bans,
+        minute: s.minute,
+        draftMode: s.draftMode,
+        activeTeam: s.activeTeam,
+        cmStep: s.cmStep,
+        cmSequence: s.cmSequence,
+      }),
+    }
+  )
+);

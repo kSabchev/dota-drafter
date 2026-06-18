@@ -208,5 +208,4926 @@
       "manta",
       "diadem"
     ]
+  },
+  "16": {
+    "generic": [
+      "ogre_axe",
+      "boots",
+      "blink",
+      "staff_of_wizardry",
+      "ultimate_scepter",
+      "point_booster",
+      "blade_of_alacrity",
+      "phase_boots",
+      "bottle",
+      "chainmail"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bottle",
+        "chainmail",
+        "phase_boots",
+        "bracer",
+        "power_treads",
+        "null_talisman",
+        "blink"
+      ],
+      "mid": [
+        "ogre_axe",
+        "staff_of_wizardry",
+        "blink",
+        "point_booster",
+        "blade_of_alacrity",
+        "ultimate_scepter",
+        "mithril_hammer",
+        "aghanims_shard"
+      ],
+      "late": [
+        "black_king_bar",
+        "lesser_crit",
+        "demon_edge",
+        "greater_crit",
+        "shivas_guard",
+        "soul_booster",
+        "ultimate_scepter",
+        "bloodstone"
+      ]
+    }
+  },
+  "17": {
+    "generic": [
+      "ogre_axe",
+      "boots",
+      "bottle",
+      "kaya",
+      "staff_of_wizardry",
+      "power_treads",
+      "sange",
+      "kaya_and_sange",
+      "soul_ring",
+      "witch_blade"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bottle",
+        "soul_ring",
+        "power_treads",
+        "staff_of_wizardry",
+        "null_talisman",
+        "arcane_boots",
+        "kaya"
+      ],
+      "mid": [
+        "ogre_axe",
+        "kaya",
+        "staff_of_wizardry",
+        "sange",
+        "kaya_and_sange",
+        "blitz_knuckles",
+        "oblivion_staff",
+        "witch_blade"
+      ],
+      "late": [
+        "mystic_staff",
+        "devastator",
+        "black_king_bar",
+        "witch_blade",
+        "ultimate_scepter",
+        "sange",
+        "kaya_and_sange",
+        "sphere"
+      ]
+    }
+  },
+  "18": {
+    "generic": [
+      "broadsword",
+      "ogre_axe",
+      "boots",
+      "power_treads",
+      "mask_of_madness",
+      "echo_sabre",
+      "blink",
+      "lifesteal",
+      "demon_edge",
+      "lesser_crit"
+    ]
+  },
+  "19": {
+    "generic": [
+      "ogre_axe",
+      "demon_edge",
+      "claymore",
+      "boots",
+      "power_treads",
+      "echo_sabre",
+      "broadsword",
+      "invis_sword",
+      "blitz_knuckles",
+      "blink"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "ogre_axe",
+        "broadsword",
+        "void_stone",
+        "wraith_band",
+        "soul_ring",
+        "echo_sabre"
+      ],
+      "mid": [
+        "claymore",
+        "echo_sabre",
+        "blitz_knuckles",
+        "invis_sword",
+        "ogre_axe",
+        "blink",
+        "broadsword",
+        "demon_edge"
+      ],
+      "late": [
+        "demon_edge",
+        "greater_crit",
+        "harpoon",
+        "lesser_crit",
+        "hyperstone",
+        "silver_edge",
+        "black_king_bar",
+        "eagle"
+      ]
+    }
+  },
+  "20": {
+    "generic": [
+      "blade_of_alacrity",
+      "boots",
+      "ultimate_scepter",
+      "staff_of_wizardry",
+      "power_treads",
+      "broadsword",
+      "ogre_axe",
+      "specialists_array",
+      "point_booster",
+      "tranquil_boots"
+    ]
+  },
+  "21": {
+    "generic": [
+      "boots",
+      "mithril_hammer",
+      "power_treads",
+      "blade_of_alacrity",
+      "maelstrom",
+      "black_king_bar",
+      "bracer",
+      "ogre_axe",
+      "null_talisman",
+      "hyperstone"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "bracer",
+        "null_talisman",
+        "javelin",
+        "urn_of_shadows",
+        "blade_of_alacrity",
+        "bottle"
+      ],
+      "mid": [
+        "mithril_hammer",
+        "blade_of_alacrity",
+        "maelstrom",
+        "ogre_axe",
+        "hyperstone",
+        "mjollnir",
+        "dragon_lance",
+        "black_king_bar"
+      ],
+      "late": [
+        "demon_edge",
+        "lesser_crit",
+        "force_staff",
+        "greater_crit",
+        "blink",
+        "black_king_bar",
+        "reaver",
+        "satanic"
+      ]
+    }
+  },
+  "22": {
+    "generic": [
+      "staff_of_wizardry",
+      "arcane_boots",
+      "boots",
+      "kaya",
+      "ogre_axe",
+      "point_booster",
+      "ultimate_scepter",
+      "blade_of_alacrity",
+      "aghanims_shard",
+      "null_talisman"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "null_talisman",
+        "bottle",
+        "staff_of_wizardry",
+        "kaya",
+        "ring_of_health",
+        "void_stone"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "ogre_axe",
+        "point_booster",
+        "arcane_boots",
+        "kaya",
+        "blade_of_alacrity",
+        "ultimate_scepter",
+        "aghanims_shard"
+      ],
+      "late": [
+        "refresher",
+        "ultimate_scepter",
+        "relic",
+        "demon_edge",
+        "rapier",
+        "kaya",
+        "yasha",
+        "yasha_and_kaya"
+      ]
+    }
+  },
+  "23": {
+    "generic": [
+      "bracer",
+      "boots",
+      "phase_boots",
+      "chainmail",
+      "ogre_axe",
+      "ultimate_scepter",
+      "demon_edge",
+      "claymore",
+      "point_booster",
+      "blade_of_alacrity"
+    ],
+    "phases": {
+      "early": [
+        "bracer",
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "broadsword",
+        "bottle",
+        "helm_of_iron_will",
+        "ogre_axe"
+      ],
+      "mid": [
+        "ogre_axe",
+        "point_booster",
+        "blade_of_alacrity",
+        "claymore",
+        "staff_of_wizardry",
+        "ultimate_scepter",
+        "aghanims_shard",
+        "talisman_of_evasion"
+      ],
+      "late": [
+        "demon_edge",
+        "ultimate_scepter",
+        "greater_crit",
+        "black_king_bar",
+        "shivas_guard",
+        "lesser_crit",
+        "silver_edge",
+        "hyperstone"
+      ]
+    }
+  },
+  "25": {
+    "generic": [
+      "staff_of_wizardry",
+      "blade_of_alacrity",
+      "null_talisman",
+      "boots",
+      "travel_boots",
+      "kaya",
+      "ogre_axe",
+      "yasha",
+      "ultimate_scepter",
+      "yasha_and_kaya"
+    ],
+    "phases": {
+      "early": [
+        "null_talisman",
+        "boots",
+        "staff_of_wizardry",
+        "kaya",
+        "bottle",
+        "travel_boots",
+        "javelin",
+        "mithril_hammer"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "staff_of_wizardry",
+        "ogre_axe",
+        "travel_boots",
+        "point_booster",
+        "ultimate_scepter",
+        "yasha",
+        "yasha_and_kaya"
+      ],
+      "late": [
+        "ultimate_orb",
+        "blink",
+        "ethereal_blade",
+        "black_king_bar",
+        "demon_edge",
+        "satanic",
+        "reaver",
+        "yasha"
+      ]
+    }
+  },
+  "26": {
+    "generic": [
+      "blink",
+      "tranquil_boots",
+      "boots",
+      "glimmer_cape",
+      "aether_lens",
+      "force_staff",
+      "invis_sword",
+      "staff_of_wizardry",
+      "ghost",
+      "aeon_disk"
+    ],
+    "phases": {
+      "early": [
+        "tranquil_boots",
+        "boots",
+        "bracer",
+        "hand_of_midas",
+        "null_talisman"
+      ],
+      "mid": [
+        "blink",
+        "staff_of_wizardry",
+        "ghost",
+        "blitz_knuckles",
+        "glimmer_cape",
+        "claymore",
+        "force_staff",
+        "invis_sword"
+      ],
+      "late": [
+        "aether_lens",
+        "glimmer_cape",
+        "invis_sword",
+        "force_staff",
+        "aeon_disk",
+        "ultimate_scepter",
+        "cyclone",
+        "black_king_bar"
+      ]
+    }
+  },
+  "27": {
+    "generic": [
+      "boots",
+      "blink",
+      "arcane_boots",
+      "aether_lens",
+      "glimmer_cape",
+      "tranquil_boots",
+      "aghanims_shard",
+      "force_staff",
+      "staff_of_wizardry",
+      "cyclone"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "arcane_boots",
+        "void_stone",
+        "energy_booster",
+        "null_talisman",
+        "bracer"
+      ],
+      "mid": [
+        "blink",
+        "arcane_boots",
+        "aether_lens",
+        "glimmer_cape",
+        "aghanims_shard",
+        "staff_of_wizardry",
+        "ogre_axe",
+        "point_booster"
+      ],
+      "late": [
+        "glimmer_cape",
+        "aether_lens",
+        "blink",
+        "force_staff",
+        "black_king_bar",
+        "cyclone",
+        "ultimate_scepter",
+        "refresher"
+      ]
+    }
+  },
+  "28": {
+    "generic": [
+      "blink",
+      "boots",
+      "ogre_axe",
+      "power_treads",
+      "aghanims_shard",
+      "bracer",
+      "black_king_bar",
+      "mithril_hammer",
+      "ultimate_scepter",
+      "echo_sabre"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "bracer",
+        "bottle",
+        "soul_ring",
+        "broadsword",
+        "chainmail",
+        "ogre_axe"
+      ],
+      "mid": [
+        "blink",
+        "ogre_axe",
+        "aghanims_shard",
+        "mithril_hammer",
+        "black_king_bar",
+        "broadsword",
+        "echo_sabre",
+        "claymore"
+      ],
+      "late": [
+        "black_king_bar",
+        "ultimate_scepter",
+        "hyperstone",
+        "assault",
+        "relic",
+        "nullifier",
+        "echo_sabre",
+        "harpoon"
+      ]
+    }
+  },
+  "29": {
+    "generic": [
+      "phase_boots",
+      "boots",
+      "chainmail",
+      "blink",
+      "bracer",
+      "soul_ring",
+      "ultimate_scepter",
+      "ogre_axe",
+      "staff_of_wizardry",
+      "point_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "bracer",
+        "soul_ring",
+        "ring_of_health",
+        "void_stone",
+        "lifesteal"
+      ],
+      "mid": [
+        "blink",
+        "ogre_axe",
+        "staff_of_wizardry",
+        "point_booster",
+        "aghanims_shard",
+        "blade_of_alacrity",
+        "ultimate_scepter",
+        "mage_slayer"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "shivas_guard",
+        "blink",
+        "black_king_bar",
+        "refresher",
+        "soul_booster",
+        "octarine_core",
+        "reaver"
+      ]
+    }
+  },
+  "30": {
+    "generic": [
+      "arcane_boots",
+      "boots",
+      "glimmer_cape",
+      "aghanims_shard",
+      "blink",
+      "ultimate_scepter",
+      "staff_of_wizardry",
+      "urn_of_shadows",
+      "force_staff",
+      "solar_crest"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "urn_of_shadows",
+        "chainmail",
+        "void_stone",
+        "null_talisman",
+        "soul_ring",
+        "tranquil_boots"
+      ],
+      "mid": [
+        "arcane_boots",
+        "glimmer_cape",
+        "aghanims_shard",
+        "staff_of_wizardry",
+        "pavise",
+        "blink",
+        "diadem",
+        "solar_crest"
+      ],
+      "late": [
+        "blink",
+        "glimmer_cape",
+        "ultimate_scepter",
+        "force_staff",
+        "aeon_disk",
+        "solar_crest",
+        "guardian_greaves",
+        "aether_lens"
+      ]
+    }
+  },
+  "31": {
+    "generic": [
+      "boots",
+      "tranquil_boots",
+      "blink",
+      "glimmer_cape",
+      "aghanims_shard",
+      "ultimate_scepter",
+      "force_staff",
+      "staff_of_wizardry",
+      "solar_crest",
+      "pavise"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "soul_ring"
+      ],
+      "mid": [
+        "glimmer_cape",
+        "aghanims_shard",
+        "blink",
+        "staff_of_wizardry",
+        "pavise",
+        "force_staff",
+        "solar_crest",
+        "point_booster"
+      ],
+      "late": [
+        "blink",
+        "ultimate_scepter",
+        "glimmer_cape",
+        "force_staff",
+        "solar_crest",
+        "black_king_bar",
+        "aether_lens",
+        "aeon_disk"
+      ]
+    }
+  },
+  "32": {
+    "generic": [
+      "blade_of_alacrity",
+      "power_treads",
+      "diffusal_blade",
+      "boots",
+      "yasha",
+      "diadem",
+      "manta",
+      "wraith_band",
+      "eagle",
+      "pers"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "wraith_band",
+        "blade_of_alacrity",
+        "orb_of_corrosion",
+        "ring_of_health",
+        "void_stone",
+        "pers"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "diffusal_blade",
+        "yasha",
+        "diadem",
+        "manta",
+        "power_treads",
+        "ogre_axe",
+        "point_booster"
+      ],
+      "late": [
+        "eagle",
+        "manta",
+        "disperser",
+        "basher",
+        "ultimate_orb",
+        "black_king_bar",
+        "lesser_crit",
+        "yasha"
+      ]
+    }
+  },
+  "33": {
+    "generic": [
+      "blink",
+      "boots",
+      "ancient_janggo",
+      "black_king_bar",
+      "tranquil_boots",
+      "ogre_axe",
+      "mithril_hammer",
+      "aghanims_shard",
+      "ultimate_scepter",
+      "ring_of_tarrasque"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "ancient_janggo",
+        "helm_of_iron_will",
+        "null_talisman",
+        "helm_of_the_dominator",
+        "bracer",
+        "soul_ring"
+      ],
+      "mid": [
+        "blink",
+        "ogre_axe",
+        "mithril_hammer",
+        "aghanims_shard",
+        "ring_of_tarrasque",
+        "black_king_bar",
+        "boots_of_bearing",
+        "ancient_janggo"
+      ],
+      "late": [
+        "black_king_bar",
+        "ultimate_scepter",
+        "refresher",
+        "soul_booster",
+        "octarine_core",
+        "shivas_guard",
+        "travel_boots",
+        "sphere"
+      ]
+    }
+  },
+  "34": {
+    "generic": [
+      "staff_of_wizardry",
+      "ogre_axe",
+      "kaya",
+      "bottle",
+      "blink",
+      "point_booster",
+      "ultimate_scepter",
+      "blade_of_alacrity",
+      "sange",
+      "kaya_and_sange"
+    ],
+    "phases": {
+      "early": [
+        "bottle",
+        "staff_of_wizardry",
+        "kaya",
+        "blink",
+        "null_talisman",
+        "ogre_axe",
+        "boots",
+        "power_treads"
+      ],
+      "mid": [
+        "ogre_axe",
+        "point_booster",
+        "staff_of_wizardry",
+        "blade_of_alacrity",
+        "blink",
+        "ultimate_scepter",
+        "sange",
+        "kaya_and_sange"
+      ],
+      "late": [
+        "mystic_staff",
+        "shivas_guard",
+        "sange",
+        "aether_lens",
+        "kaya_and_sange",
+        "dagon",
+        "black_king_bar",
+        "dagon_2"
+      ]
+    }
+  },
+  "35": {
+    "generic": [
+      "blade_of_alacrity",
+      "wraith_band",
+      "boots",
+      "power_treads",
+      "dragon_lance",
+      "mithril_hammer",
+      "broadsword",
+      "maelstrom",
+      "staff_of_wizardry",
+      "demon_edge"
+    ],
+    "phases": {
+      "early": [
+        "wraith_band",
+        "boots",
+        "power_treads",
+        "javelin",
+        "lifesteal",
+        "broadsword",
+        "blade_of_alacrity",
+        "mithril_hammer"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "dragon_lance",
+        "mithril_hammer",
+        "staff_of_wizardry",
+        "maelstrom",
+        "claymore",
+        "broadsword",
+        "hyperstone"
+      ],
+      "late": [
+        "demon_edge",
+        "black_king_bar",
+        "lesser_crit",
+        "greater_crit",
+        "silver_edge",
+        "force_staff",
+        "hurricane_pike",
+        "blink"
+      ]
+    }
+  },
+  "36": {
+    "generic": [
+      "boots",
+      "talisman_of_evasion",
+      "relic",
+      "radiance",
+      "aghanims_shard",
+      "travel_boots",
+      "reaver",
+      "heart",
+      "consecrated_wraps",
+      "vitality_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bracer",
+        "null_talisman",
+        "talisman_of_evasion",
+        "relic",
+        "chainmail",
+        "phase_boots",
+        "travel_boots"
+      ],
+      "mid": [
+        "radiance",
+        "aghanims_shard",
+        "talisman_of_evasion",
+        "travel_boots",
+        "relic",
+        "vitality_booster",
+        "consecrated_wraps",
+        "ogre_axe"
+      ],
+      "late": [
+        "heart",
+        "reaver",
+        "ultimate_scepter",
+        "shivas_guard",
+        "travel_boots_2",
+        "ultimate_scepter_2",
+        "black_king_bar",
+        "sange"
+      ]
+    }
+  },
+  "37": {
+    "generic": [
+      "arcane_boots",
+      "boots",
+      "glimmer_cape",
+      "aghanims_shard",
+      "staff_of_wizardry",
+      "ultimate_scepter",
+      "force_staff",
+      "point_booster",
+      "hand_of_midas",
+      "pavise"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "shadow_amulet"
+      ],
+      "mid": [
+        "glimmer_cape",
+        "arcane_boots",
+        "aghanims_shard",
+        "staff_of_wizardry",
+        "point_booster",
+        "hand_of_midas",
+        "pavise",
+        "ghost"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "force_staff",
+        "glimmer_cape",
+        "refresher",
+        "blink",
+        "lotus_orb",
+        "aeon_disk",
+        "guardian_greaves"
+      ]
+    }
+  },
+  "38": {
+    "generic": [
+      "ogre_axe",
+      "blink",
+      "boots",
+      "ultimate_orb",
+      "black_king_bar",
+      "helm_of_the_dominator",
+      "helm_of_iron_will",
+      "helm_of_the_overlord",
+      "blade_of_alacrity",
+      "ultimate_scepter"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "helm_of_iron_will",
+        "helm_of_the_dominator",
+        "arcane_boots",
+        "ogre_axe",
+        "power_treads",
+        "null_talisman",
+        "bottle"
+      ],
+      "mid": [
+        "ogre_axe",
+        "blink",
+        "ultimate_orb",
+        "helm_of_the_overlord",
+        "blade_of_alacrity",
+        "ultimate_scepter",
+        "mithril_hammer",
+        "staff_of_wizardry"
+      ],
+      "late": [
+        "black_king_bar",
+        "blink",
+        "assault",
+        "hyperstone",
+        "mystic_staff",
+        "sheepstick",
+        "travel_boots",
+        "ultimate_scepter_2"
+      ]
+    }
+  },
+  "39": {
+    "generic": [
+      "staff_of_wizardry",
+      "ogre_axe",
+      "boots",
+      "power_treads",
+      "kaya",
+      "bottle",
+      "point_booster",
+      "ultimate_scepter",
+      "sange",
+      "kaya_and_sange"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bottle",
+        "power_treads",
+        "null_talisman",
+        "staff_of_wizardry",
+        "soul_ring",
+        "kaya",
+        "voodoo_mask"
+      ],
+      "mid": [
+        "ogre_axe",
+        "staff_of_wizardry",
+        "point_booster",
+        "kaya",
+        "blade_of_alacrity",
+        "ultimate_scepter",
+        "sange",
+        "kaya_and_sange"
+      ],
+      "late": [
+        "soul_booster",
+        "shivas_guard",
+        "black_king_bar",
+        "bloodstone",
+        "sange",
+        "kaya_and_sange",
+        "octarine_core",
+        "ultimate_scepter"
+      ]
+    }
+  },
+  "40": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "staff_of_wizardry",
+      "force_staff",
+      "spirit_vessel",
+      "diadem",
+      "urn_of_shadows",
+      "guardian_greaves",
+      "glimmer_cape",
+      "mekansm"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "urn_of_shadows",
+        "arcane_boots",
+        "tranquil_boots",
+        "power_treads",
+        "chainmail",
+        "bracer",
+        "null_talisman"
+      ],
+      "mid": [
+        "arcane_boots",
+        "staff_of_wizardry",
+        "spirit_vessel",
+        "diadem",
+        "mekansm",
+        "guardian_greaves",
+        "pavise",
+        "glimmer_cape"
+      ],
+      "late": [
+        "force_staff",
+        "ultimate_scepter",
+        "blink",
+        "pipe",
+        "solar_crest",
+        "mystic_staff",
+        "lotus_orb",
+        "glimmer_cape"
+      ]
+    }
+  },
+  "41": {
+    "generic": [
+      "broadsword",
+      "blade_of_alacrity",
+      "power_treads",
+      "boots",
+      "yasha",
+      "pers",
+      "bfury",
+      "ring_of_health",
+      "manta",
+      "diadem"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "ring_of_health",
+        "broadsword",
+        "wraith_band",
+        "lifesteal",
+        "void_stone",
+        "pers"
+      ],
+      "mid": [
+        "broadsword",
+        "blade_of_alacrity",
+        "bfury",
+        "yasha",
+        "diadem",
+        "pers",
+        "manta",
+        "ogre_axe"
+      ],
+      "late": [
+        "ultimate_orb",
+        "ultimate_scepter",
+        "black_king_bar",
+        "demon_edge",
+        "eagle",
+        "sphere",
+        "butterfly",
+        "hyperstone"
+      ]
+    }
+  },
+  "42": {
+    "generic": [
+      "boots",
+      "phase_boots",
+      "chainmail",
+      "blink",
+      "relic",
+      "bracer",
+      "talisman_of_evasion",
+      "radiance",
+      "mithril_hammer",
+      "armlet"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "bracer",
+        "helm_of_iron_will",
+        "power_treads",
+        "soul_ring",
+        "armlet"
+      ],
+      "mid": [
+        "talisman_of_evasion",
+        "radiance",
+        "relic",
+        "mithril_hammer",
+        "blink",
+        "armlet",
+        "blitz_knuckles",
+        "aghanims_shard"
+      ],
+      "late": [
+        "blink",
+        "hyperstone",
+        "black_king_bar",
+        "assault",
+        "bloodthorn",
+        "demon_edge",
+        "orchid",
+        "ultimate_scepter"
+      ]
+    }
+  },
+  "43": {
+    "generic": [
+      "staff_of_wizardry",
+      "boots",
+      "ogre_axe",
+      "null_talisman",
+      "power_treads",
+      "bottle",
+      "vitality_booster",
+      "black_king_bar",
+      "kaya",
+      "ultimate_scepter"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "null_talisman",
+        "bottle",
+        "power_treads",
+        "staff_of_wizardry",
+        "chainmail",
+        "phase_boots",
+        "bracer"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "ogre_axe",
+        "vitality_booster",
+        "blade_of_alacrity",
+        "kaya",
+        "cyclone",
+        "consecrated_wraps",
+        "mithril_hammer"
+      ],
+      "late": [
+        "black_king_bar",
+        "shivas_guard",
+        "blink",
+        "soul_booster",
+        "mystic_staff",
+        "kaya_and_sange",
+        "ultimate_scepter",
+        "sange"
+      ]
+    }
+  },
+  "44": {
+    "generic": [
+      "mithril_hammer",
+      "broadsword",
+      "power_treads",
+      "pers",
+      "bfury",
+      "boots",
+      "ring_of_health",
+      "desolator",
+      "void_stone",
+      "black_king_bar"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "ring_of_health",
+        "power_treads",
+        "broadsword",
+        "void_stone",
+        "pers",
+        "wraith_band",
+        "bracer"
+      ],
+      "mid": [
+        "mithril_hammer",
+        "broadsword",
+        "bfury",
+        "desolator",
+        "pers",
+        "ogre_axe",
+        "black_king_bar",
+        "blade_of_alacrity"
+      ],
+      "late": [
+        "basher",
+        "reaver",
+        "satanic",
+        "black_king_bar",
+        "sange",
+        "abyssal_blade",
+        "desolator",
+        "relic"
+      ]
+    }
+  },
+  "45": {
+    "generic": [
+      "arcane_boots",
+      "boots",
+      "glimmer_cape",
+      "aether_lens",
+      "null_talisman",
+      "staff_of_wizardry",
+      "force_staff",
+      "kaya",
+      "blink",
+      "ogre_axe"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "null_talisman",
+        "staff_of_wizardry",
+        "bottle",
+        "kaya",
+        "void_stone",
+        "tranquil_boots"
+      ],
+      "mid": [
+        "arcane_boots",
+        "glimmer_cape",
+        "aether_lens",
+        "staff_of_wizardry",
+        "kaya",
+        "ogre_axe",
+        "point_booster",
+        "aghanims_shard"
+      ],
+      "late": [
+        "aether_lens",
+        "force_staff",
+        "glimmer_cape",
+        "blink",
+        "aeon_disk",
+        "cyclone",
+        "ultimate_scepter",
+        "solar_crest"
+      ]
+    }
+  },
+  "46": {
+    "generic": [
+      "mithril_hammer",
+      "power_treads",
+      "boots",
+      "desolator",
+      "blink",
+      "demon_edge",
+      "blade_of_alacrity",
+      "dragon_lance",
+      "lesser_crit",
+      "claymore"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "falcon_blade",
+        "mithril_hammer",
+        "wraith_band",
+        "blade_of_alacrity",
+        "null_talisman",
+        "bottle"
+      ],
+      "mid": [
+        "mithril_hammer",
+        "desolator",
+        "blink",
+        "dragon_lance",
+        "blade_of_alacrity",
+        "claymore",
+        "lesser_crit",
+        "demon_edge"
+      ],
+      "late": [
+        "demon_edge",
+        "greater_crit",
+        "eagle",
+        "lesser_crit",
+        "force_staff",
+        "hurricane_pike",
+        "swift_blink",
+        "black_king_bar"
+      ]
+    }
+  },
+  "47": {
+    "generic": [
+      "blade_of_alacrity",
+      "boots",
+      "staff_of_wizardry",
+      "force_staff",
+      "dragon_lance",
+      "hurricane_pike",
+      "power_treads",
+      "wraith_band",
+      "bracer",
+      "yasha"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "wraith_band",
+        "power_treads",
+        "bracer",
+        "null_talisman",
+        "ring_of_health",
+        "blade_of_alacrity",
+        "void_stone"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "staff_of_wizardry",
+        "dragon_lance",
+        "force_staff",
+        "hurricane_pike",
+        "yasha",
+        "diadem",
+        "mage_slayer"
+      ],
+      "late": [
+        "black_king_bar",
+        "ultimate_orb",
+        "manta",
+        "hurricane_pike",
+        "force_staff",
+        "ultimate_scepter",
+        "eagle",
+        "butterfly"
+      ]
+    }
+  },
+  "48": {
+    "generic": [
+      "blade_of_alacrity",
+      "broadsword",
+      "boots",
+      "power_treads",
+      "mask_of_madness",
+      "yasha",
+      "diadem",
+      "manta",
+      "lifesteal",
+      "eagle"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "lifesteal",
+        "broadsword",
+        "mask_of_madness",
+        "wraith_band",
+        "blade_of_alacrity",
+        "dragon_lance"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "yasha",
+        "diadem",
+        "manta",
+        "mask_of_madness",
+        "dragon_lance",
+        "broadsword",
+        "claymore"
+      ],
+      "late": [
+        "butterfly",
+        "eagle",
+        "black_king_bar",
+        "reaver",
+        "satanic",
+        "hurricane_pike",
+        "force_staff",
+        "demon_edge"
+      ]
+    }
+  },
+  "49": {
+    "generic": [
+      "boots",
+      "power_treads",
+      "bracer",
+      "blink",
+      "claymore",
+      "broadsword",
+      "lesser_crit",
+      "demon_edge",
+      "mask_of_madness",
+      "mithril_hammer"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "bracer",
+        "lifesteal",
+        "broadsword",
+        "helm_of_iron_will",
+        "soul_ring",
+        "javelin"
+      ],
+      "mid": [
+        "claymore",
+        "blink",
+        "mithril_hammer",
+        "mask_of_madness",
+        "lesser_crit",
+        "broadsword",
+        "hyperstone",
+        "maelstrom"
+      ],
+      "late": [
+        "demon_edge",
+        "greater_crit",
+        "black_king_bar",
+        "lesser_crit",
+        "hyperstone",
+        "reaver",
+        "monkey_king_bar",
+        "blink"
+      ]
+    }
+  },
+  "50": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "holy_locket",
+      "glimmer_cape",
+      "guardian_greaves",
+      "mekansm",
+      "blink",
+      "staff_of_wizardry",
+      "force_staff",
+      "solar_crest"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "soul_ring",
+        "bracer",
+        "ogre_axe",
+        "power_treads",
+        "null_talisman",
+        "bottle"
+      ],
+      "mid": [
+        "arcane_boots",
+        "holy_locket",
+        "mekansm",
+        "glimmer_cape",
+        "staff_of_wizardry",
+        "guardian_greaves",
+        "aghanims_shard",
+        "pavise"
+      ],
+      "late": [
+        "guardian_greaves",
+        "blink",
+        "glimmer_cape",
+        "aether_lens",
+        "holy_locket",
+        "force_staff",
+        "solar_crest",
+        "travel_boots"
+      ]
+    }
+  },
+  "51": {
+    "generic": [
+      "boots",
+      "tranquil_boots",
+      "blink",
+      "staff_of_wizardry",
+      "cyclone",
+      "force_staff",
+      "essence_distiller",
+      "glimmer_cape",
+      "chainmail",
+      "urn_of_shadows"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "chainmail",
+        "urn_of_shadows",
+        "bracer",
+        "phase_boots",
+        "soul_ring",
+        "talisman_of_evasion"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "essence_distiller",
+        "blink",
+        "cyclone",
+        "force_staff",
+        "aghanims_shard",
+        "glimmer_cape",
+        "blitz_knuckles"
+      ],
+      "late": [
+        "force_staff",
+        "blink",
+        "cyclone",
+        "mystic_staff",
+        "orchid",
+        "vladmir",
+        "blade_mail",
+        "glimmer_cape"
+      ]
+    }
+  },
+  "52": {
+    "generic": [
+      "staff_of_wizardry",
+      "boots",
+      "kaya",
+      "arcane_boots",
+      "blink",
+      "bottle",
+      "ogre_axe",
+      "soul_booster",
+      "sange",
+      "kaya_and_sange"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "bottle",
+        "staff_of_wizardry",
+        "null_talisman",
+        "kaya",
+        "blink",
+        "travel_boots"
+      ],
+      "mid": [
+        "kaya",
+        "staff_of_wizardry",
+        "blink",
+        "ogre_axe",
+        "veil_of_discord",
+        "vitality_booster",
+        "sange",
+        "kaya_and_sange"
+      ],
+      "late": [
+        "black_king_bar",
+        "soul_booster",
+        "shivas_guard",
+        "bloodstone",
+        "sange",
+        "kaya_and_sange",
+        "mystic_staff",
+        "yasha"
+      ]
+    }
+  },
+  "53": {
+    "generic": [
+      "blade_of_alacrity",
+      "mithril_hammer",
+      "hyperstone",
+      "power_treads",
+      "boots",
+      "maelstrom",
+      "mjollnir",
+      "dragon_lance",
+      "force_staff",
+      "demon_edge"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "javelin",
+        "urn_of_shadows",
+        "mithril_hammer",
+        "diadem",
+        "spirit_vessel",
+        "null_talisman"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "mithril_hammer",
+        "hyperstone",
+        "maelstrom",
+        "dragon_lance",
+        "mjollnir",
+        "claymore",
+        "staff_of_wizardry"
+      ],
+      "late": [
+        "demon_edge",
+        "hyperstone",
+        "force_staff",
+        "lesser_crit",
+        "greater_crit",
+        "hurricane_pike",
+        "black_king_bar",
+        "reaver"
+      ]
+    }
+  },
+  "54": {
+    "generic": [
+      "boots",
+      "chainmail",
+      "phase_boots",
+      "relic",
+      "talisman_of_evasion",
+      "radiance",
+      "blade_of_alacrity",
+      "yasha",
+      "sange",
+      "ogre_axe"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "bracer",
+        "power_treads",
+        "helm_of_iron_will",
+        "talisman_of_evasion",
+        "javelin"
+      ],
+      "mid": [
+        "relic",
+        "radiance",
+        "talisman_of_evasion",
+        "blade_of_alacrity",
+        "yasha",
+        "ogre_axe",
+        "sange",
+        "sange_and_yasha"
+      ],
+      "late": [
+        "basher",
+        "ultimate_scepter",
+        "sange",
+        "abyssal_blade",
+        "demon_edge",
+        "hyperstone",
+        "manta",
+        "monkey_king_bar"
+      ]
+    }
+  },
+  "55": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "blink",
+      "guardian_greaves",
+      "mekansm",
+      "vitality_booster",
+      "shivas_guard",
+      "null_talisman",
+      "vanguard",
+      "platemail"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "null_talisman",
+        "chainmail",
+        "ring_of_health",
+        "helm_of_iron_will",
+        "vitality_booster",
+        "soul_ring"
+      ],
+      "mid": [
+        "guardian_greaves",
+        "mekansm",
+        "blink",
+        "platemail",
+        "vitality_booster",
+        "pipe",
+        "ring_of_tarrasque",
+        "arcane_boots"
+      ],
+      "late": [
+        "shivas_guard",
+        "blink",
+        "ultimate_scepter",
+        "black_king_bar",
+        "mystic_staff",
+        "sheepstick",
+        "refresher",
+        "lotus_orb"
+      ]
+    }
+  },
+  "56": {
+    "generic": [
+      "mithril_hammer",
+      "power_treads",
+      "boots",
+      "desolator",
+      "blade_of_alacrity",
+      "aghanims_shard",
+      "demon_edge",
+      "lesser_crit",
+      "falcon_blade",
+      "dragon_lance"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "falcon_blade",
+        "soul_ring",
+        "mithril_hammer",
+        "blitz_knuckles",
+        "wraith_band",
+        "oblivion_staff"
+      ],
+      "mid": [
+        "mithril_hammer",
+        "desolator",
+        "blade_of_alacrity",
+        "aghanims_shard",
+        "dragon_lance",
+        "claymore",
+        "lesser_crit",
+        "blitz_knuckles"
+      ],
+      "late": [
+        "demon_edge",
+        "greater_crit",
+        "force_staff",
+        "lesser_crit",
+        "hurricane_pike",
+        "black_king_bar",
+        "relic",
+        "nullifier"
+      ]
+    }
+  },
+  "57": {
+    "generic": [
+      "boots",
+      "ogre_axe",
+      "phase_boots",
+      "bracer",
+      "chainmail",
+      "broadsword",
+      "echo_sabre",
+      "blink",
+      "harpoon",
+      "diadem"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bracer",
+        "chainmail",
+        "phase_boots",
+        "soul_ring",
+        "ogre_axe",
+        "bottle",
+        "power_treads"
+      ],
+      "mid": [
+        "ogre_axe",
+        "echo_sabre",
+        "broadsword",
+        "diadem",
+        "harpoon",
+        "blink",
+        "relic",
+        "talisman_of_evasion"
+      ],
+      "late": [
+        "black_king_bar",
+        "blink",
+        "ultimate_scepter",
+        "soul_booster",
+        "octarine_core",
+        "pipe",
+        "assault",
+        "basher"
+      ]
+    }
+  },
+  "58": {
+    "generic": [
+      "boots",
+      "staff_of_wizardry",
+      "force_staff",
+      "power_treads",
+      "ancient_janggo",
+      "blade_of_alacrity",
+      "ultimate_scepter",
+      "hurricane_pike",
+      "ogre_axe",
+      "point_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "null_talisman",
+        "power_treads",
+        "staff_of_wizardry",
+        "urn_of_shadows",
+        "soul_ring",
+        "ancient_janggo",
+        "pavise"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "ancient_janggo",
+        "blade_of_alacrity",
+        "power_treads",
+        "ogre_axe",
+        "point_booster",
+        "force_staff",
+        "dragon_lance"
+      ],
+      "late": [
+        "hurricane_pike",
+        "force_staff",
+        "ultimate_scepter",
+        "hyperstone",
+        "black_king_bar",
+        "glimmer_cape",
+        "blink",
+        "solar_crest"
+      ]
+    }
+  },
+  "59": {
+    "generic": [
+      "ogre_axe",
+      "armlet",
+      "boots",
+      "helm_of_iron_will",
+      "blink",
+      "blade_of_alacrity",
+      "black_king_bar",
+      "power_treads",
+      "sange",
+      "yasha"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "helm_of_iron_will",
+        "armlet",
+        "bracer",
+        "power_treads",
+        "chainmail",
+        "phase_boots",
+        "blink"
+      ],
+      "mid": [
+        "ogre_axe",
+        "blade_of_alacrity",
+        "blink",
+        "mithril_hammer",
+        "sange",
+        "black_king_bar",
+        "power_treads",
+        "armlet"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "yasha",
+        "reaver",
+        "sange_and_yasha",
+        "black_king_bar",
+        "satanic",
+        "force_staff",
+        "hurricane_pike"
+      ]
+    }
+  },
+  "60": {
+    "generic": [
+      "bracer",
+      "ogre_axe",
+      "boots",
+      "phase_boots",
+      "chainmail",
+      "blink",
+      "black_king_bar",
+      "echo_sabre",
+      "broadsword",
+      "mithril_hammer"
+    ],
+    "phases": {
+      "early": [
+        "bracer",
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "ogre_axe",
+        "void_stone",
+        "broadsword",
+        "urn_of_shadows"
+      ],
+      "mid": [
+        "ogre_axe",
+        "blink",
+        "mithril_hammer",
+        "echo_sabre",
+        "broadsword",
+        "black_king_bar",
+        "diadem",
+        "harpoon"
+      ],
+      "late": [
+        "black_king_bar",
+        "relic",
+        "nullifier",
+        "harpoon",
+        "hyperstone",
+        "blink",
+        "sange",
+        "assault"
+      ]
+    }
+  },
+  "61": {
+    "generic": [
+      "boots",
+      "power_treads",
+      "blade_of_alacrity",
+      "soul_ring",
+      "yasha",
+      "diadem",
+      "manta",
+      "blitz_knuckles",
+      "oblivion_staff",
+      "orchid"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "soul_ring",
+        "wraith_band",
+        "blade_of_alacrity",
+        "blitz_knuckles",
+        "tranquil_boots",
+        "bracer"
+      ],
+      "mid": [
+        "diadem",
+        "manta",
+        "yasha",
+        "blade_of_alacrity",
+        "oblivion_staff",
+        "claymore",
+        "orchid",
+        "blitz_knuckles"
+      ],
+      "late": [
+        "ultimate_orb",
+        "eagle",
+        "butterfly",
+        "black_king_bar",
+        "bloodthorn",
+        "skadi",
+        "hyperstone",
+        "demon_edge"
+      ]
+    }
+  },
+  "62": {
+    "generic": [
+      "tranquil_boots",
+      "ancient_janggo",
+      "boots_of_bearing",
+      "boots",
+      "ring_of_tarrasque",
+      "staff_of_wizardry",
+      "diadem",
+      "cyclone",
+      "spirit_vessel",
+      "pipe"
+    ],
+    "phases": {
+      "early": [
+        "tranquil_boots",
+        "boots",
+        "urn_of_shadows",
+        "chainmail",
+        "arcane_boots",
+        "phase_boots",
+        "void_stone",
+        "wraith_band"
+      ],
+      "mid": [
+        "ancient_janggo",
+        "ring_of_tarrasque",
+        "staff_of_wizardry",
+        "diadem",
+        "boots_of_bearing",
+        "spirit_vessel",
+        "platemail",
+        "cyclone"
+      ],
+      "late": [
+        "pipe",
+        "mystic_staff",
+        "boots_of_bearing",
+        "lotus_orb",
+        "cyclone",
+        "sheepstick",
+        "force_staff",
+        "crimson_guard"
+      ]
+    }
+  },
+  "63": {
+    "generic": [
+      "mithril_hammer",
+      "blade_of_alacrity",
+      "aghanims_shard",
+      "power_treads",
+      "boots",
+      "falcon_blade",
+      "dragon_lance",
+      "lesser_crit",
+      "desolator",
+      "demon_edge"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "falcon_blade",
+        "urn_of_shadows",
+        "javelin",
+        "wraith_band",
+        "diadem",
+        "void_stone"
+      ],
+      "mid": [
+        "mithril_hammer",
+        "blade_of_alacrity",
+        "aghanims_shard",
+        "dragon_lance",
+        "desolator",
+        "maelstrom",
+        "ogre_axe",
+        "staff_of_wizardry"
+      ],
+      "late": [
+        "demon_edge",
+        "lesser_crit",
+        "greater_crit",
+        "black_king_bar",
+        "force_staff",
+        "reaver",
+        "satanic",
+        "ultimate_orb"
+      ]
+    }
+  },
+  "64": {
+    "generic": [
+      "arcane_boots",
+      "boots",
+      "glimmer_cape",
+      "staff_of_wizardry",
+      "cyclone",
+      "force_staff",
+      "ultimate_scepter",
+      "aghanims_shard",
+      "blink",
+      "point_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "null_talisman",
+        "tranquil_boots",
+        "chainmail",
+        "javelin",
+        "power_treads",
+        "bracer"
+      ],
+      "mid": [
+        "arcane_boots",
+        "staff_of_wizardry",
+        "glimmer_cape",
+        "cyclone",
+        "aghanims_shard",
+        "point_booster",
+        "force_staff",
+        "blade_of_alacrity"
+      ],
+      "late": [
+        "cyclone",
+        "force_staff",
+        "ultimate_scepter",
+        "glimmer_cape",
+        "blink",
+        "mystic_staff",
+        "guardian_greaves",
+        "sheepstick"
+      ]
+    }
+  },
+  "65": {
+    "generic": [
+      "boots",
+      "blink",
+      "tranquil_boots",
+      "ancient_janggo",
+      "boots_of_bearing",
+      "force_staff",
+      "black_king_bar",
+      "ring_of_tarrasque",
+      "ogre_axe",
+      "null_talisman"
+    ]
+  },
+  "66": {
+    "generic": [
+      "arcane_boots",
+      "boots",
+      "mekansm",
+      "guardian_greaves",
+      "ancient_janggo",
+      "vladmir",
+      "solar_crest",
+      "pipe",
+      "ultimate_scepter",
+      "pavise"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "ancient_janggo",
+        "chainmail"
+      ],
+      "mid": [
+        "arcane_boots",
+        "mekansm",
+        "ancient_janggo",
+        "guardian_greaves",
+        "pavise",
+        "solar_crest",
+        "vladmir",
+        "ring_of_tarrasque"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "pipe",
+        "vladmir",
+        "guardian_greaves",
+        "solar_crest",
+        "glimmer_cape",
+        "blink",
+        "force_staff"
+      ]
+    }
+  },
+  "67": {
+    "generic": [
+      "power_treads",
+      "boots",
+      "blade_of_alacrity",
+      "yasha",
+      "manta",
+      "ultimate_orb",
+      "relic",
+      "radiance",
+      "diadem",
+      "talisman_of_evasion"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "ring_of_health",
+        "wraith_band",
+        "void_stone",
+        "pers",
+        "urn_of_shadows",
+        "diadem"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "relic",
+        "talisman_of_evasion",
+        "yasha",
+        "radiance",
+        "diadem",
+        "manta",
+        "power_treads"
+      ],
+      "late": [
+        "ultimate_orb",
+        "manta",
+        "skadi",
+        "eagle",
+        "basher",
+        "butterfly",
+        "sange",
+        "abyssal_blade"
+      ]
+    }
+  },
+  "68": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "staff_of_wizardry",
+      "glimmer_cape",
+      "rod_of_atos",
+      "vitality_booster",
+      "force_staff",
+      "aghanims_shard",
+      "blink",
+      "cyclone"
+    ]
+  },
+  "69": {
+    "generic": [
+      "bracer",
+      "boots",
+      "phase_boots",
+      "chainmail",
+      "blink",
+      "ogre_axe",
+      "black_king_bar",
+      "mithril_hammer",
+      "shivas_guard",
+      "relic"
+    ],
+    "phases": {
+      "early": [
+        "bracer",
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "hand_of_midas",
+        "soul_ring",
+        "ancient_janggo",
+        "null_talisman"
+      ],
+      "mid": [
+        "ogre_axe",
+        "blink",
+        "mithril_hammer",
+        "relic",
+        "radiance",
+        "talisman_of_evasion",
+        "black_king_bar",
+        "aghanims_shard"
+      ],
+      "late": [
+        "shivas_guard",
+        "ultimate_scepter",
+        "black_king_bar",
+        "blink",
+        "reaver",
+        "refresher",
+        "travel_boots",
+        "ultimate_scepter_2"
+      ]
+    }
+  },
+  "70": {
+    "generic": [
+      "broadsword",
+      "boots",
+      "mithril_hammer",
+      "pers",
+      "blink",
+      "bfury",
+      "ring_of_health",
+      "basher",
+      "phase_boots",
+      "void_stone"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "ring_of_health",
+        "void_stone",
+        "chainmail",
+        "phase_boots",
+        "broadsword",
+        "pers",
+        "power_treads"
+      ],
+      "mid": [
+        "broadsword",
+        "mithril_hammer",
+        "blink",
+        "bfury",
+        "basher",
+        "ogre_axe",
+        "pers",
+        "aghanims_shard"
+      ],
+      "late": [
+        "sange",
+        "abyssal_blade",
+        "black_king_bar",
+        "ultimate_scepter",
+        "basher",
+        "demon_edge",
+        "monkey_king_bar",
+        "reaver"
+      ]
+    }
+  },
+  "71": {
+    "generic": [
+      "phase_boots",
+      "chainmail",
+      "invis_sword",
+      "blitz_knuckles",
+      "claymore",
+      "ancient_janggo",
+      "boots",
+      "staff_of_wizardry",
+      "yasha",
+      "ogre_axe"
+    ],
+    "phases": {
+      "early": [
+        "chainmail",
+        "phase_boots",
+        "boots",
+        "bracer",
+        "urn_of_shadows",
+        "point_booster",
+        "soul_ring",
+        "blitz_knuckles"
+      ],
+      "mid": [
+        "claymore",
+        "blitz_knuckles",
+        "ancient_janggo",
+        "phase_boots",
+        "invis_sword",
+        "staff_of_wizardry",
+        "ogre_axe",
+        "blade_of_alacrity"
+      ],
+      "late": [
+        "invis_sword",
+        "yasha",
+        "cyclone",
+        "yasha_and_kaya",
+        "black_king_bar",
+        "kaya",
+        "demon_edge",
+        "mystic_staff"
+      ]
+    }
+  },
+  "72": {
+    "generic": [
+      "ogre_axe",
+      "blade_of_alacrity",
+      "boots",
+      "claymore",
+      "power_treads",
+      "lesser_crit",
+      "staff_of_wizardry",
+      "demon_edge",
+      "falcon_blade",
+      "point_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "falcon_blade",
+        "claymore",
+        "blade_of_alacrity",
+        "wraith_band",
+        "lifesteal",
+        "lesser_crit"
+      ],
+      "mid": [
+        "ogre_axe",
+        "blade_of_alacrity",
+        "claymore",
+        "staff_of_wizardry",
+        "point_booster",
+        "lesser_crit",
+        "ultimate_scepter",
+        "mithril_hammer"
+      ],
+      "late": [
+        "demon_edge",
+        "greater_crit",
+        "satanic",
+        "reaver",
+        "eagle",
+        "black_king_bar",
+        "relic",
+        "butterfly"
+      ]
+    }
+  },
+  "73": {
+    "generic": [
+      "ogre_axe",
+      "ultimate_scepter",
+      "blade_of_alacrity",
+      "staff_of_wizardry",
+      "point_booster",
+      "boots",
+      "soul_ring",
+      "relic",
+      "talisman_of_evasion",
+      "radiance"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "soul_ring",
+        "chainmail",
+        "phase_boots",
+        "power_treads",
+        "bracer",
+        "ogre_axe",
+        "relic"
+      ],
+      "mid": [
+        "ogre_axe",
+        "blade_of_alacrity",
+        "staff_of_wizardry",
+        "point_booster",
+        "ultimate_scepter",
+        "radiance",
+        "talisman_of_evasion",
+        "relic"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "hyperstone",
+        "assault",
+        "black_king_bar",
+        "basher",
+        "sange",
+        "abyssal_blade",
+        "blink"
+      ]
+    }
+  },
+  "74": {
+    "generic": [
+      "staff_of_wizardry",
+      "null_talisman",
+      "boots",
+      "travel_boots",
+      "kaya",
+      "meteor_hammer",
+      "point_booster",
+      "ultimate_scepter",
+      "ogre_axe",
+      "aghanims_shard"
+    ],
+    "phases": {
+      "early": [
+        "null_talisman",
+        "boots",
+        "staff_of_wizardry",
+        "kaya",
+        "meteor_hammer",
+        "hand_of_midas",
+        "urn_of_shadows",
+        "power_treads"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "travel_boots",
+        "point_booster",
+        "ogre_axe",
+        "aghanims_shard",
+        "vitality_booster",
+        "blade_of_alacrity",
+        "meteor_hammer"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "black_king_bar",
+        "mystic_staff",
+        "sheepstick",
+        "octarine_core",
+        "soul_booster",
+        "shivas_guard",
+        "refresher"
+      ]
+    }
+  },
+  "75": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "staff_of_wizardry",
+      "force_staff",
+      "refresher",
+      "glimmer_cape",
+      "ultimate_scepter",
+      "null_talisman",
+      "tranquil_boots",
+      "solar_crest"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "null_talisman",
+        "arcane_boots",
+        "tranquil_boots",
+        "urn_of_shadows",
+        "chainmail",
+        "staff_of_wizardry",
+        "power_treads"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "arcane_boots",
+        "force_staff",
+        "glimmer_cape",
+        "pavise",
+        "ancient_janggo",
+        "hand_of_midas",
+        "power_treads"
+      ],
+      "late": [
+        "refresher",
+        "force_staff",
+        "ultimate_scepter",
+        "solar_crest",
+        "glimmer_cape",
+        "hurricane_pike",
+        "blink",
+        "invis_sword"
+      ]
+    }
+  },
+  "76": {
+    "generic": [
+      "null_talisman",
+      "power_treads",
+      "boots",
+      "blade_of_alacrity",
+      "staff_of_wizardry",
+      "blitz_knuckles",
+      "oblivion_staff",
+      "witch_blade",
+      "force_staff",
+      "hurricane_pike"
+    ],
+    "phases": {
+      "early": [
+        "null_talisman",
+        "boots",
+        "power_treads",
+        "blitz_knuckles",
+        "oblivion_staff",
+        "chainmail",
+        "staff_of_wizardry",
+        "hand_of_midas"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "staff_of_wizardry",
+        "witch_blade",
+        "dragon_lance",
+        "oblivion_staff",
+        "force_staff",
+        "blink",
+        "blitz_knuckles"
+      ],
+      "late": [
+        "mystic_staff",
+        "hurricane_pike",
+        "hyperstone",
+        "devastator",
+        "ultimate_scepter",
+        "force_staff",
+        "sheepstick",
+        "black_king_bar"
+      ]
+    }
+  },
+  "77": {
+    "generic": [
+      "helm_of_iron_will",
+      "helm_of_the_dominator",
+      "ultimate_orb",
+      "helm_of_the_overlord",
+      "aghanims_shard",
+      "hyperstone",
+      "assault",
+      "platemail",
+      "black_king_bar",
+      "relic"
+    ],
+    "phases": {
+      "early": [
+        "helm_of_iron_will",
+        "helm_of_the_dominator",
+        "boots",
+        "soul_ring",
+        "ancient_janggo"
+      ],
+      "mid": [
+        "ultimate_orb",
+        "helm_of_the_overlord",
+        "aghanims_shard",
+        "hyperstone",
+        "platemail",
+        "assault",
+        "power_treads",
+        "ogre_axe"
+      ],
+      "late": [
+        "black_king_bar",
+        "assault",
+        "relic",
+        "nullifier",
+        "hyperstone",
+        "blink",
+        "ultimate_scepter",
+        "basher"
+      ]
+    }
+  },
+  "78": {
+    "generic": [
+      "boots",
+      "ogre_axe",
+      "bracer",
+      "blade_of_alacrity",
+      "ultimate_scepter",
+      "staff_of_wizardry",
+      "point_booster",
+      "blink",
+      "hand_of_midas",
+      "hyperstone"
+    ]
+  },
+  "79": {
+    "generic": [
+      "arcane_boots",
+      "boots",
+      "blink",
+      "aether_lens",
+      "ultimate_scepter",
+      "glimmer_cape",
+      "aghanims_shard",
+      "staff_of_wizardry",
+      "force_staff",
+      "point_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "tranquil_boots",
+        "null_talisman",
+        "bracer",
+        "urn_of_shadows"
+      ],
+      "mid": [
+        "blink",
+        "arcane_boots",
+        "aghanims_shard",
+        "aether_lens",
+        "staff_of_wizardry",
+        "point_booster",
+        "glimmer_cape",
+        "ogre_axe"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "aether_lens",
+        "blink",
+        "glimmer_cape",
+        "force_staff",
+        "aeon_disk",
+        "solar_crest",
+        "travel_boots"
+      ]
+    }
+  },
+  "80": {
+    "generic": [
+      "boots",
+      "hyperstone",
+      "blade_of_alacrity",
+      "maelstrom",
+      "mithril_hammer",
+      "mjollnir",
+      "power_treads",
+      "ultimate_scepter",
+      "ogre_axe",
+      "demon_edge"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "javelin",
+        "mithril_hammer",
+        "orb_of_corrosion",
+        "blade_of_alacrity",
+        "chainmail",
+        "phase_boots"
+      ],
+      "mid": [
+        "hyperstone",
+        "maelstrom",
+        "mjollnir",
+        "blade_of_alacrity",
+        "ogre_axe",
+        "mithril_hammer",
+        "point_booster",
+        "staff_of_wizardry"
+      ],
+      "late": [
+        "demon_edge",
+        "silver_edge",
+        "invis_sword",
+        "black_king_bar",
+        "eagle",
+        "butterfly",
+        "ultimate_scepter_2",
+        "monkey_king_bar"
+      ]
+    }
+  },
+  "81": {
+    "generic": [
+      "boots",
+      "power_treads",
+      "armlet",
+      "blitz_knuckles",
+      "bracer",
+      "oblivion_staff",
+      "helm_of_iron_will",
+      "blink",
+      "ogre_axe",
+      "claymore"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "bracer",
+        "helm_of_iron_will",
+        "armlet",
+        "broadsword",
+        "ogre_axe",
+        "soul_ring"
+      ],
+      "mid": [
+        "blitz_knuckles",
+        "armlet",
+        "oblivion_staff",
+        "claymore",
+        "ogre_axe",
+        "orchid",
+        "blink",
+        "echo_sabre"
+      ],
+      "late": [
+        "reaver",
+        "bloodthorn",
+        "blink",
+        "heart",
+        "manta",
+        "ultimate_scepter",
+        "yasha",
+        "black_king_bar"
+      ]
+    }
+  },
+  "82": {
+    "generic": [
+      "blade_of_alacrity",
+      "ogre_axe",
+      "wraith_band",
+      "boots",
+      "power_treads",
+      "yasha",
+      "sange",
+      "sange_and_yasha",
+      "ultimate_orb",
+      "ultimate_scepter"
+    ],
+    "phases": {
+      "early": [
+        "wraith_band",
+        "boots",
+        "power_treads",
+        "blade_of_alacrity",
+        "yasha",
+        "diffusal_blade",
+        "ogre_axe",
+        "blink"
+      ],
+      "mid": [
+        "ogre_axe",
+        "blade_of_alacrity",
+        "sange_and_yasha",
+        "sange",
+        "staff_of_wizardry",
+        "yasha",
+        "point_booster",
+        "aghanims_shard"
+      ],
+      "late": [
+        "ultimate_orb",
+        "eagle",
+        "ultimate_scepter",
+        "skadi",
+        "blink",
+        "butterfly",
+        "disperser",
+        "ultimate_scepter_2"
+      ]
+    }
+  },
+  "83": {
+    "generic": [
+      "blink",
+      "arcane_boots",
+      "boots",
+      "solar_crest",
+      "force_staff",
+      "pavise",
+      "essence_distiller",
+      "staff_of_wizardry",
+      "cyclone",
+      "ultimate_scepter"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "arcane_boots",
+        "urn_of_shadows",
+        "chainmail",
+        "soul_ring"
+      ],
+      "mid": [
+        "arcane_boots",
+        "blink",
+        "pavise",
+        "essence_distiller",
+        "solar_crest",
+        "staff_of_wizardry",
+        "ancient_janggo",
+        "aghanims_shard"
+      ],
+      "late": [
+        "blink",
+        "force_staff",
+        "ultimate_scepter",
+        "cyclone",
+        "solar_crest",
+        "mystic_staff",
+        "vladmir",
+        "lotus_orb"
+      ]
+    }
+  },
+  "84": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "hand_of_midas",
+      "aether_lens",
+      "soul_ring",
+      "staff_of_wizardry",
+      "ogre_axe",
+      "bracer",
+      "solar_crest",
+      "blade_of_alacrity"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "soul_ring",
+        "bracer",
+        "hand_of_midas",
+        "power_treads",
+        "broadsword",
+        "chainmail"
+      ],
+      "mid": [
+        "arcane_boots",
+        "hand_of_midas",
+        "aether_lens",
+        "staff_of_wizardry",
+        "ogre_axe",
+        "blade_of_alacrity",
+        "pavise",
+        "point_booster"
+      ],
+      "late": [
+        "pipe",
+        "solar_crest",
+        "mystic_staff",
+        "guardian_greaves",
+        "glimmer_cape",
+        "blink",
+        "reaver",
+        "vladmir"
+      ]
+    }
+  },
+  "85": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "guardian_greaves",
+      "mekansm",
+      "blink",
+      "soul_ring",
+      "ogre_axe",
+      "staff_of_wizardry",
+      "chainmail",
+      "phase_boots"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "soul_ring",
+        "chainmail",
+        "phase_boots",
+        "null_talisman",
+        "void_stone",
+        "bracer"
+      ],
+      "mid": [
+        "arcane_boots",
+        "mekansm",
+        "staff_of_wizardry",
+        "ogre_axe",
+        "guardian_greaves",
+        "platemail",
+        "glimmer_cape",
+        "point_booster"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "blink",
+        "guardian_greaves",
+        "black_king_bar",
+        "octarine_core",
+        "soul_booster",
+        "lotus_orb",
+        "pipe"
+      ]
+    }
+  },
+  "86": {
+    "generic": [
+      "boots",
+      "blink",
+      "arcane_boots",
+      "staff_of_wizardry",
+      "essence_distiller",
+      "urn_of_shadows",
+      "aether_lens",
+      "ultimate_scepter",
+      "point_booster",
+      "ogre_axe"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "urn_of_shadows",
+        "arcane_boots",
+        "bottle",
+        "chainmail",
+        "void_stone",
+        "ring_of_health",
+        "diadem"
+      ],
+      "mid": [
+        "blink",
+        "staff_of_wizardry",
+        "essence_distiller",
+        "arcane_boots",
+        "point_booster",
+        "ogre_axe",
+        "aghanims_shard",
+        "blade_of_alacrity"
+      ],
+      "late": [
+        "blink",
+        "ultimate_scepter",
+        "aether_lens",
+        "glimmer_cape",
+        "travel_boots",
+        "cyclone",
+        "aeon_disk",
+        "mystic_staff"
+      ]
+    }
+  },
+  "87": {
+    "generic": [
+      "arcane_boots",
+      "boots",
+      "blink",
+      "glimmer_cape",
+      "staff_of_wizardry",
+      "point_booster",
+      "ultimate_scepter",
+      "ogre_axe",
+      "aether_lens",
+      "pavise"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "blink",
+        "soul_ring"
+      ],
+      "mid": [
+        "arcane_boots",
+        "blink",
+        "staff_of_wizardry",
+        "point_booster",
+        "glimmer_cape",
+        "ogre_axe",
+        "pavise",
+        "ancient_janggo"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "blink",
+        "glimmer_cape",
+        "cyclone",
+        "vladmir",
+        "force_staff",
+        "dagon_4",
+        "solar_crest"
+      ]
+    }
+  },
+  "88": {
+    "generic": [
+      "cyclone",
+      "staff_of_wizardry",
+      "boots",
+      "blink",
+      "arcane_boots",
+      "point_booster",
+      "dagon",
+      "ultimate_scepter",
+      "soul_booster",
+      "aghanims_shard"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "tranquil_boots",
+        "bottle",
+        "null_talisman",
+        "void_stone",
+        "urn_of_shadows",
+        "power_treads"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "cyclone",
+        "arcane_boots",
+        "point_booster",
+        "blink",
+        "dagon",
+        "aghanims_shard",
+        "essence_distiller"
+      ],
+      "late": [
+        "cyclone",
+        "blink",
+        "ultimate_scepter",
+        "octarine_core",
+        "soul_booster",
+        "aeon_disk",
+        "force_staff",
+        "dagon_2"
+      ]
+    }
+  },
+  "89": {
+    "generic": [
+      "boots",
+      "blade_of_alacrity",
+      "claymore",
+      "wraith_band",
+      "blitz_knuckles",
+      "diadem",
+      "power_treads",
+      "oblivion_staff",
+      "yasha",
+      "manta"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "wraith_band",
+        "power_treads",
+        "blade_of_alacrity",
+        "yasha",
+        "diadem",
+        "broadsword",
+        "ogre_axe"
+      ],
+      "mid": [
+        "claymore",
+        "blitz_knuckles",
+        "oblivion_staff",
+        "diadem",
+        "manta",
+        "orchid",
+        "yasha",
+        "reaver"
+      ],
+      "late": [
+        "ultimate_orb",
+        "eagle",
+        "butterfly",
+        "bloodthorn",
+        "heart",
+        "reaver",
+        "skadi",
+        "mystic_staff"
+      ]
+    }
+  },
+  "90": {
+    "generic": [
+      "boots",
+      "holy_locket",
+      "travel_boots",
+      "point_booster",
+      "urn_of_shadows",
+      "staff_of_wizardry",
+      "soul_booster",
+      "spirit_vessel",
+      "octarine_core",
+      "diadem"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "urn_of_shadows",
+        "diadem",
+        "tranquil_boots",
+        "spirit_vessel",
+        "travel_boots",
+        "oblivion_staff",
+        "blitz_knuckles"
+      ],
+      "mid": [
+        "holy_locket",
+        "point_booster",
+        "staff_of_wizardry",
+        "travel_boots",
+        "vitality_booster",
+        "force_staff",
+        "soul_booster",
+        "aghanims_shard"
+      ],
+      "late": [
+        "mystic_staff",
+        "ultimate_scepter",
+        "octarine_core",
+        "sheepstick",
+        "soul_booster",
+        "black_king_bar",
+        "travel_boots",
+        "force_staff"
+      ]
+    }
+  },
+  "91": {
+    "generic": [
+      "holy_locket",
+      "mekansm",
+      "soul_ring",
+      "ultimate_scepter",
+      "glimmer_cape",
+      "reaver"
+    ]
+  },
+  "92": {
+    "generic": [
+      "boots",
+      "ancient_janggo",
+      "null_talisman",
+      "tranquil_boots",
+      "boots_of_bearing",
+      "hyperstone",
+      "ring_of_tarrasque",
+      "vladmir",
+      "assault",
+      "ultimate_scepter"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "null_talisman",
+        "tranquil_boots",
+        "ancient_janggo",
+        "bracer",
+        "lifesteal",
+        "wraith_band",
+        "blitz_knuckles"
+      ],
+      "mid": [
+        "ancient_janggo",
+        "ring_of_tarrasque",
+        "vladmir",
+        "boots_of_bearing",
+        "aghanims_shard",
+        "platemail",
+        "oblivion_staff",
+        "ogre_axe"
+      ],
+      "late": [
+        "assault",
+        "hyperstone",
+        "ultimate_scepter",
+        "mystic_staff",
+        "sheepstick",
+        "boots_of_bearing",
+        "pipe",
+        "bloodthorn"
+      ]
+    }
+  },
+  "93": {
+    "generic": [
+      "blade_of_alacrity",
+      "power_treads",
+      "boots",
+      "ogre_axe",
+      "diffusal_blade",
+      "ultimate_scepter",
+      "staff_of_wizardry",
+      "point_booster",
+      "pers",
+      "ultimate_orb"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "blade_of_alacrity",
+        "wraith_band",
+        "bracer",
+        "void_stone",
+        "ring_of_health",
+        "pers"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "ogre_axe",
+        "diffusal_blade",
+        "staff_of_wizardry",
+        "point_booster",
+        "ultimate_scepter",
+        "mage_slayer",
+        "pers"
+      ],
+      "late": [
+        "ultimate_orb",
+        "eagle",
+        "ultimate_scepter",
+        "disperser",
+        "black_king_bar",
+        "demon_edge",
+        "skadi",
+        "basher"
+      ]
+    }
+  },
+  "94": {
+    "generic": [
+      "blade_of_alacrity",
+      "eagle",
+      "ultimate_orb",
+      "boots",
+      "power_treads",
+      "yasha",
+      "diadem",
+      "manta",
+      "claymore",
+      "demon_edge"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "null_talisman",
+        "blade_of_alacrity",
+        "yasha",
+        "falcon_blade",
+        "wraith_band",
+        "diadem"
+      ],
+      "mid": [
+        "manta",
+        "diadem",
+        "claymore",
+        "yasha",
+        "eagle",
+        "talisman_of_evasion",
+        "butterfly",
+        "blade_of_alacrity"
+      ],
+      "late": [
+        "ultimate_orb",
+        "demon_edge",
+        "skadi",
+        "lesser_crit",
+        "greater_crit",
+        "eagle",
+        "blink",
+        "black_king_bar"
+      ]
+    }
+  },
+  "95": {
+    "generic": [
+      "broadsword",
+      "ogre_axe",
+      "boots",
+      "blade_of_alacrity",
+      "power_treads",
+      "yasha",
+      "pers",
+      "bfury",
+      "ring_of_health",
+      "mithril_hammer"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "ring_of_health",
+        "void_stone",
+        "pers",
+        "broadsword",
+        "wraith_band",
+        "javelin"
+      ],
+      "mid": [
+        "ogre_axe",
+        "broadsword",
+        "blade_of_alacrity",
+        "bfury",
+        "yasha",
+        "mithril_hammer",
+        "sange_and_yasha",
+        "sange"
+      ],
+      "late": [
+        "demon_edge",
+        "black_king_bar",
+        "basher",
+        "sange",
+        "eagle",
+        "invis_sword",
+        "silver_edge",
+        "blink"
+      ]
+    }
+  },
+  "96": {
+    "generic": [
+      "bracer",
+      "blink",
+      "vitality_booster",
+      "vanguard",
+      "ring_of_health",
+      "broadsword",
+      "blade_mail",
+      "crimson_guard",
+      "reaver",
+      "ring_of_tarrasque"
+    ],
+    "phases": {
+      "early": [
+        "bracer",
+        "ring_of_health",
+        "vitality_booster",
+        "vanguard",
+        "splintmail",
+        "helm_of_iron_will",
+        "helm_of_the_dominator",
+        "broadsword"
+      ],
+      "mid": [
+        "blink",
+        "blade_mail",
+        "broadsword",
+        "ring_of_tarrasque",
+        "crimson_guard",
+        "platemail",
+        "pipe",
+        "pers"
+      ],
+      "late": [
+        "reaver",
+        "heart",
+        "ultimate_scepter",
+        "crimson_guard",
+        "shivas_guard",
+        "lotus_orb",
+        "pipe",
+        "black_king_bar"
+      ]
+    }
+  },
+  "97": {
+    "generic": [
+      "blink",
+      "boots",
+      "ogre_axe",
+      "power_treads",
+      "broadsword",
+      "bracer",
+      "echo_sabre",
+      "harpoon",
+      "diadem",
+      "wraith_band"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "bracer",
+        "wraith_band",
+        "broadsword",
+        "lifesteal",
+        "ogre_axe",
+        "mask_of_madness"
+      ],
+      "mid": [
+        "blink",
+        "ogre_axe",
+        "diadem",
+        "broadsword",
+        "echo_sabre",
+        "harpoon",
+        "staff_of_wizardry",
+        "mithril_hammer"
+      ],
+      "late": [
+        "black_king_bar",
+        "ultimate_scepter",
+        "harpoon",
+        "demon_edge",
+        "refresher",
+        "force_staff",
+        "lesser_crit",
+        "ultimate_orb"
+      ]
+    }
+  },
+  "98": {
+    "generic": [
+      "ogre_axe",
+      "staff_of_wizardry",
+      "kaya",
+      "boots",
+      "sange",
+      "kaya_and_sange",
+      "soul_ring",
+      "bracer",
+      "blink",
+      "power_treads"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "soul_ring",
+        "bracer",
+        "power_treads",
+        "staff_of_wizardry",
+        "arcane_boots",
+        "bottle",
+        "ring_of_health"
+      ],
+      "mid": [
+        "ogre_axe",
+        "staff_of_wizardry",
+        "kaya",
+        "sange",
+        "kaya_and_sange",
+        "blink",
+        "mithril_hammer",
+        "platemail"
+      ],
+      "late": [
+        "shivas_guard",
+        "ultimate_scepter",
+        "black_king_bar",
+        "blink",
+        "reaver",
+        "mystic_staff",
+        "sheepstick",
+        "soul_booster"
+      ]
+    }
+  },
+  "99": {
+    "generic": [
+      "boots",
+      "bracer",
+      "power_treads",
+      "ogre_axe",
+      "aghanims_shard",
+      "sange",
+      "vitality_booster",
+      "yasha",
+      "sange_and_yasha",
+      "ring_of_health"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bracer",
+        "power_treads",
+        "ring_of_health",
+        "soul_ring",
+        "vitality_booster",
+        "vanguard",
+        "void_stone"
+      ],
+      "mid": [
+        "aghanims_shard",
+        "ogre_axe",
+        "blade_of_alacrity",
+        "sange",
+        "consecrated_wraps",
+        "platemail",
+        "lotus_orb",
+        "vitality_booster"
+      ],
+      "late": [
+        "reaver",
+        "heart",
+        "sange_and_yasha",
+        "yasha",
+        "sange",
+        "black_king_bar",
+        "hyperstone",
+        "assault"
+      ]
+    }
+  },
+  "100": {
+    "generic": [
+      "blink",
+      "boots",
+      "tranquil_boots",
+      "phase_boots",
+      "staff_of_wizardry",
+      "cyclone",
+      "force_staff",
+      "ultimate_scepter",
+      "ogre_axe",
+      "chainmail"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "chainmail",
+        "phase_boots",
+        "bracer",
+        "urn_of_shadows",
+        "blink",
+        "bottle"
+      ],
+      "mid": [
+        "blink",
+        "staff_of_wizardry",
+        "phase_boots",
+        "ogre_axe",
+        "force_staff",
+        "arcane_boots",
+        "ancient_janggo",
+        "pavise"
+      ],
+      "late": [
+        "cyclone",
+        "ultimate_scepter",
+        "force_staff",
+        "black_king_bar",
+        "blink",
+        "lotus_orb",
+        "glimmer_cape",
+        "solar_crest"
+      ]
+    }
+  },
+  "101": {
+    "generic": [
+      "null_talisman",
+      "staff_of_wizardry",
+      "boots",
+      "arcane_boots",
+      "kaya",
+      "rod_of_atos",
+      "vitality_booster",
+      "aghanims_shard",
+      "blink",
+      "ghost"
+    ],
+    "phases": {
+      "early": [
+        "null_talisman",
+        "boots",
+        "staff_of_wizardry",
+        "arcane_boots",
+        "kaya",
+        "vitality_booster"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "arcane_boots",
+        "vitality_booster",
+        "aghanims_shard",
+        "rod_of_atos",
+        "kaya",
+        "ghost",
+        "point_booster"
+      ],
+      "late": [
+        "blink",
+        "mystic_staff",
+        "sheepstick",
+        "kaya",
+        "sange",
+        "kaya_and_sange",
+        "rod_of_atos",
+        "ultimate_scepter"
+      ]
+    }
+  },
+  "102": {
+    "generic": [
+      "boots",
+      "chainmail",
+      "phase_boots",
+      "talisman_of_evasion",
+      "relic",
+      "radiance",
+      "null_talisman",
+      "diadem",
+      "blade_of_alacrity",
+      "yasha"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "null_talisman",
+        "ogre_axe",
+        "bracer",
+        "arcane_boots",
+        "broadsword"
+      ],
+      "mid": [
+        "talisman_of_evasion",
+        "relic",
+        "radiance",
+        "diadem",
+        "blade_of_alacrity",
+        "yasha",
+        "ogre_axe",
+        "manta"
+      ],
+      "late": [
+        "orchid",
+        "bloodthorn",
+        "blink",
+        "basher",
+        "ultimate_scepter",
+        "eagle",
+        "sange",
+        "manta"
+      ]
+    }
+  },
+  "103": {
+    "generic": [
+      "boots",
+      "ogre_axe",
+      "staff_of_wizardry",
+      "chainmail",
+      "phase_boots",
+      "solar_crest",
+      "ancient_janggo",
+      "ultimate_scepter",
+      "tranquil_boots",
+      "point_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "tranquil_boots",
+        "bracer",
+        "lifesteal",
+        "ogre_axe",
+        "broadsword"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "ogre_axe",
+        "ancient_janggo",
+        "point_booster",
+        "pavise",
+        "broadsword",
+        "blade_of_alacrity",
+        "ultimate_scepter"
+      ],
+      "late": [
+        "solar_crest",
+        "lesser_crit",
+        "ultimate_scepter",
+        "demon_edge",
+        "glimmer_cape",
+        "force_staff",
+        "boots_of_bearing",
+        "greater_crit"
+      ]
+    }
+  },
+  "104": {
+    "generic": [
+      "boots",
+      "bracer",
+      "broadsword",
+      "blink",
+      "blade_mail",
+      "phase_boots",
+      "chainmail",
+      "black_king_bar",
+      "ogre_axe",
+      "mithril_hammer"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bracer",
+        "chainmail",
+        "phase_boots",
+        "broadsword",
+        "splintmail",
+        "soul_ring",
+        "blade_mail"
+      ],
+      "mid": [
+        "blink",
+        "blade_mail",
+        "broadsword",
+        "ogre_axe",
+        "mithril_hammer",
+        "claymore",
+        "blitz_knuckles",
+        "black_king_bar"
+      ],
+      "late": [
+        "black_king_bar",
+        "demon_edge",
+        "invis_sword",
+        "assault",
+        "hyperstone",
+        "silver_edge",
+        "ultimate_scepter",
+        "nullifier"
+      ]
+    }
+  },
+  "105": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "staff_of_wizardry",
+      "aether_lens",
+      "force_staff",
+      "glimmer_cape",
+      "tranquil_boots",
+      "mystic_staff",
+      "solar_crest",
+      "kaya"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "soul_ring",
+        "arcane_boots",
+        "null_talisman",
+        "bottle",
+        "bracer",
+        "wraith_band"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "arcane_boots",
+        "aether_lens",
+        "glimmer_cape",
+        "pavise",
+        "force_staff",
+        "solar_crest",
+        "kaya"
+      ],
+      "late": [
+        "mystic_staff",
+        "sheepstick",
+        "force_staff",
+        "aether_lens",
+        "lotus_orb",
+        "ultimate_scepter",
+        "soul_booster",
+        "glimmer_cape"
+      ]
+    }
+  },
+  "106": {
+    "generic": [
+      "boots",
+      "bottle",
+      "phase_boots",
+      "staff_of_wizardry",
+      "pers",
+      "chainmail",
+      "kaya",
+      "mage_slayer",
+      "ogre_axe",
+      "diadem"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bottle",
+        "chainmail",
+        "phase_boots",
+        "urn_of_shadows",
+        "diadem",
+        "ring_of_health",
+        "void_stone"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "ogre_axe",
+        "mage_slayer",
+        "pers",
+        "spirit_vessel",
+        "kaya",
+        "aghanims_shard",
+        "diadem"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "black_king_bar",
+        "shivas_guard",
+        "soul_booster",
+        "kaya_and_sange",
+        "sange",
+        "kaya",
+        "bloodstone"
+      ]
+    }
+  },
+  "107": {
+    "generic": [
+      "urn_of_shadows",
+      "diadem",
+      "spirit_vessel",
+      "boots",
+      "ogre_axe",
+      "staff_of_wizardry",
+      "bottle",
+      "power_treads",
+      "kaya",
+      "blink"
+    ],
+    "phases": {
+      "early": [
+        "urn_of_shadows",
+        "boots",
+        "bottle",
+        "diadem",
+        "power_treads",
+        "bracer",
+        "spirit_vessel",
+        "void_stone"
+      ],
+      "mid": [
+        "spirit_vessel",
+        "ogre_axe",
+        "diadem",
+        "staff_of_wizardry",
+        "mithril_hammer",
+        "kaya",
+        "blink",
+        "power_treads"
+      ],
+      "late": [
+        "soul_booster",
+        "ultimate_scepter",
+        "shivas_guard",
+        "black_king_bar",
+        "aether_lens",
+        "bloodstone",
+        "sange",
+        "kaya_and_sange"
+      ]
+    }
+  },
+  "108": {
+    "generic": [
+      "staff_of_wizardry",
+      "boots",
+      "vitality_booster",
+      "soul_ring",
+      "bracer",
+      "rod_of_atos",
+      "ultimate_scepter",
+      "ogre_axe",
+      "power_treads",
+      "point_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "soul_ring",
+        "bracer",
+        "power_treads",
+        "chainmail",
+        "vitality_booster",
+        "arcane_boots",
+        "staff_of_wizardry"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "vitality_booster",
+        "rod_of_atos",
+        "ogre_axe",
+        "point_booster",
+        "aghanims_shard",
+        "blade_of_alacrity",
+        "ultimate_scepter"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "gungir",
+        "black_king_bar",
+        "soul_booster",
+        "shivas_guard",
+        "octarine_core",
+        "mystic_staff",
+        "crimson_guard"
+      ]
+    }
+  },
+  "109": {
+    "generic": [
+      "blade_of_alacrity",
+      "ultimate_orb",
+      "boots",
+      "power_treads",
+      "yasha",
+      "diadem",
+      "manta",
+      "falcon_blade",
+      "dragon_lance",
+      "aghanims_shard"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "falcon_blade",
+        "blade_of_alacrity",
+        "wraith_band",
+        "yasha",
+        "null_talisman"
+      ],
+      "mid": [
+        "blade_of_alacrity",
+        "yasha",
+        "diadem",
+        "manta",
+        "dragon_lance",
+        "aghanims_shard",
+        "ultimate_orb",
+        "staff_of_wizardry"
+      ],
+      "late": [
+        "ultimate_orb",
+        "skadi",
+        "demon_edge",
+        "hurricane_pike",
+        "force_staff",
+        "black_king_bar",
+        "eagle",
+        "lesser_crit"
+      ]
+    }
+  },
+  "110": {
+    "generic": [
+      "boots",
+      "tranquil_boots",
+      "diadem",
+      "spirit_vessel",
+      "aghanims_shard",
+      "urn_of_shadows",
+      "platemail",
+      "shivas_guard",
+      "bracer",
+      "staff_of_wizardry"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "urn_of_shadows",
+        "bracer",
+        "diadem",
+        "talisman_of_evasion",
+        "platemail",
+        "relic"
+      ],
+      "mid": [
+        "diadem",
+        "aghanims_shard",
+        "spirit_vessel",
+        "platemail",
+        "staff_of_wizardry",
+        "shivas_guard",
+        "pavise",
+        "solar_crest"
+      ],
+      "late": [
+        "mystic_staff",
+        "sheepstick",
+        "refresher",
+        "aeon_disk",
+        "shivas_guard",
+        "lotus_orb",
+        "force_staff",
+        "cyclone"
+      ]
+    }
+  },
+  "111": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "blink",
+      "aether_lens",
+      "glimmer_cape",
+      "ghost",
+      "mekansm",
+      "guardian_greaves",
+      "aeon_disk",
+      "force_staff"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "null_talisman",
+        "bottle",
+        "urn_of_shadows",
+        "soul_ring",
+        "holy_locket"
+      ],
+      "mid": [
+        "arcane_boots",
+        "blink",
+        "ghost",
+        "mekansm",
+        "glimmer_cape",
+        "aether_lens",
+        "guardian_greaves",
+        "holy_locket"
+      ],
+      "late": [
+        "blink",
+        "aether_lens",
+        "aeon_disk",
+        "force_staff",
+        "guardian_greaves",
+        "glimmer_cape",
+        "invis_sword",
+        "holy_locket"
+      ]
+    }
+  },
+  "112": {
+    "generic": [
+      "boots",
+      "blink",
+      "arcane_boots",
+      "glimmer_cape",
+      "force_staff",
+      "aeon_disk",
+      "aether_lens",
+      "staff_of_wizardry",
+      "holy_locket",
+      "power_treads"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "null_talisman",
+        "urn_of_shadows",
+        "chainmail",
+        "cloak",
+        "bottle",
+        "ring_of_health"
+      ],
+      "mid": [
+        "blink",
+        "arcane_boots",
+        "glimmer_cape",
+        "staff_of_wizardry",
+        "holy_locket",
+        "power_treads",
+        "force_staff",
+        "pavise"
+      ],
+      "late": [
+        "blink",
+        "force_staff",
+        "aeon_disk",
+        "glimmer_cape",
+        "aether_lens",
+        "invis_sword",
+        "solar_crest",
+        "hurricane_pike"
+      ]
+    }
+  },
+  "113": {
+    "generic": [
+      "hyperstone",
+      "hand_of_midas",
+      "mithril_hammer",
+      "maelstrom",
+      "boots",
+      "mjollnir",
+      "blade_of_alacrity",
+      "blitz_knuckles",
+      "javelin",
+      "orchid"
+    ],
+    "phases": {
+      "early": [
+        "hand_of_midas",
+        "boots",
+        "javelin",
+        "mithril_hammer",
+        "power_treads",
+        "bottle",
+        "wraith_band",
+        "maelstrom"
+      ],
+      "mid": [
+        "maelstrom",
+        "hyperstone",
+        "mjollnir",
+        "mithril_hammer",
+        "blade_of_alacrity",
+        "blitz_knuckles",
+        "oblivion_staff",
+        "orchid"
+      ],
+      "late": [
+        "hyperstone",
+        "bloodthorn",
+        "ultimate_orb",
+        "mystic_staff",
+        "sheepstick",
+        "force_staff",
+        "hurricane_pike",
+        "blink"
+      ]
+    }
+  },
+  "114": {
+    "generic": [
+      "mithril_hammer",
+      "boots",
+      "ogre_axe",
+      "power_treads",
+      "broadsword",
+      "wraith_band",
+      "black_king_bar",
+      "echo_sabre",
+      "blade_of_alacrity",
+      "desolator"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "wraith_band",
+        "void_stone",
+        "broadsword",
+        "ogre_axe",
+        "ring_of_health",
+        "blade_of_alacrity"
+      ],
+      "mid": [
+        "mithril_hammer",
+        "ogre_axe",
+        "broadsword",
+        "echo_sabre",
+        "desolator",
+        "blade_of_alacrity",
+        "diadem",
+        "black_king_bar"
+      ],
+      "late": [
+        "ultimate_orb",
+        "black_king_bar",
+        "eagle",
+        "skadi",
+        "harpoon",
+        "demon_edge",
+        "butterfly",
+        "basher"
+      ]
+    }
+  },
+  "119": {
+    "generic": [
+      "boots",
+      "staff_of_wizardry",
+      "cyclone",
+      "blink",
+      "tranquil_boots",
+      "arcane_boots",
+      "urn_of_shadows",
+      "force_staff",
+      "mystic_staff",
+      "glimmer_cape"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "tranquil_boots",
+        "urn_of_shadows",
+        "bracer",
+        "null_talisman",
+        "staff_of_wizardry",
+        "void_stone",
+        "arcane_boots"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "cyclone",
+        "blink",
+        "arcane_boots",
+        "aghanims_shard",
+        "diadem",
+        "essence_distiller",
+        "spirit_vessel"
+      ],
+      "late": [
+        "blink",
+        "force_staff",
+        "mystic_staff",
+        "cyclone",
+        "glimmer_cape",
+        "ultimate_scepter",
+        "soul_booster",
+        "aeon_disk"
+      ]
+    }
+  },
+  "120": {
+    "generic": [
+      "blade_of_alacrity",
+      "boots",
+      "blink",
+      "diffusal_blade",
+      "ultimate_scepter",
+      "power_treads",
+      "staff_of_wizardry",
+      "point_booster",
+      "bottle",
+      "ogre_axe"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bottle",
+        "blade_of_alacrity",
+        "power_treads",
+        "ring_of_health",
+        "void_stone",
+        "pers",
+        "bracer"
+      ],
+      "mid": [
+        "blink",
+        "blade_of_alacrity",
+        "diffusal_blade",
+        "staff_of_wizardry",
+        "point_booster",
+        "ogre_axe",
+        "mage_slayer",
+        "aghanims_shard"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "basher",
+        "soul_booster",
+        "octarine_core",
+        "eagle",
+        "disperser",
+        "blink",
+        "shivas_guard"
+      ]
+    }
+  },
+  "121": {
+    "generic": [
+      "arcane_boots",
+      "boots",
+      "blink",
+      "glimmer_cape",
+      "mystic_staff",
+      "ultimate_scepter",
+      "aether_lens",
+      "staff_of_wizardry",
+      "sheepstick",
+      "force_staff"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "null_talisman",
+        "urn_of_shadows",
+        "bottle",
+        "bracer"
+      ],
+      "mid": [
+        "arcane_boots",
+        "blink",
+        "glimmer_cape",
+        "staff_of_wizardry",
+        "aether_lens",
+        "aghanims_shard",
+        "ghost",
+        "point_booster"
+      ],
+      "late": [
+        "mystic_staff",
+        "blink",
+        "ultimate_scepter",
+        "sheepstick",
+        "glimmer_cape",
+        "aether_lens",
+        "cyclone",
+        "force_staff"
+      ]
+    }
+  },
+  "123": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "staff_of_wizardry",
+      "essence_distiller",
+      "force_staff",
+      "aghanims_shard",
+      "rod_of_atos",
+      "blink",
+      "glimmer_cape",
+      "vitality_booster"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "urn_of_shadows",
+        "arcane_boots",
+        "chainmail",
+        "power_treads",
+        "wraith_band",
+        "staff_of_wizardry",
+        "bottle"
+      ],
+      "mid": [
+        "arcane_boots",
+        "staff_of_wizardry",
+        "essence_distiller",
+        "aghanims_shard",
+        "vitality_booster",
+        "rod_of_atos",
+        "force_staff",
+        "blade_of_alacrity"
+      ],
+      "late": [
+        "force_staff",
+        "blink",
+        "glimmer_cape",
+        "mystic_staff",
+        "cyclone",
+        "ultimate_orb",
+        "sheepstick",
+        "lotus_orb"
+      ]
+    }
+  },
+  "126": {
+    "generic": [
+      "boots",
+      "diadem",
+      "staff_of_wizardry",
+      "bottle",
+      "blade_of_alacrity",
+      "power_treads",
+      "aghanims_shard",
+      "urn_of_shadows",
+      "ultimate_scepter",
+      "spirit_vessel"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bottle",
+        "urn_of_shadows",
+        "power_treads",
+        "diadem",
+        "chainmail",
+        "void_stone",
+        "bracer"
+      ],
+      "mid": [
+        "staff_of_wizardry",
+        "blade_of_alacrity",
+        "aghanims_shard",
+        "diadem",
+        "spirit_vessel",
+        "ogre_axe",
+        "power_treads",
+        "point_booster"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "black_king_bar",
+        "ultimate_orb",
+        "yasha",
+        "kaya",
+        "manta",
+        "yasha_and_kaya",
+        "soul_booster"
+      ]
+    }
+  },
+  "128": {
+    "generic": [
+      "boots",
+      "aghanims_shard",
+      "staff_of_wizardry",
+      "blink",
+      "kaya",
+      "travel_boots",
+      "soul_ring",
+      "yasha",
+      "yasha_and_kaya",
+      "arcane_boots"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "soul_ring",
+        "bottle",
+        "bracer",
+        "travel_boots",
+        "staff_of_wizardry",
+        "arcane_boots",
+        "power_treads"
+      ],
+      "mid": [
+        "aghanims_shard",
+        "staff_of_wizardry",
+        "blink",
+        "kaya",
+        "blade_of_alacrity",
+        "travel_boots",
+        "yasha",
+        "ogre_axe"
+      ],
+      "late": [
+        "black_king_bar",
+        "yasha_and_kaya",
+        "shivas_guard",
+        "yasha",
+        "blink",
+        "mystic_staff",
+        "refresher",
+        "sheepstick"
+      ]
+    }
+  },
+  "129": {
+    "generic": [
+      "bracer",
+      "boots",
+      "phase_boots",
+      "chainmail",
+      "blink",
+      "soul_ring",
+      "mithril_hammer",
+      "aghanims_shard",
+      "staff_of_wizardry",
+      "cyclone"
+    ],
+    "phases": {
+      "early": [
+        "bracer",
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "soul_ring",
+        "lifesteal",
+        "helm_of_iron_will",
+        "void_stone"
+      ],
+      "mid": [
+        "blink",
+        "mithril_hammer",
+        "aghanims_shard",
+        "staff_of_wizardry",
+        "ogre_axe",
+        "cyclone",
+        "desolator",
+        "phase_boots"
+      ],
+      "late": [
+        "black_king_bar",
+        "mystic_staff",
+        "sheepstick",
+        "refresher",
+        "cyclone",
+        "blink",
+        "reaver",
+        "shivas_guard"
+      ]
+    }
+  },
+  "131": {
+    "generic": [
+      "boots",
+      "arcane_boots",
+      "staff_of_wizardry",
+      "blink",
+      "aether_lens",
+      "glimmer_cape",
+      "force_staff",
+      "vitality_booster",
+      "rod_of_atos",
+      "ultimate_scepter"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "arcane_boots",
+        "urn_of_shadows",
+        "null_talisman",
+        "chainmail",
+        "staff_of_wizardry",
+        "bottle",
+        "void_stone"
+      ],
+      "mid": [
+        "arcane_boots",
+        "staff_of_wizardry",
+        "vitality_booster",
+        "rod_of_atos",
+        "blink",
+        "aether_lens",
+        "glimmer_cape",
+        "cyclone"
+      ],
+      "late": [
+        "blink",
+        "aether_lens",
+        "ultimate_scepter",
+        "force_staff",
+        "glimmer_cape",
+        "cyclone",
+        "mystic_staff",
+        "guardian_greaves"
+      ]
+    }
+  },
+  "135": {
+    "generic": [
+      "ogre_axe",
+      "boots",
+      "bracer",
+      "phase_boots",
+      "broadsword",
+      "echo_sabre",
+      "chainmail",
+      "soul_ring",
+      "harpoon",
+      "mithril_hammer"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "bracer",
+        "chainmail",
+        "soul_ring",
+        "phase_boots",
+        "void_stone",
+        "ogre_axe",
+        "bottle"
+      ],
+      "mid": [
+        "ogre_axe",
+        "broadsword",
+        "echo_sabre",
+        "aghanims_shard",
+        "mithril_hammer",
+        "diadem",
+        "harpoon",
+        "phase_boots"
+      ],
+      "late": [
+        "hyperstone",
+        "assault",
+        "black_king_bar",
+        "harpoon",
+        "basher",
+        "sange",
+        "blink",
+        "relic"
+      ]
+    }
+  },
+  "136": {
+    "generic": [
+      "phase_boots",
+      "boots",
+      "chainmail",
+      "ogre_axe",
+      "mithril_hammer",
+      "black_king_bar",
+      "solar_crest",
+      "pavise",
+      "glimmer_cape",
+      "basher"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "bracer",
+        "helm_of_iron_will",
+        "bottle",
+        "ogre_axe",
+        "ring_of_health"
+      ],
+      "mid": [
+        "phase_boots",
+        "ogre_axe",
+        "mithril_hammer",
+        "pavise",
+        "solar_crest",
+        "black_king_bar",
+        "staff_of_wizardry",
+        "blade_of_alacrity"
+      ],
+      "late": [
+        "glimmer_cape",
+        "black_king_bar",
+        "basher",
+        "blink",
+        "vladmir",
+        "lesser_crit",
+        "solar_crest",
+        "demon_edge"
+      ]
+    }
+  },
+  "137": {
+    "generic": [
+      "ogre_axe",
+      "phase_boots",
+      "chainmail",
+      "boots",
+      "blink",
+      "black_king_bar",
+      "mithril_hammer",
+      "soul_ring",
+      "ultimate_scepter",
+      "aghanims_shard"
+    ],
+    "phases": {
+      "early": [
+        "chainmail",
+        "boots",
+        "phase_boots",
+        "soul_ring",
+        "bottle",
+        "bracer",
+        "vitality_booster",
+        "blink"
+      ],
+      "mid": [
+        "ogre_axe",
+        "blink",
+        "mithril_hammer",
+        "black_king_bar",
+        "aghanims_shard",
+        "staff_of_wizardry",
+        "point_booster",
+        "consecrated_wraps"
+      ],
+      "late": [
+        "ultimate_scepter",
+        "shivas_guard",
+        "black_king_bar",
+        "soul_booster",
+        "reaver",
+        "ultimate_orb",
+        "sphere",
+        "heart"
+      ]
+    }
+  },
+  "138": {
+    "generic": [
+      "mithril_hammer",
+      "boots",
+      "power_treads",
+      "maelstrom",
+      "hyperstone",
+      "blade_of_alacrity",
+      "demon_edge",
+      "falcon_blade",
+      "mjollnir",
+      "dragon_lance"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "falcon_blade",
+        "javelin",
+        "lifesteal",
+        "null_talisman",
+        "broadsword",
+        "mithril_hammer"
+      ],
+      "mid": [
+        "mithril_hammer",
+        "maelstrom",
+        "blade_of_alacrity",
+        "dragon_lance",
+        "hyperstone",
+        "mjollnir",
+        "mask_of_madness",
+        "broadsword"
+      ],
+      "late": [
+        "demon_edge",
+        "black_king_bar",
+        "lesser_crit",
+        "hurricane_pike",
+        "force_staff",
+        "hyperstone",
+        "greater_crit",
+        "blink"
+      ]
+    }
+  },
+  "145": {
+    "generic": [
+      "mithril_hammer",
+      "boots",
+      "power_treads",
+      "pers",
+      "mage_slayer",
+      "blade_of_alacrity",
+      "ring_of_health",
+      "desolator",
+      "ogre_axe",
+      "ultimate_scepter"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "power_treads",
+        "ring_of_health",
+        "void_stone",
+        "pers",
+        "wraith_band",
+        "cloak",
+        "falcon_blade"
+      ],
+      "mid": [
+        "mithril_hammer",
+        "blade_of_alacrity",
+        "mage_slayer",
+        "desolator",
+        "ogre_axe",
+        "pers",
+        "point_booster",
+        "staff_of_wizardry"
+      ],
+      "late": [
+        "black_king_bar",
+        "demon_edge",
+        "ultimate_scepter",
+        "eagle",
+        "blink",
+        "lesser_crit",
+        "relic",
+        "greater_crit"
+      ]
+    }
+  },
+  "155": {
+    "generic": [
+      "ogre_axe",
+      "staff_of_wizardry",
+      "boots",
+      "kaya",
+      "phase_boots",
+      "chainmail",
+      "soul_ring",
+      "sange",
+      "kaya_and_sange",
+      "ultimate_scepter"
+    ],
+    "phases": {
+      "early": [
+        "boots",
+        "chainmail",
+        "phase_boots",
+        "soul_ring",
+        "bracer",
+        "staff_of_wizardry",
+        "arcane_boots",
+        "bottle"
+      ],
+      "mid": [
+        "ogre_axe",
+        "staff_of_wizardry",
+        "kaya",
+        "sange",
+        "kaya_and_sange",
+        "aghanims_shard",
+        "point_booster",
+        "blade_of_alacrity"
+      ],
+      "late": [
+        "black_king_bar",
+        "ultimate_scepter",
+        "lotus_orb",
+        "shivas_guard",
+        "ultimate_orb",
+        "sphere",
+        "ultimate_scepter_2",
+        "sange"
+      ]
+    }
   }
 }
