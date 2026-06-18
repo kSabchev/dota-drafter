@@ -11,11 +11,7 @@ import path from "path";
 import crypto from "crypto";
 import { loadMatrixSnapshot } from "./src/matrix-loader.mjs";
 import {
-  seedMatchups,
-  seedSynergies,
-  getMatchups,
-  getCounteredBy,
-  getSynergies,
+  getDb,
   getPositions,
   setPositions,
   getGuides,
@@ -237,6 +233,22 @@ app.get("/constants/heroes", async (req, res) => {
         roles: h.roles,
         img: "https://cdn.cloudflare.steamstatic.com" + h.img,
         icon: "https://cdn.cloudflare.steamstatic.com" + h.icon,
+        // stats
+        primary_attr: h.primary_attr ?? null,
+        attack_type: h.attack_type ?? null,
+        base_str: h.base_str ?? null,
+        base_agi: h.base_agi ?? null,
+        base_int: h.base_int ?? null,
+        str_gain: h.str_gain ?? null,
+        agi_gain: h.agi_gain ?? null,
+        int_gain: h.int_gain ?? null,
+        attack_range: h.attack_range ?? null,
+        move_speed: h.move_speed ?? null,
+        attack_rate: h.attack_rate ?? null,
+        base_armor: h.base_armor ?? null,
+        base_health_regen: h.base_health_regen ?? null,
+        base_mana_regen: h.base_mana_regen ?? null,
+        cm_enabled: h.cm_enabled ?? true,
       }));
     });
     res.json({ heroes });
@@ -246,18 +258,74 @@ app.get("/constants/heroes", async (req, res) => {
   }
 });
 
+app.get("/constants/hero_lore", async (req, res) => {
+  try {
+    const lore = await cached("hero_lore", async () => {
+      const [heroesR, loreR] = await Promise.all([
+        fetch("https://api.opendota.com/api/constants/heroes"),
+        fetch("https://api.opendota.com/api/constants/hero_lore"),
+      ]);
+      const heroesJ = await heroesR.json();
+      const loreJ = await loreR.json(); // { npc_dota_hero_X: "lore text" }
+      // remap from internal name to id
+      const out = {};
+      for (const h of Object.values(heroesJ)) {
+        const text = loreJ[h.name];
+        if (text) out[h.id] = text;
+      }
+      return out;
+    }, 24 * 60 * 60 * 1000); // 24h TTL
+    res.json(lore);
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
+// Hero meta scores derived from OpenDota heroStats (pro_pick, pro_win, bracket picks)
+// Returns Record<heroId, { score, pro_pick, pro_win, pub_pick_8, pub_win_8 }>
+app.get("/constants/hero_meta", async (req, res) => {
+  try {
+    const meta = await cached("hero_meta", async () => {
+      const r = await fetch("https://api.opendota.com/api/heroStats");
+      const stats = await r.json();
+      const out = {};
+      for (const h of stats) {
+        const proPick  = h.pro_pick  ?? 0;
+        const proWin   = h.pro_win   ?? 0;
+        const pub8Pick = (h["8_pick"] ?? 0) + (h["7_pick"] ?? 0); // immortal + divine
+        const pub8Win  = (h["8_win"]  ?? 0) + (h["7_win"]  ?? 0);
+        // Combine: pro counts 5×, high-bracket pub counts 1× (normalized per 100 games)
+        const proScore = proPick > 5  ? (proWin  / proPick)  * Math.sqrt(proPick)  * 5  : 0;
+        const pubScore = pub8Pick > 50 ? (pub8Win / pub8Pick) * Math.sqrt(pub8Pick / 50) : 0;
+        out[h.id] = {
+          score:       Math.round((proScore + pubScore) * 10) / 10,
+          pro_pick:    proPick,
+          pro_win:     proWin,
+          pub_pick_hi: pub8Pick,
+          pub_win_hi:  pub8Win,
+        };
+      }
+      return out;
+    }, 24 * 60 * 60 * 1000);
+    res.json(meta);
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
 app.get("/constants/items", async (req, res) => {
   try {
     const items = await cached("items", async () => {
       const r = await fetch("https://api.opendota.com/api/constants/items");
       const j = await r.json();
-      return Object.values(j)
-        .filter((i) => i.dname)
-        .map((i) => ({
+      return Object.entries(j)
+        .filter(([, i]) => i.dname)
+        .map(([name, i]) => ({
+          name,  // internal name e.g. "power_treads"
           id: i.id,
           dname: i.dname,
           img: i.img ? "https://cdn.cloudflare.steamstatic.com" + i.img : null,
-          cost: i.cost,
+          cost: i.cost ?? null,
           components: i.components || [],
           created: !!i.created,
         }));
@@ -869,6 +937,38 @@ app.post("/advisor/suggest", async (req, res) => {
     const pickCount = yourIds.length + enemyIds.length;
     const matrixWeight = 0.3 + pickCount * 0.4;
 
+    // Role-fill context: load DB positions and compute what's still needed
+    const yourRolesArr = (input.perspective === "team2" ? input.roles?.team2 : input.roles?.team1) || [];
+    const yourRolesFilled = new Set(yourRolesArr.filter(Boolean));
+    const neededPositions = [1, 2, 3, 4, 5].filter((p) => !yourRolesFilled.has(p));
+
+    let dbHeroPositions = {};
+    try {
+      const rows = getDb()
+        .prepare(`SELECT hero_id, position, is_primary, is_flex FROM hero_positions`)
+        .all();
+      for (const r of rows) {
+        if (!dbHeroPositions[r.hero_id]) dbHeroPositions[r.hero_id] = [];
+        dbHeroPositions[r.hero_id].push(r);
+      }
+    } catch {}
+
+    function roleFillBonus(heroId) {
+      const positions = dbHeroPositions[heroId] ?? [];
+      if (!positions.length || !neededPositions.length) return 0;
+      // tier: 0=main, 1=secondary, 2=suboptimal, 3=undesirable
+      const main      = positions.find((p) => (p.tier ?? 0) === 0);
+      const secondary = positions.find((p) => (p.tier ?? 0) === 1);
+      if (main) {
+        if (neededPositions.includes(main.position)) return 3.0;
+        if (yourRolesFilled.size > 0) return -1.5; // position already covered
+      }
+      if (secondary && neededPositions.includes(secondary.position)) return 1.5;
+      // Suboptimal/undesirable: small bonus if it fills a gap, still penalised elsewhere
+      const suboptimal = positions.find((p) => (p.tier ?? 0) === 2 && neededPositions.includes(p.position));
+      return suboptimal ? 0.5 : 0;
+    }
+
     // --- helpers (local) ---
     function reasonsFor(profile) {
       const rs = [];
@@ -1029,6 +1129,14 @@ app.post("/advisor/suggest", async (req, res) => {
         // context (matrix) — weight scales with draft depth so matrix dominates late
         const ctx = contextScoreFor(h.id, team1Ids, team2Ids, matrix);
         score += matrixWeight * ctx;
+
+        // role-fill bonus: prefer heroes that fill open positions
+        const rfb = roleFillBonus(h.id);
+        score += rfb;
+        if (rfb > 0) {
+          const pos = (dbHeroPositions[h.id] ?? []).find((p) => p.is_primary);
+          if (pos && neededPositions.includes(pos.position)) reasons.push(`Fills Pos ${pos.position}`);
+        }
 
         return {
           hero_id: h.id,
@@ -1193,10 +1301,16 @@ app.get("/heroes/:id/matchups", (req, res) => {
   try {
     const heroId = Number(req.params.id);
     const limit = Math.min(Number(req.query.limit ?? 20), 100);
-    const minGames = Number(req.query.minGames ?? 100);
-    const counters = getMatchups(heroId, { limit, minGames });
-    const counteredBy = getCounteredBy(heroId, { limit, minGames });
-    res.json({ hero_id: heroId, counters, counteredBy });
+    const matrix = getMatrixBundle();
+
+    if (!matrix?.topOpponents) return res.json({ hero_id: heroId, counters: [], counteredBy: [], source: "none" });
+    const toEntry = (e) => ({ opponent_id: e.id, winrate: e.wr ?? 0, games: e.games ?? 0, score: e.score });
+    res.json({
+      hero_id: heroId,
+      source: "matrix",
+      counters: (matrix.topOpponents[heroId] || []).slice(0, limit).map(toEntry),
+      counteredBy: (matrix.topCounteredBy?.[heroId] || []).slice(0, limit).map(toEntry),
+    });
   } catch (e) {
     res.status(500).json({ error: String(e.message) });
   }
@@ -1206,8 +1320,32 @@ app.get("/heroes/:id/synergies", (req, res) => {
   try {
     const heroId = Number(req.params.id);
     const limit = Math.min(Number(req.query.limit ?? 20), 100);
-    const minGames = Number(req.query.minGames ?? 50);
-    res.json({ hero_id: heroId, allies: getSynergies(heroId, { limit, minGames }) });
+    const matrix = getMatrixBundle();
+
+    if (!matrix?.topAllies) return res.json({ hero_id: heroId, allies: [], source: "none" });
+    res.json({
+      hero_id: heroId,
+      source: "matrix",
+      allies: (matrix.topAllies[heroId] || []).slice(0, limit).map((e) => ({
+        ally_id: e.id, wr: e.wr ?? 0, games: e.games ?? 0, score: e.score,
+      })),
+    });
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
+app.get("/heroes/positions", (req, res) => {
+  try {
+    const rows = getDb()
+      .prepare(`SELECT hero_id, position, tier FROM hero_positions ORDER BY hero_id, tier, position`)
+      .all();
+    const map = {};
+    for (const r of rows) {
+      if (!map[r.hero_id]) map[r.hero_id] = [];
+      map[r.hero_id].push({ position: r.position, tier: r.tier ?? 0 });
+    }
+    res.json({ positions: map });
   } catch (e) {
     res.status(500).json({ error: String(e.message) });
   }
@@ -1226,8 +1364,7 @@ app.put("/heroes/:id/positions", (req, res) => {
     const heroId = Number(req.params.id);
     const positions = z.array(z.object({
       position: z.number().int().min(1).max(5),
-      is_primary: z.number().int().min(0).max(1).optional(),
-      is_flex: z.number().int().min(0).max(1).optional(),
+      tier: z.number().int().min(0).max(3).default(0),
     })).parse(req.body);
     setPositions(heroId, positions);
     res.json({ ok: true });
@@ -1266,6 +1403,267 @@ app.delete("/heroes/:id/guides/:guideId", (req, res) => {
   } catch (e) {
     res.status(500).json({ error: String(e.message) });
   }
+});
+
+// ─── Item builds & unique items ──────────────────────────────────────────────
+
+const UNIQUE_ITEMS_PATH = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1")), "data/unique-items.json");
+const HERO_ITEMS_PATH   = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1")), "data/hero-items.json");
+
+function readJson(p, fallback) {
+  try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return fallback; }
+}
+function writeJson(p, data) {
+  fs.writeFileSync(p, JSON.stringify(data, null, 2), "utf8");
+}
+
+// Items that should only be built once per team
+app.get("/items/unique", (req, res) => {
+  res.json({ items: readJson(UNIQUE_ITEMS_PATH, []) });
+});
+
+app.put("/items/unique", (req, res) => {
+  try {
+    const items = z.array(z.string().min(1)).parse(req.body);
+    writeJson(UNIQUE_ITEMS_PATH, items);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ error: String(e.message) });
+  }
+});
+
+// Hero item builds — keyed by hero_id → position (or "generic") → string[]
+app.get("/heroes/:id/items", (req, res) => {
+  const heroId = String(Number(req.params.id));
+  const all = readJson(HERO_ITEMS_PATH, {});
+  res.json({ hero_id: Number(heroId), builds: all[heroId] ?? {} });
+});
+
+app.put("/heroes/:id/items", (req, res) => {
+  try {
+    const heroId = String(Number(req.params.id));
+    const body = z.object({
+      position: z.union([z.literal("generic"), z.number().int().min(1).max(5)]),
+      items:    z.array(z.string().min(1)),
+    }).parse(req.body);
+    const all = readJson(HERO_ITEMS_PATH, {});
+    if (!all[heroId]) all[heroId] = {};
+    all[heroId][String(body.position)] = body.items;
+    writeJson(HERO_ITEMS_PATH, all);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ error: String(e.message) });
+  }
+});
+
+// Bulk read — returns { hero_id: { pos: [...] } } for all heroes that have data
+app.get("/items/builds", (req, res) => {
+  res.json(readJson(HERO_ITEMS_PATH, {}));
+});
+
+// Auto-fetch popular items from OpenDota for a single hero, save into hero-items.json
+app.post("/admin/heroes/:id/fetch-items", async (req, res) => {
+  try {
+    const heroId = Number(req.params.id);
+
+    // Fetch item constants to build id→name map
+    const [popRes, constRes] = await Promise.all([
+      fetch(`https://api.opendota.com/api/heroes/${heroId}/itemPopularity`),
+      fetch("https://api.opendota.com/api/constants/items"),
+    ]);
+    if (!popRes.ok) return res.status(502).json({ error: `OpenDota returned ${popRes.status}` });
+    const pop = await popRes.json();
+    const itemConsts = constRes.ok ? await constRes.json() : {};
+
+    const idToName = {};
+    for (const [name, data] of Object.entries(itemConsts ?? {})) {
+      if (data?.id != null) idToName[String(data.id)] = name;
+    }
+
+    const SKIP = new Set(["tango", "clarity", "faerie_fire", "enchanted_mango",
+      "observer_ward", "sentry_ward", "smoke_of_deceit", "tome_of_knowledge"]);
+
+    // Aggregate mid + late game items by count
+    const counts = {};
+    for (const phase of ["early_game_items", "mid_game_items", "late_game_items"]) {
+      for (const [itemId, count] of Object.entries(pop[phase] ?? {})) {
+        counts[itemId] = (counts[itemId] ?? 0) + count;
+      }
+    }
+
+    const top = Object.entries(counts)
+      .map(([id, count]) => ({ name: idToName[id], count }))
+      .filter(({ name }) => name && !SKIP.has(name) && !name.startsWith("recipe"))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10)
+      .map(({ name }) => name);
+
+    const all = readJson(HERO_ITEMS_PATH, {});
+    const key = String(heroId);
+    if (!all[key]) all[key] = {};
+    all[key].generic = top;
+    writeJson(HERO_ITEMS_PATH, all);
+    res.json({ ok: true, fetched: top });
+  } catch (e) {
+    res.status(500).json({ error: String(e.message) });
+  }
+});
+
+// GET /admin/heroes/fetch-all-items  — SSE stream, fetches builds for every hero from OpenDota
+// Query: onlyMissing=true (default) skips heroes that already have a "generic" build
+app.get("/admin/heroes/fetch-all-items", async (req, res) => {
+  const onlyMissing = req.query.onlyMissing !== "false";
+  // OpenDota free tier: ~60 req/min → 1 req/sec minimum. Default 1100ms gives headroom.
+  const delayMs = Math.max(600, Math.min(5000, Number(req.query.delay ?? 1100)));
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  const send = (obj) => {
+    if (!res.writableEnded) res.write(`data: ${JSON.stringify(obj)}\n\n`);
+  };
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const SKIP = new Set([
+    "tango", "clarity", "faerie_fire", "enchanted_mango",
+    "observer_ward", "sentry_ward", "smoke_of_deceit", "tome_of_knowledge",
+    "ward_dispenser",
+  ]);
+
+  // Fetch with one retry on rate-limit
+  const fetchOD = async (url) => {
+    for (let attempt = 0; attempt <= 1; attempt++) {
+      const r = await fetch(url);
+      if (r.status === 429 || r.status === 503) {
+        if (attempt === 0) { await sleep(6000); continue; }
+        throw new Error(`Rate limited (HTTP ${r.status})`);
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json();
+      if (data && !Array.isArray(data) && data.error) {
+        if (attempt === 0) { await sleep(6000); continue; }
+        throw new Error(String(data.error));
+      }
+      return data;
+    }
+  };
+
+  try {
+    // Fetch hero list and item constants in parallel
+    const [heroList, itemConsts] = await Promise.all([
+      fetchOD("https://api.opendota.com/api/heroes"),
+      fetchOD("https://api.opendota.com/api/constants/items"),
+    ]);
+    if (!Array.isArray(heroList)) throw new Error("Unexpected hero list shape");
+
+    // Build item-id → internal-name map (e.g. 1 → "blink")
+    const idToName = {};
+    for (const [name, data] of Object.entries(itemConsts ?? {})) {
+      if (data?.id != null) idToName[String(data.id)] = name;
+    }
+
+    heroList.sort((a, b) => a.id - b.id);
+
+    const allBuilds = readJson(HERO_ITEMS_PATH, {});
+
+    const toFetch = onlyMissing
+      ? heroList.filter((h) => !allBuilds[String(h.id)]?.generic?.length)
+      : heroList;
+
+    const skipped = heroList.length - toFetch.length;
+    send({ type: "start", total: toFetch.length, skipped });
+
+    let done = 0, failed = 0, fetched = 0;
+
+    for (const hero of toFetch) {
+      if (res.writableEnded) break;
+
+      try {
+        // itemPopularity returns { early_game_items, mid_game_items, late_game_items }
+        // where each phase is { [itemId]: count }
+        const pop = await fetchOD(`https://api.opendota.com/api/heroes/${hero.id}/itemPopularity`);
+
+        // Aggregate counts across relevant phases (skip start_game consumables phase)
+        const counts = {};
+        for (const phase of ["early_game_items", "mid_game_items", "late_game_items"]) {
+          for (const [itemId, count] of Object.entries(pop[phase] ?? {})) {
+            counts[itemId] = (counts[itemId] ?? 0) + count;
+          }
+        }
+
+        const top = Object.entries(counts)
+          .map(([id, count]) => ({ name: idToName[id], count }))
+          .filter(({ name }) => name && !SKIP.has(name) && !name.startsWith("recipe"))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 10)
+          .map(({ name }) => name);
+
+        if (!allBuilds[String(hero.id)]) allBuilds[String(hero.id)] = {};
+        allBuilds[String(hero.id)].generic = top;
+        writeJson(HERO_ITEMS_PATH, allBuilds);
+
+        done++; fetched++;
+        send({ type: "hero", heroId: hero.id, name: hero.localized_name, items: top, done, total: toFetch.length });
+      } catch (e) {
+        done++; failed++;
+        send({ type: "fail", heroId: hero.id, name: hero.localized_name, error: e.message, done, total: toFetch.length });
+      }
+
+      await sleep(delayMs);
+    }
+
+    send({ type: "done", fetched, failed, skipped, total: toFetch.length });
+  } catch (e) {
+    send({ type: "fatal", error: e.message });
+  }
+
+  if (!res.writableEnded) res.end();
+});
+
+// ─── Hero desire timings ──────────────────────────────────────────────────────
+// Schema: { [heroId]: { [desireKey]: [val10, val15, val20, val25, val30] } }
+
+const HERO_TIMINGS_PATH = path.resolve(
+  path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1")),
+  "data/hero-timings.json"
+);
+
+const DESIRE_KEYS = ["teamfight","pickoff","push","split","objective","farm","early_end","late_scale"];
+const TIMING_SCHEMA = z.record(
+  z.string(),   // heroId
+  z.record(
+    z.enum(DESIRE_KEYS),
+    z.array(z.number().int().min(0).max(100)).length(5)
+  )
+);
+
+app.get("/heroes/:id/timings", (req, res) => {
+  const heroId = String(Number(req.params.id));
+  const all = readJson(HERO_TIMINGS_PATH, {});
+  res.json({ hero_id: Number(heroId), timings: all[heroId] ?? {} });
+});
+
+app.put("/heroes/:id/timings", (req, res) => {
+  try {
+    const heroId = String(Number(req.params.id));
+    const body = z.record(
+      z.enum(DESIRE_KEYS),
+      z.array(z.number().int().min(0).max(100)).length(5)
+    ).parse(req.body);
+    const all = readJson(HERO_TIMINGS_PATH, {});
+    all[heroId] = body;
+    writeJson(HERO_TIMINGS_PATH, all);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ error: String(e.message) });
+  }
+});
+
+// Bulk read for the draft team panel
+app.get("/heroes/timings/all", (req, res) => {
+  res.json(readJson(HERO_TIMINGS_PATH, {}));
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1571,6 +1969,35 @@ app.post("/storyboard", async (req, res) => {
   }
 });
 
+// POST /admin/seed/positions?overwrite=true  — apply seed-positions.json to the DB
+// Without overwrite: only inserts rows that don't already exist (INSERT OR IGNORE)
+// With overwrite=true: clears all existing rows first
+app.post("/admin/seed/positions", (req, res) => {
+  try {
+    const seedPath = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1")),
+      "data/seed-positions.json"
+    );
+    const seedData = JSON.parse(fs.readFileSync(seedPath, "utf8"));
+    const db = getDb();
+    const overwrite = req.query.overwrite === "true";
+    if (overwrite) db.prepare("DELETE FROM hero_positions").run();
+    const ins = db.prepare(
+      "INSERT OR IGNORE INTO hero_positions (hero_id, position, tier) VALUES (?, ?, ?)"
+    );
+    let inserted = 0;
+    db.transaction(() => {
+      for (const row of seedData) {
+        const info = ins.run(row.hero_id, row.position, row.tier ?? 0);
+        inserted += info.changes;
+      }
+    })();
+    res.json({ ok: true, total: seedData.length, inserted, overwrite });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 app.post("/admin/opendota/sync", async (req, res) => {
   try {
     const limit = Number(req.query.limit || 0);
@@ -1594,24 +2021,9 @@ app.post("/admin/opendota/sync", async (req, res) => {
 
 app.post("/admin/opendota/sync-and-reload", async (req, res) => {
   try {
-    const { matrix, allVsRaw, withMatrix } = await syncOpenDotaAndBuildMatrices();
-    const { topAllies, topOpponents } = matrix;
-    req.app.locals.matrixTopK = {
-      topAllies,
-      topOpponents,
-      _meta: {
-        schema: "matrix-topk/v1",
-        generatedAt: new Date().toISOString(),
-        source: "OpenDota",
-      },
-    };
-    // Seed SQLite (non-fatal)
-    try {
-      seedMatchups(allVsRaw, matrix.vsMatrix);
-      seedSynergies(withMatrix);
-    } catch (dbErr) {
-      console.warn("[db] seed failed (non-fatal):", dbErr.message);
-    }
+    const { matrix } = await syncOpenDotaAndBuildMatrices();
+    const { topAllies, topOpponents, topCounteredBy } = matrix;
+    __MATRIX_BUNDLE = matrix;
     res.json({ ok: true, heroes: Object.keys(topAllies || {}).length });
   } catch (e) {
     res.status(500).json({ error: String(e?.message || e) });

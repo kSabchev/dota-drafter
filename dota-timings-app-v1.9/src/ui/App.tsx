@@ -4,10 +4,11 @@ import CreateDraft from "./CreateDraft";
 import ImportDraft from "./ImportDraft";
 import Heroes from "./Heroes";
 import Profiles from "./Profiles";
+import Admin from "./Admin";
 import ErrorBoundary from "./ErrorBoundary";
 import StatusStrip from "./parts/StatusStrip";
 
-type Page = "create" | "import" | "heroes" | "profiles";
+type Page = "create" | "import" | "heroes" | "profiles" | "admin";
 
 export default function App() {
   const init = useStore((s) => s.init);
@@ -67,7 +68,7 @@ export default function App() {
         >
           <StatusStrip />
           <nav style={{ display: "flex", gap: 8 }}>
-            {(["create", "import", "heroes", "profiles"] as Page[]).map((p) => (
+            {(["create", "import", "heroes", "profiles", "admin"] as Page[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPage(p)}
@@ -79,10 +80,8 @@ export default function App() {
                   color: "#e6edf3",
                 }}
               >
-                {p === "create"
-                  ? "Create Draft"
-                  : p === "import"
-                  ? "Import Draft"
+                {p === "create" ? "Create Draft"
+                  : p === "import" ? "Import Draft"
                   : p[0].toUpperCase() + p.slice(1)}
               </button>
             ))}
@@ -96,6 +95,7 @@ export default function App() {
           )}
           {page === "heroes" && <Heroes />}
           {page === "profiles" && <Profiles />}
+          {page === "admin" && <Admin />}
         </main>
       </div>
     </ErrorBoundary>

@@ -321,25 +321,51 @@ export async function buildVsMatrix(heroes, allVsRaw) {
   return vsMatrix;
 }
 
-/** Build top‑K maps from matrices */
+/** Build top‑K maps from matrices (includes wr, games, and reverse counteredBy lookup) */
 export function buildTopK(heroes, vsMatrix, withMatrix, k = DEFAULT_K) {
   const topOpponents = {};
   const topAllies = {};
+
   for (const h of heroes) {
     const vs = Object.entries(vsMatrix[h.id] || {}).map(([id, cell]) => ({
       id: Number(id),
       score: Math.round(cell.score),
+      wr: Math.round(cell.wr * 1000) / 1000,
+      games: cell.games ?? 0,
     }));
     const al = Object.entries(withMatrix?.[h.id] || {}).map(([id, cell]) => ({
       id: Number(id),
       score: Math.round(cell.score),
+      wr: Math.round(cell.wr * 1000) / 1000,
+      games: cell.games ?? 0,
     }));
     vs.sort((a, b) => b.score - a.score);
     al.sort((a, b) => b.score - a.score);
     topOpponents[h.id] = vs.slice(0, k);
     topAllies[h.id] = al.slice(0, k);
   }
-  return { topOpponents, topAllies };
+
+  // topCounteredBy[heroId] = heroes that most strongly counter heroId
+  // i.e. for hero H, collect vsMatrix[other][H] across all others, sort desc
+  const topCounteredBy = {};
+  for (const h of heroes) {
+    const counters = [];
+    for (const other of heroes) {
+      if (other.id === h.id) continue;
+      const cell = vsMatrix[other.id]?.[h.id];
+      if (!cell) continue;
+      counters.push({
+        id: other.id,
+        score: Math.round(cell.score),
+        wr: Math.round(cell.wr * 1000) / 1000,
+        games: cell.games ?? 0,
+      });
+    }
+    counters.sort((a, b) => b.score - a.score);
+    topCounteredBy[h.id] = counters.slice(0, k);
+  }
+
+  return { topOpponents, topAllies, topCounteredBy };
 }
 
 export async function syncOpenDotaAndBuildMatrices(limit = 0) {

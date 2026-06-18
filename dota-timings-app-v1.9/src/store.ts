@@ -7,6 +7,22 @@ export type Hero = {
   img: string;
   icon: string;
   roles?: string[];
+  // stats (available after server restart)
+  primary_attr?: "str" | "agi" | "int" | "all" | null;
+  attack_type?: "Melee" | "Ranged" | null;
+  base_str?: number | null;
+  base_agi?: number | null;
+  base_int?: number | null;
+  str_gain?: number | null;
+  agi_gain?: number | null;
+  int_gain?: number | null;
+  attack_range?: number | null;
+  move_speed?: number | null;
+  attack_rate?: number | null;
+  base_armor?: number | null;
+  base_health_regen?: number | null;
+  base_mana_regen?: number | null;
+  cm_enabled?: boolean | null;
 };
 export type Profile = {
   id: string;
@@ -20,6 +36,7 @@ export type Pick = {
   hero_id: number;
   profile?: Profile | null;
   role?: number | null;
+  roleManual?: boolean; // true = user explicitly assigned this role
 };
 
 type TopK = Record<number, { id: number; score: number }[]>;
@@ -57,7 +74,9 @@ type AdvisorSuggestion = {
 };
 type Coverage = { tag: string; ok: boolean };
 
-export type Ban = { hero_id: number; team: 1 | 2 };
+export type Ban = { hero_id: number; team: 1 | 2; skipped?: true };
+/** tier: 0=main  1=secondary  2=suboptimal  3=undesirable */
+export type PosEntry = { position: number; tier: number };
 type DraftSnapshot = { team1: Pick[]; team2: Pick[]; bans: Ban[] };
 
 type State = {
@@ -76,6 +95,8 @@ type State = {
   story: any | null;
   matrix?: { topAllies: TopK; topOpponents: TopK };
   metaByRole?: MetaByRole;
+  // hero positions (loaded from DB on init)
+  heroPositions: Record<number, PosEntry[]>;
   // undo history
   _history: DraftSnapshot[];
   canUndo: boolean;
@@ -87,9 +108,12 @@ type State = {
 };
 type Actions = {
   init: () => Promise<void>;
+  loadPositions: () => Promise<void>;
+  setHeroPositions: (m: Record<number, PosEntry[]>) => void;
   clearBoard: () => void;
   pickHero: (id: number, forceTeam?: 1 | 2) => void;
   banHero: (id: number, forceTeam?: 1 | 2) => void;
+  skipBan: () => void;
   replacePickAt: (team: 1 | 2, idx: number, heroId: number) => void;
   undo: () => void;
   setDraftMode: (mode: "manual" | "cm", firstPick?: "team1" | "team2") => Promise<void>;
@@ -112,6 +136,42 @@ type Actions = {
   enemyGainIfTheyPick: (heroId: number) => number;
 };
 
+function _bestRole(
+  heroId: number,
+  heroPositions: Record<number, PosEntry[]>,
+  takenRoles: (number | null)[]
+): number | null {
+  const positions = heroPositions[heroId] ?? [];
+  if (!positions.length) return null;
+  const taken = new Set(takenRoles.filter(Boolean) as number[]);
+  // Only auto-assign main (0) or secondary (1); suboptimal/undesirable need explicit override
+  for (const tier of [0, 1]) {
+    const p = positions.find((e) => e.tier === tier && !taken.has(e.position));
+    if (p) return p.position;
+  }
+  // Fall back to main even if already taken
+  return positions.find((e) => e.tier === 0)?.position ?? positions[0].position;
+}
+
+// Re-resolve auto-assigned roles for a team after a manual role change.
+// Manual picks are treated as reserved slots; auto picks are re-assigned greedily.
+function _resolveTeamRoles(picks: Pick[], heroPositions: Record<number, PosEntry[]>): Pick[] {
+  // All manually-set roles are pre-reserved
+  const manualRoles = picks.filter((p) => p.roleManual).map((p) => p.role ?? null);
+  const taken = [...manualRoles];
+  const result: Pick[] = [];
+  for (const p of picks) {
+    if (p.roleManual) {
+      result.push(p);
+    } else {
+      const newRole = _bestRole(p.hero_id, heroPositions, taken);
+      result.push({ ...p, role: newRole });
+      if (newRole != null) taken.push(newRole);
+    }
+  }
+  return result;
+}
+
 export const useStore = create<State & Actions>((set, get) => ({
   apiBase: import.meta.env.VITE_API_BASE || "http://localhost:8787",
   heroes: [],
@@ -133,14 +193,26 @@ export const useStore = create<State & Actions>((set, get) => ({
   activeTeam: "team1",
   cmSequence: null,
   cmStep: 0,
+  heroPositions: {},
 
   async init() {
     const base = get().apiBase;
-    const [h, p] = await Promise.all([
+    const [h, p, pos] = await Promise.all([
       fetch(base + "/constants/heroes").then((r) => r.json()),
       fetch(base + "/presets").then((r) => r.json()),
+      fetch(base + "/heroes/positions").then((r) => r.json()).catch(() => ({ positions: {} })),
     ]);
-    set({ heroes: h.heroes, profilesByHero: p.profilesByHero });
+    set({ heroes: h.heroes, profilesByHero: p.profilesByHero, heroPositions: pos.positions ?? {} });
+  },
+
+  async loadPositions() {
+    const base = get().apiBase;
+    const j = await fetch(base + "/heroes/positions").then((r) => r.json());
+    set({ heroPositions: j.positions ?? {} });
+  },
+
+  setHeroPositions(m) {
+    set({ heroPositions: m });
   },
   async loadMatrix() {
     const base = get().apiBase;
@@ -251,7 +323,9 @@ export const useStore = create<State & Actions>((set, get) => ({
       team = forceTeam ?? (t1 <= t2 ? 1 : 2);
     }
     const best = (s.profilesByHero[id] || [])[0] || null;
-    const slot = { hero_id: id, profile: best, role: best?.positions?.[0] ?? null };
+    const teamArr = team === 1 ? s.team1 : s.team2;
+    const takenRoles = teamArr.map((p) => p.role ?? null);
+    const slot = { hero_id: id, profile: best, role: _bestRole(id, s.heroPositions, takenRoles) };
     const newTeam1 = team === 1 && s.team1.length < 5 ? [...s.team1, slot] : s.team1;
     const newTeam2 = team === 2 && s.team2.length < 5 ? [...s.team2, slot] : s.team2;
     if (newTeam1 === s.team1 && newTeam2 === s.team2) return;
@@ -289,6 +363,18 @@ export const useStore = create<State & Actions>((set, get) => ({
     set({ bans: [...s.bans, { hero_id: id, team }], _history: history, canUndo: true, cmStep: newCmStep, activeTeam: nextActive });
   },
 
+  skipBan() {
+    const s = get();
+    if (s.draftMode !== "cm" || !s.cmSequence) return;
+    const step = s.cmSequence[s.cmStep];
+    if (!step || step.type !== "ban") return;
+    const team: 1 | 2 = step.team === "team1" ? 1 : 2;
+    const newCmStep = s.cmStep + 1;
+    const nextActive: "team1" | "team2" = s.cmSequence[newCmStep]?.team ?? s.activeTeam;
+    const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
+    set({ bans: [...s.bans, { hero_id: 0, team, skipped: true }], _history: history, canUndo: true, cmStep: newCmStep, activeTeam: nextActive });
+  },
+
   replacePickAt(team: 1 | 2, idx: number, heroId: number) {
     const s = get();
     const teamArr = team === 1 ? s.team1 : s.team2;
@@ -298,7 +384,8 @@ export const useStore = create<State & Actions>((set, get) => ({
     if (s.bans.some((b) => b.hero_id === heroId)) return;
     if (teamArr.some((p, i) => p.hero_id === heroId && i !== idx)) return;
     const best = (s.profilesByHero[heroId] || [])[0] || null;
-    const slot = { hero_id: heroId, profile: best, role: best?.positions?.[0] ?? null };
+    const takenRoles = teamArr.filter((_, i) => i !== idx).map((p) => p.role ?? null);
+    const slot = { hero_id: heroId, profile: best, role: _bestRole(heroId, s.heroPositions, takenRoles) };
     const newArr = teamArr.map((p, i) => (i === idx ? slot : p));
     const history = [...s._history, { team1: s.team1, team2: s.team2, bans: s.bans }];
     set(team === 1
@@ -355,10 +442,15 @@ export const useStore = create<State & Actions>((set, get) => ({
 
   setRoleForPick(team, idx, pos) {
     const key = team === 1 ? "team1" : "team2";
-    const arr = [...(get() as any)[key]];
+    const arr = [...(get() as any)[key]] as Pick[];
     if (!arr[idx]) return;
-    arr[idx] = { ...arr[idx], role: pos };
-    set({ [key]: arr } as any);
+    // pos=0 means clear: becomes auto-assigned again
+    arr[idx] = pos > 0
+      ? { ...arr[idx], role: pos, roleManual: true }
+      : { ...arr[idx], role: null, roleManual: false };
+    // Re-resolve all auto picks so they adapt to the new constraint
+    const resolved = _resolveTeamRoles(arr, get().heroPositions);
+    set({ [key]: resolved } as any);
   },
 
   async runAdvisor() {
@@ -378,7 +470,7 @@ export const useStore = create<State & Actions>((set, get) => ({
       picked: get()
         .team1.concat(get().team2)
         .map((p) => p.hero_id),
-      banned: get().bans.map((b) => b.hero_id),
+      banned: get().bans.filter((b) => !b.skipped).map((b) => b.hero_id),
       roles: {
         team1: get().team1.map((p) => p.role || null),
         team2: get().team2.map((p) => p.role || null),

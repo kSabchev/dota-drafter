@@ -1,0 +1,212 @@
+{
+  "1": {
+    "generic": [
+      "broadsword",
+      "blade_of_alacrity",
+      "power_treads",
+      "boots",
+      "manta",
+      "yasha",
+      "pers",
+      "bfury",
+      "diadem",
+      "ring_of_health"
+    ]
+  },
+  "2": {
+    "generic": [
+      "boots",
+      "blink",
+      "broadsword",
+      "blade_mail",
+      "phase_boots",
+      "chainmail",
+      "ogre_axe",
+      "black_king_bar",
+      "bracer",
+      "aghanims_shard"
+    ]
+  },
+  "3": {
+    "generic": [
+      "boots",
+      "aether_lens",
+      "ultimate_scepter",
+      "blink",
+      "arcane_boots",
+      "glimmer_cape",
+      "ogre_axe",
+      "staff_of_wizardry",
+      "point_booster",
+      "force_staff"
+    ]
+  },
+  "4": {
+    "generic": [
+      "mithril_hammer",
+      "boots",
+      "ogre_axe",
+      "maelstrom",
+      "hyperstone",
+      "mjollnir",
+      "chainmail",
+      "phase_boots",
+      "black_king_bar",
+      "javelin"
+    ]
+  },
+  "5": {
+    "generic": [
+      "boots",
+      "tranquil_boots",
+      "blink",
+      "aghanims_shard",
+      "glimmer_cape",
+      "staff_of_wizardry",
+      "soul_ring",
+      "ancient_janggo",
+      "force_staff",
+      "ultimate_scepter"
+    ]
+  },
+  "6": {
+    "generic": [
+      "blade_of_alacrity",
+      "boots",
+      "power_treads",
+      "staff_of_wizardry",
+      "dragon_lance",
+      "yasha",
+      "falcon_blade",
+      "force_staff",
+      "hurricane_pike",
+      "manta"
+    ]
+  },
+  "7": {
+    "generic": [
+      "blink",
+      "staff_of_wizardry",
+      "boots",
+      "blade_of_alacrity",
+      "kaya",
+      "ogre_axe",
+      "aghanims_shard",
+      "yasha",
+      "yasha_and_kaya",
+      "power_treads"
+    ]
+  },
+  "8": {
+    "generic": [
+      "broadsword",
+      "blade_of_alacrity",
+      "boots",
+      "yasha",
+      "pers",
+      "bfury",
+      "power_treads",
+      "eagle",
+      "ring_of_health",
+      "manta"
+    ]
+  },
+  "9": {
+    "generic": [
+      "boots",
+      "staff_of_wizardry",
+      "arcane_boots",
+      "blade_of_alacrity",
+      "cyclone",
+      "urn_of_shadows",
+      "ultimate_scepter",
+      "power_treads",
+      "ogre_axe",
+      "point_booster"
+    ]
+  },
+  "10": {
+    "generic": [
+      "blade_of_alacrity",
+      "boots",
+      "power_treads",
+      "diadem",
+      "yasha",
+      "manta",
+      "vladmir",
+      "lifesteal",
+      "eagle",
+      "ultimate_orb"
+    ]
+  },
+  "11": {
+    "generic": [
+      "blade_of_alacrity",
+      "boots",
+      "power_treads",
+      "demon_edge",
+      "broadsword",
+      "claymore",
+      "mask_of_madness",
+      "yasha",
+      "staff_of_wizardry",
+      "dragon_lance"
+    ]
+  },
+  "12": {
+    "generic": [
+      "blade_of_alacrity",
+      "power_treads",
+      "yasha",
+      "diadem",
+      "boots",
+      "ultimate_orb",
+      "manta",
+      "ogre_axe",
+      "staff_of_wizardry",
+      "ultimate_scepter"
+    ]
+  },
+  "13": {
+    "generic": [
+      "boots",
+      "witch_blade",
+      "oblivion_staff",
+      "blitz_knuckles",
+      "blink",
+      "power_treads",
+      "bottle",
+      "mystic_staff",
+      "devastator",
+      "soul_booster"
+    ]
+  },
+  "14": {
+    "generic": [
+      "tranquil_boots",
+      "boots",
+      "blink",
+      "aether_lens",
+      "bracer",
+      "ogre_axe",
+      "staff_of_wizardry",
+      "point_booster",
+      "ultimate_scepter",
+      "phase_boots"
+    ]
+  },
+  "15": {
+    "generic": [
+      "boots",
+      "power_treads",
+      "yasha",
+      "blade_of_alacrity",
+      "ogre_axe",
+      "wraith_band",
+      "mithril_hammer",
+      "black_king_bar",
+      "manta",
+      "diadem"
+    ]
+  }
+}
