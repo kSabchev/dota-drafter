@@ -31,6 +31,8 @@ data/snapshots/
 data/tmp/
 *.sqlite
 *.db
+*.db-shm
+*.db-wal
 assets/heroes/*
 
 # API / temporary files
